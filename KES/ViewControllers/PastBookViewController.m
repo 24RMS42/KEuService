@@ -84,24 +84,34 @@
 {
     NSArray* booksObject = [responseObject valueForKey:@"bookings"];
     for (NSDictionary *obj in booksObject) {
-        NewsModel *bookModel = [[NewsModel alloc] init];
-        bookModel.schedule_id = [Functions checkNullValue:[obj valueForKey:@"schedule_id"]];
-        bookModel.schedule = [Functions checkNullValue:[obj valueForKey:@"schedule"]];
-        bookModel.room = [Functions checkNullValue:[obj valueForKey:@"room"]];
-        bookModel.building = [Functions checkNullValue:[obj valueForKey:@"building"]];
-        bookModel.trainer = [Functions checkNullValue:[obj valueForKey:@"trainer"]];
-        bookModel.course = [Functions checkNullValue:[obj valueForKey:@"course"]];
-        bookModel.start_date = [Functions checkNullValue:[obj valueForKey:@"start_date"]];
-        bookModel.end_date = [Functions checkNullValue:[obj valueForKey:@"end_date"]];
-        bookModel.profile_img_url = [Functions checkNullValue:[obj valueForKey:@"profile_image_url"]];
-        bookModel.color = [Functions convertToHexColor:[obj valueForKey:@"color"]];
-        
-        NSDate *startDateTime = [Functions convertStringToDate:[obj valueForKey:@"start_date"] format:@"yyyy-MM-dd HH:mm:ss"];
-        NSString *startTimeStr = [Functions convertDateToString:startDateTime format:@"ccc d LLL yyyy @ h:mm a"];
-        bookModel.format_start_date = startTimeStr;
-        bookModel.time_prompt = [startDateTime timeAgo];
-        
-        [bookArray addObject:bookModel];
+        @try {
+            NewsModel *bookModel = [[NewsModel alloc] init];
+            bookModel.schedule_id = [Functions checkNullValue:[obj valueForKey:@"schedule_id"]];
+            bookModel.schedule = [Functions checkNullValue:[obj valueForKey:@"schedule"]];
+            bookModel.room = [Functions checkNullValue:[obj valueForKey:@"room"]];
+            bookModel.building = [Functions checkNullValue:[obj valueForKey:@"building"]];
+            bookModel.trainer = [Functions checkNullValue:[obj valueForKey:@"trainer"]];
+            bookModel.course = [Functions checkNullValue:[obj valueForKey:@"course"]];
+            bookModel.start_date = [Functions checkNullValue:[obj valueForKey:@"start_date"]];
+            bookModel.end_date = [Functions checkNullValue:[obj valueForKey:@"end_date"]];
+            bookModel.profile_img_url = [Functions checkNullValue:[obj valueForKey:@"profile_image_url"]];
+            bookModel.color = [Functions convertToHexColor:[obj valueForKey:@"color"]];
+            
+            NSArray *timeSlots = [obj objectForKey:@"timeslots"];
+            NSDictionary *slotObj = [timeSlots objectAtIndex:0];
+            bookModel.slot_start_date = [slotObj valueForKey:@"start_date"];
+            bookModel.slot_end_date = [slotObj valueForKey:@"end_date"];
+            
+            NSDate *startDateTime = [Functions convertStringToDate:bookModel.slot_start_date format:MAIN_DATE_FORMAT];
+            NSString *startTimeStr = [Functions convertDateToString:startDateTime format:@"ccc d LLL yyyy @ h:mm a"];
+            bookModel.format_start_date = startTimeStr;
+            bookModel.time_prompt = [startDateTime timeAgo];
+            
+            [bookArray addObject:bookModel];
+        }
+        @catch (NSException *exception) {
+            [Functions showAlert:@"PastBookView:parseBooksArray" message:exception.reason];
+        }
     }
 }
 
@@ -181,27 +191,32 @@
     UILabel *timelbl = (UILabel*)[cell viewWithTag:22];
     UILabel *locationlbl = (UILabel*)[cell viewWithTag:23];
     UILabel *personlbl = (UILabel*)[cell viewWithTag:24];
-    UILabel *timePromptlbl = (UILabel*)[cell viewWithTag:26];
+    //UILabel *timePromptlbl = (UILabel*)[cell viewWithTag:26];
     UILabel *colorlbl = (UILabel*)[cell viewWithTag:27];
     UIFont *titleFont = [UIFont fontWithName:@"Roboto-Medium" size:19.0f];
     NSDictionary *userAttributes = @{NSFontAttributeName: titleFont,
                                      NSForegroundColorAttributeName: [UIColor blackColor]};
     
-    if ([bookArray count] > 0) {
-        NewsModel *item = [bookArray objectAtIndex:indexPath.row];
-        [Functions makeRoundImageView:headerImg];
-        [headerImg sd_setImageWithURL:[NSURL URLWithString:item.profile_img_url] placeholderImage:[UIImage imageNamed:@"person.png"]];
-        titlelbl.text = item.course;
-        locationlbl.text = [NSString stringWithFormat:@"%@, %@", item.building, item.room];
-        timelbl.text = item.format_start_date;
-        personlbl.text = item.trainer;
-        timePromptlbl.text = item.time_prompt;
-        
-        CGSize titleSize = [item.course sizeWithAttributes:userAttributes];
-        CGRect frame = colorlbl.frame;
-        frame.size = CGSizeMake(titleSize.width, 1);
-        colorlbl.frame = frame;
-        colorlbl.backgroundColor = item.color;
+    @try {
+        if ([bookArray count] > 0) {
+            NewsModel *item = [bookArray objectAtIndex:indexPath.row];
+            [Functions makeRoundImageView:headerImg];
+            [headerImg sd_setImageWithURL:[NSURL URLWithString:item.profile_img_url] placeholderImage:[UIImage imageNamed:@"person.png"]];
+            titlelbl.text = item.course;
+            locationlbl.text = [NSString stringWithFormat:@"%@, %@", item.building, item.room];
+            timelbl.text = item.format_start_date;
+            personlbl.text = item.trainer;
+            //timePromptlbl.text = item.time_prompt;
+            
+            CGSize titleSize = [item.course sizeWithAttributes:userAttributes];
+            CGRect frame = colorlbl.frame;
+            frame.size = CGSizeMake(titleSize.width, 1);
+            colorlbl.frame = frame;
+            colorlbl.backgroundColor = item.color;
+        }
+    }
+    @catch (NSException *exception) {
+        [Functions showAlert:@"PastBookView:cellForRowAtIndexPath" message:exception.reason];
     }
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;

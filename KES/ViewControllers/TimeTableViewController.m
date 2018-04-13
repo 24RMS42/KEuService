@@ -115,7 +115,9 @@
     
     if (_classDetailView.hidden) {
         _noMonthItemLbl.hidden = NO;
-        _noMonthItemLbl.text = [NSString stringWithFormat:@"%@ selected\nYou currently have no items", targetDateStr];
+        NSDate *targetDate = [Functions convertStringToDate:targetDateStr format:self.dateFormatter1.dateFormat];
+        NSString *newTargetDateStr = [Functions convertDateToString:targetDate format:@"cccc, LLL d, yyyy"];
+        _noMonthItemLbl.text = [NSString stringWithFormat:@"%@ selected\nYou currently have no items", newTargetDateStr];
     }
 }
 

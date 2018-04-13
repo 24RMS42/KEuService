@@ -15,13 +15,14 @@
 #import "SignupViewController.h"
 #import "ForgotPasswordViewController.h"
 #import "WebServices.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @interface ViewController : UIViewController<CAPSPageMenuDelegate, WebServicesDelegate>
 {
     LoginViewController *loginController;
     SignupViewController *signupController;
     WebServices *objWebServices;
-    NSString *quoteApi;
+    NSString *quoteApi, *settingsApi;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *TopView;
@@ -29,6 +30,9 @@
 @property (weak, nonatomic) IBOutlet UIView *splashView;
 @property (weak, nonatomic) IBOutlet UILabel *splashLbl;
 @property (weak, nonatomic) IBOutlet UITextView *quoteTxt;
+@property (weak, nonatomic) IBOutlet UIImageView *julieImgView;
+@property (weak, nonatomic) IBOutlet UIImageView *citiationStartImg;
+@property (weak, nonatomic) IBOutlet UIImageView *citiationEndImg;
 
 @end
 

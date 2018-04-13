@@ -48,12 +48,14 @@
                                                  name:NOTIFICATION_LOGOUT
                                                object:nil];
     
+    settingsApi = [NSString stringWithFormat:@"%@%@", BASE_URL, APP_SETTINGS];
+    [objWebServices callApiWithParameters:nil apiName:settingsApi type:GET_REQUEST loader:NO view:self];
+    
     quoteApi = [NSString stringWithFormat:@"%@%@?category=%@", BASE_URL, NEWS_LIST, @"Quotes"];
     [objWebServices callApiWithParameters:nil apiName:quoteApi type:GET_REQUEST loader:NO view:self];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     NSInteger currentIndex = _pagemenu.currentPageIndex;
     [self setWebServiceObjAgain:currentIndex];
 }
@@ -82,14 +84,14 @@
 }
 
 - (void)startTimer {
-    [NSTimer scheduledTimerWithTimeInterval:4.0
+    [NSTimer scheduledTimerWithTimeInterval:5.0
                                      target:self
                                    selector:@selector(initializeView)
                                    userInfo:nil
                                     repeats:NO];
 }
 
-- (void)setIntroPage:(NSNotification *) notification{
+- (void)setIntroPage:(NSNotification *)notification {
     
     EAIntroPage *page1 = [EAIntroPage page];
     page1.bgImage = [UIImage imageNamed:@"intro1"];
@@ -129,12 +131,11 @@
     _intro = intro;
 }
 
-- (void)removeIntro: (UIButton*)sender{
+- (void)removeIntro:(UIButton*)sender {
     [_intro removeFromSuperview];
 }
 
-- (void)setLoginForm
-{
+- (void)setLoginForm {
     NSMutableArray *controllerArray = [NSMutableArray array];
     
     loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"login"];
@@ -161,7 +162,7 @@
     [self.view addSubview:_pagemenu.view];
 }
 
-- (void)didTapGoToLeft :(NSNotification *) notification{
+- (void)didTapGoToLeft:(NSNotification *)notification {
     NSInteger currentIndex = _pagemenu.currentPageIndex;
     
     if (currentIndex > 0) {
@@ -169,7 +170,7 @@
     }
 }
 
-- (void)didTapGoToRight :(NSNotification *) notification{
+- (void)didTapGoToRight:(NSNotification *)notification {
     NSInteger currentIndex = _pagemenu.currentPageIndex;
     
     if (currentIndex < _pagemenu.controllerArray.count) {
@@ -177,7 +178,7 @@
     }
 }
 
-- (void)forgotPassword :(NSNotification *) notification {
+- (void)forgotPassword:(NSNotification *)notification {
     NSDictionary* info = notification.userInfo;
     NSString *infoinfo = [info valueForKey:@"info"];
     ForgotPasswordViewController *forgotController = [self.storyboard instantiateViewControllerWithIdentifier:@"forgotPwd"];
@@ -185,12 +186,12 @@
     [self.navigationController pushViewController:forgotController animated:YES];
 }
 
-- (void)goHome :(NSNotification *) notification{
+- (void)goHome:(NSNotification *)notification {
     UIViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"mainTab"];
     [self.navigationController pushViewController:controller animated:YES];
 }
 
-- (void)loggedOut :(NSNotification *) notification{
+- (void)loggedOut:(NSNotification *)notification {
     NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
     if ([[userInfo objectForKey:KEY_LOGGEDIN] isEqualToString:@"yes"]) {
         [userInfo setObject:@"no" forKey:KEY_LOGGEDIN];
@@ -209,8 +210,7 @@
 }
 
 #pragma mark - webservice call delegate
--(void)response:(NSDictionary *)responseDict apiName:(NSString *)apiName ifAnyError:(NSError *)error
-{
+-(void)response:(NSDictionary *)responseDict apiName:(NSString *)apiName ifAnyError:(NSError *)error {
     if ([apiName isEqualToString:quoteApi])
     {
         if(responseDict != nil)
@@ -219,7 +219,6 @@
             if (success == 1) {
                 NSArray* quoteObject = [responseDict valueForKey:@"news"];
                 for (NSDictionary *obj in quoteObject) {
-                    //_splashLbl.text = [obj valueForKey:@"content"];
                     NSAttributedString *quoteAttributedString = [[NSAttributedString alloc]
                                                                   initWithData: [[obj valueForKey:@"content"] dataUsingEncoding:NSUnicodeStringEncoding]
                                                                   options: @{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType }
@@ -230,11 +229,30 @@
                     _quoteTxt.textAlignment = NSTextAlignmentCenter;
                     _quoteTxt.textColor = [UIColor whiteColor];
                     [_quoteTxt setFont:[UIFont fontWithName:@"Roboto-Regular" size:13]];
+                    [_quoteTxt sizeToFit];
+                    
+                    _citiationStartImg.hidden = NO;
+                    _citiationEndImg.hidden = NO;
+                    CGRect citiationFrame = _citiationEndImg.frame;
+                    citiationFrame.origin.y = _quoteTxt.frame.origin.y + _quoteTxt.frame.size.height - 60;
+                    _citiationEndImg.frame = citiationFrame;
+                    
                     break;
                 }
                 [self startTimer];
             } else {
                 [Functions checkError:responseDict];
+            }
+        }
+    }
+    else if ([apiName isEqualToString:settingsApi]) {
+        if(responseDict != nil)
+        {
+            int success = [[responseDict valueForKey:@"success"] intValue];
+            if (success == 1) {
+                NSDictionary *settingObj = [responseDict objectForKey:@"variables"];
+                NSString *julieImgUrl = [NSString stringWithFormat:@"%@%@", BASE_URL, [settingObj valueForKey:@"app_home_banner"]];
+                [_julieImgView sd_setImageWithURL:[NSURL URLWithString:julieImgUrl]];
             }
         }
     }

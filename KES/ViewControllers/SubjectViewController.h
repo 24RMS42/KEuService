@@ -14,29 +14,19 @@
 {
     WebServices *objWebServices;
     NSString *updateProfileApi;
+    int offset;
+    NSMutableArray *subjectTagLists;
 }
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIView *sInnerView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *levelSegment;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *accountingSegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *agSegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *mathSegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *artSegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *biologSegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *businessSegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *chemistrySegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *dcgSegment;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *englishSegment;
-
+@property (weak, nonatomic) IBOutlet UIView *subView;
 @property (weak, nonatomic) IBOutlet UISwitch *accountingSwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *agSwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *mathSwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *artSwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *biologySwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *businessSwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *chemistrySwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *dcgSwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *englishSwitch;
+@property (weak, nonatomic) IBOutlet UITextView *explainTxt;
 
 - (IBAction)OnBackClicked:(id)sender;
 - (IBAction)switchChanged:(id)sender;
+- (IBAction)cycleChanged:(id)sender;
 
 @end

@@ -30,7 +30,7 @@
 - (UIImage*)getScreenShot {
     // create graphics context with screen size
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    screenRect.size.height = screenRect.size.width * 1.3;
+    screenRect.size.height = screenRect.size.width * 1.45;
     UIGraphicsBeginImageContext(screenRect.size);
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     [[UIColor blackColor] set];

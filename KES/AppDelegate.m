@@ -18,7 +18,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    [[UISegmentedControl appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor blackColor]} forState:UIControlStateNormal];
+    [[UISegmentedControl appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor colorWithHex:COLOR_GRAY]} forState:UIControlStateNormal];
     _topicArray = [[NSMutableArray alloc] init];
     _locationArray = [[NSMutableArray alloc] init];
     _categoryArray = [[NSMutableArray alloc] init];

@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "ContactData.h"
+#import "UIColor+ColorWithHex.h"
+#import "macro.h"
 @import HockeySDK;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>

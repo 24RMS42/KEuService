@@ -20,10 +20,70 @@
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
     
+    [self retriveSubjects:appDelegate.contactData.cycle];
+    
+    _levelSegment.selectedSegmentIndex = [appDelegate.contactData.cycle isEqualToString:@"Senior"] ? 1 : 0;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)retriveSubjects:(NSString *)cycle {
+    //Remove existing subject views
+    for (NSString *tag in subjectTagLists) {
+        UIView *view = [self.sInnerView viewWithTag:[tag integerValue]];
+        [view removeFromSuperview];
+    }
+    
+    //Add news subject views
+    offset = 0;
+    subjectTagLists = [[NSMutableArray alloc] init];
+    for (SubjectModel *subjectObj in appDelegate.subjectArray) {
+        if ([subjectObj.cycle rangeOfString:cycle].location != NSNotFound) {
+            NSLog(@"%@=====%@", subjectObj.cycle, cycle);
+            NSInteger tag = [subjectObj.subject_id integerValue];
+            UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, _subView.frame.origin.y + offset, _subView.frame.size.width, _subView.frame.size.height)];
+            view.tag = tag + 200;
+            
+            [subjectTagLists addObject:@(tag + 200)];
+            
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(22, 2, 120, 36)];
+            label.font = [UIFont fontWithName:@"Roboto-Light" size:15];
+            label.textColor = [UIColor colorWithHex:COLOR_FONT];
+            label.text = subjectObj.name;
+            
+            UISwitch *uswitch = [[UISwitch alloc] initWithFrame:CGRectMake(156, 4, 51, 31)];
+            [uswitch addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
+            uswitch.tag = tag;
+            
+            NSArray *itemArray = [NSArray arrayWithObjects: @"F", @"O", @"H", nil];
+            UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:itemArray];
+            seg.frame = CGRectMake(227, 5, 126, 29);
+            seg.tintColor = [UIColor colorWithHex:COLOR_THIRD];
+            seg.selectedSegmentIndex = 0;
+            seg.tag = tag + 100;
+            seg.hidden = YES;
+            
+            [view addSubview:label];
+            [view addSubview:uswitch];
+            [view addSubview:seg];
+            [self.sInnerView addSubview:view];
+            offset += _subView.frame.size.height;
+        }
+    }
+    
+    CGRect frame = self.explainTxt.frame;
+    frame.origin.y = self.subView.frame.origin.y + offset;
+    self.explainTxt.frame = frame;
+    
+    _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, _explainTxt.frame.origin.y + _explainTxt.frame.size.height);
+    
     for (SubjectModel *subjectObj in appDelegate.contactData.subjectArray) {
         NSInteger tag = [subjectObj.subject_id integerValue];
-        UISwitch *enabledSwitch = (UISwitch*)[self.view viewWithTag:tag];
-        UISegmentedControl *enabledSeg = (UISegmentedControl*)[self.view viewWithTag:(tag+100)];
+        UISwitch *enabledSwitch = (UISwitch*)[self.sInnerView viewWithTag:tag];
+        UISegmentedControl *enabledSeg = (UISegmentedControl*)[self.sInnerView viewWithTag:(tag+100)];
         [enabledSwitch setOn:YES];
         enabledSeg.hidden = NO;
         
@@ -35,13 +95,6 @@
             enabledSeg.selectedSegmentIndex = 2;
         }
     }
-    
-    _levelSegment.selectedSegmentIndex = [appDelegate.contactData.cycle isEqualToString:@"Senior"] ? 1 : 0;
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)updateSubjectValue {
@@ -50,38 +103,21 @@
     NSMutableArray *enabledValues = [[NSMutableArray alloc] init];
     appDelegate.contactData.subjectArray = [[NSMutableArray alloc] init];
     
-    if (_accountingSwitch.isOn) {
-        [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)_accountingSwitch.tag]];
+    for (SubjectModel *subjectObj in appDelegate.subjectArray) {
+        if ([subjectObj.cycle rangeOfString:appDelegate.contactData.cycle].location != NSNotFound) {
+            NSInteger tag = [subjectObj.subject_id integerValue];
+            UISwitch *enabledSwitch = (UISwitch*)[self.sInnerView viewWithTag:tag];
+            if (enabledSwitch.isOn) {
+                [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)enabledSwitch.tag]];
+            }
+        }
     }
-    if (_agSwitch.isOn) {
-        [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)_agSwitch.tag]];
-    }
-    if (_mathSwitch.isOn) {
-        [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)_mathSwitch.tag]];
-    }
-    if (_artSwitch.isOn) {
-        [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)_artSwitch.tag]];
-    }
-    if (_biologySwitch.isOn) {
-        [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)_biologySwitch.tag]];
-    }
-    if (_businessSwitch.isOn) {
-        [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)_businessSwitch.tag]];
-    }
-    if (_chemistrySwitch.isOn) {
-        [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)_chemistrySwitch.tag]];
-    }
-    if (_dcgSwitch.isOn) {
-        [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)_dcgSwitch.tag]];
-    }
-    if (_englishSwitch.isOn) {
-        [enabledValues addObject:[NSString stringWithFormat:@"%ld", (long)_englishSwitch.tag]];
-    }
+    NSLog(@"enabled count is %lu", (unsigned long)enabledValues.count);
     
     for (SubjectModel *obj in appDelegate.subjectArray) {
         for (NSString *val in enabledValues) {
             if ([val isEqualToString:obj.subject_id]) {
-                UISegmentedControl *enabledSeg = (UISegmentedControl*)[self.view viewWithTag:([val intValue]+100)];
+                UISegmentedControl *enabledSeg = (UISegmentedControl*)[self.sInnerView viewWithTag:([val intValue]+100)];
                 if (enabledSeg.selectedSegmentIndex == 0) {
                     obj.level_id = @"9";
                 } else if (enabledSeg.selectedSegmentIndex == 1) {
@@ -98,7 +134,7 @@
 
 - (void)changeLevelState:(id)sender {
     UISwitch *sentControl = (UISwitch*)sender;
-    UISegmentedControl *seg = (UISegmentedControl*)[self.view viewWithTag:(sentControl.tag+100)];
+    UISegmentedControl *seg = (UISegmentedControl*)[self.sInnerView viewWithTag:(sentControl.tag+100)];
     if (sentControl.isOn) {
         seg.hidden = NO;
     } else
@@ -114,7 +150,7 @@
         {
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
-                
+                NSLog(@"Subject update success");
             } else {
                 [Functions checkError:responseDict];
             }
@@ -134,5 +170,10 @@
 
 - (IBAction)switchChanged:(id)sender {
     [self changeLevelState:sender];
+}
+
+- (IBAction)cycleChanged:(id)sender {
+    NSString *selectedCycle = _levelSegment.selectedSegmentIndex == 0 ? @"Junior" : @"Senior";
+    [self retriveSubjects:selectedCycle];
 }
 @end

@@ -15,10 +15,14 @@
     NSString *sendFeedbackApi;
     NSString *msgPlaceHolder;
     NSUserDefaults *userInfo;
+    CGFloat msgFieldOriginY;
+    CGRect keyboardFrame;
 }
+
 @property (nonatomic, retain) UIImage *screenshot;
 @property (weak, nonatomic) IBOutlet UITextView *messageField;
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIView *containerView;
 
 - (IBAction)onCancelClicked:(id)sender;
 - (IBAction)OnSendClicked:(id)sender;

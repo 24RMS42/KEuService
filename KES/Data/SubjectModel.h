@@ -14,5 +14,6 @@
 @property (strong ,nonatomic) NSString *name;
 @property (strong ,nonatomic) NSString *color;
 @property (strong ,nonatomic) NSString *level_id;
+@property (strong ,nonatomic) NSString *cycle;
 
 @end

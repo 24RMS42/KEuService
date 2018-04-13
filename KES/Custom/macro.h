@@ -48,8 +48,10 @@
 #define USER_LIST       @"api/user/list"
 #define USER_LOGINAS    @"api/user/login_as"
 #define USER_LOGINBACK  @"api/user/login_back"
+#define PAGE_CONTENT    @"api/pages/details"
+#define APP_SETTINGS    @"api/settings/variables"
 
-#define CREATE_BOOK_URL @"http://kilmartin.websitecms.ie/available-results.html"
+#define CREATE_BOOK_URL @"http://kilmartin.uat.ibplatform.ie/available-results.html"
 #define HELP_URL        @"http://www.kes.ie/help.html"
 #define ABOUT_URL       @"http://www.kes.ie/history"
 #define KES_BOARD       @"https://kesboard.herokuapp.com/"
@@ -107,8 +109,8 @@
 #define PageMenuOptionMenuHeight 45.0
 
 #define COLOR_PRIMARY    0x00c6ee
-#define COLOR_SECONDARY  0x0e2a6b
-#define COLOR_THIRD      0xb8d12e
+#define COLOR_SECONDARY  0x12387f
+#define COLOR_THIRD      0xb8d12f
 #define COLOR_GRAY       0x787878
 #define COLOR_FONT       0x303030
 

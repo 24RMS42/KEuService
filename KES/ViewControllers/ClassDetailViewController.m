@@ -51,8 +51,8 @@
     } else
         [self showRevisionView];
     
-    NSDate *startDate = [Functions convertStringToDate:_objBook.start_date format:@"yyyy-MM-dd HH:mm:ss"];
-    NSDate *endDate = [Functions convertStringToDate:_objBook.end_date format:@"yyyy-MM-dd HH:mm:ss"];
+    NSDate *startDate = [Functions convertStringToDate:_objBook.slot_start_date format:MAIN_DATE_FORMAT];
+    NSDate *endDate = [Functions convertStringToDate:_objBook.slot_end_date format:MAIN_DATE_FORMAT];
     NSString *startDateStr = [Functions convertDateToString:startDate format:@"LLLL ccc d"];
     NSString *startTimeStr = [Functions convertDateToString:startDate format:@"HH:mm"];
     NSString *endTimeStr = [Functions convertDateToString:endDate format:@"HH:mm"];

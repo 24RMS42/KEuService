@@ -80,7 +80,7 @@
                            canBeDismissedByUser:YES];
 }
 
-+ (void)makeFloatingField: (JVFloatLabeledTextField*)textfield placeholder:(NSString*)placeholder
++ (void)makeFloatingField:(JVFloatLabeledTextField *)textfield placeholder:(NSString *)placeholder
 {
     UIColor *floatingLabelColor = [UIColor colorWithHex:COLOR_FONT];
     
@@ -94,7 +94,7 @@
     textfield.clearButtonMode = UITextFieldViewModeWhileEditing;
 }
 
-+ (void)makeShadowLabel: (UILabel*)label
++ (void)makeShadowLabel:(UILabel *)label
 {
     label.layer.shadowOpacity = 1.0;
     label.layer.shadowRadius = 0.0;
@@ -102,7 +102,7 @@
     label.layer.shadowOffset = CGSizeMake(1.0, 1.0);
 }
 
-+ (void)makeRoundShadowView: (UIView*)view
++ (void)makeRoundShadowView:(UIView *)view
 {
     view.layer.cornerRadius = 0.5f;
     view.layer.masksToBounds = NO;
@@ -116,34 +116,21 @@
     view.layer.shadowOffset = CGSizeMake(1.0, 1.0);
 }
 
-+ (void)makeRoundImageView:(UIImageView*)imageView {
++ (void)makeRoundImageView:(UIImageView *)imageView {
     imageView.layer.cornerRadius = imageView.frame.size.width/2;
     imageView.layer.masksToBounds = YES;
 }
 
-+ (void)makeBorderView:(UIView*)view
-{
++ (void)makeBorderView:(UIView *)view {
     [view.layer setBorderColor:[UIColor lightGrayColor].CGColor];
     [view.layer setBorderWidth:0.5f];
 }
 
-+ (NSString*)getCurrentDateTime
-{
++ (NSString*)getCurrentDateTime {
     NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     NSLog(@"%@",[dateFormatter stringFromDate:[NSDate date]]);
     return [dateFormatter stringFromDate:[NSDate date]];
-}
-
-+ (void)configureButton: (UIButton*)button
-{
-    [button setBackgroundColor:[UIColor colorWithHex:COLOR_SECONDARY]];
-    //[button setTintColor:[UIColor colorWithHex:COLOR_SECONDARY]];
-    
-    button.layer.shadowOpacity = 1.0;
-    button.layer.shadowRadius = 2.0;
-    button.layer.shadowColor = [UIColor grayColor].CGColor;
-    button.layer.shadowOffset = CGSizeMake(0.5, 0.5);
 }
 
 + (NSDate*)convertStringToDate: (NSString*)strDate format:(NSString*)format {
@@ -266,8 +253,7 @@
     return parameters;
 }
 
-+ (void)parseError: (NSError*)error
-{
++ (void)parseError:(NSError*)error {
     NSData *errorData = (NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey];
     if (errorData == nil || [errorData isKindOfClass:[NSNull class]]) {
         [self showAlert:@"Alert" message:NETWORK_ERROR];
@@ -276,7 +262,7 @@
     {
         id json = [NSJSONSerialization JSONObjectWithData:errorData options:0 error:nil];
         NSString *msg = [json valueForKey:@"msg"];
-        if ([msg isEqualToString:@""] || msg == nil) {
+        if ([msg isEqualToString:@""] || msg == nil || [msg isEqual:[NSNull null]] || [msg length] == 0) {
             msg = ERROR_MSG;
         }
         
@@ -288,8 +274,7 @@
     }
 }
 
-+ (void)checkError:(id)responseObject
-{
++ (void)checkError:(id)responseObject {
     NSString *msg = [responseObject valueForKey:@"msg"];
     if ([msg isEqualToString:@"Access Denied"]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_LOGOUT object:self];

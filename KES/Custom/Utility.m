@@ -26,8 +26,7 @@
 {
     [SVProgressHUD setDefaultStyle:SVProgressHUDStyleLight];
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeGradient];
-    //[SVProgressHUD showWithStatus:@"Please wait.."];
-    [SVProgressHUD showImage:[UIImage imageNamed:@"book_select.png"] status:@"Please wait..."];
+    [SVProgressHUD showWithStatus:@"Please wait.."];
 }
 
 //Hide progress

@@ -419,26 +419,31 @@
 {
     NSArray* newsObject = [responseObject valueForKey:@"news"];
     for (NSDictionary *obj in newsObject) {
-        NewsModel *newsModel = [[NewsModel alloc] init];
-        newsModel._id = [obj valueForKey:@"id"];
-        newsModel.category_id = [obj valueForKey:@"category_id"];
-        newsModel.title = [obj valueForKey:@"title"];
-        newsModel.summary = [obj valueForKey:@"summary"];
-        newsModel.category = [obj valueForKey:@"category"];
-        newsModel.content = [obj valueForKey:@"content"];
-        newsModel.event_date = [obj valueForKey:@"event_date"];
-        newsModel.image = [NSString stringWithFormat:@"%@media/photos/news/%@", BASE_URL, [obj valueForKey:@"image"]];
-        newsModel.timebar = purpose;
-        
-        NSDate *eventDateTime = [Functions convertStringToDate:[Functions checkNullValueWithDate:[obj valueForKey:@"event_date"]] format:@"yyyy-MM-dd HH:mm:ss"];
-        NSString *dayOfWeek = [Functions convertDateToString:eventDateTime format:@"ccc"];
-        NSString *month = [Functions convertDateToString:eventDateTime format:@"LLL"];
-        NSString *day = [Functions convertDateToString:eventDateTime format:@"dd"];
-        newsModel.dayOfWeek = dayOfWeek;
-        newsModel.month = month;
-        newsModel.day = day;
-        
-        [newsArray addObject:newsModel];
+        @try {
+            NewsModel *newsModel = [[NewsModel alloc] init];
+            newsModel._id = [obj valueForKey:@"id"];
+            newsModel.category_id = [obj valueForKey:@"category_id"];
+            newsModel.title = [obj valueForKey:@"title"];
+            newsModel.summary = [obj valueForKey:@"summary"];
+            newsModel.category = [obj valueForKey:@"category"];
+            newsModel.content = [obj valueForKey:@"content"];
+            newsModel.event_date = [obj valueForKey:@"event_date"];
+            newsModel.image = [NSString stringWithFormat:@"%@media/photos/news/%@", BASE_URL, [obj valueForKey:@"image"]];
+            newsModel.timebar = purpose;
+            
+            NSDate *eventDateTime = [Functions convertStringToDate:[Functions checkNullValueWithDate:[obj valueForKey:@"event_date"]] format:@"yyyy-MM-dd HH:mm:ss"];
+            NSString *dayOfWeek = [Functions convertDateToString:eventDateTime format:@"ccc"];
+            NSString *month = [Functions convertDateToString:eventDateTime format:@"LLL"];
+            NSString *day = [Functions convertDateToString:eventDateTime format:@"dd"];
+            newsModel.dayOfWeek = dayOfWeek;
+            newsModel.month = month;
+            newsModel.day = day;
+            
+            [newsArray addObject:newsModel];
+        }
+        @catch (NSException *exception) {
+            [Functions showAlert:@"HomeView:parseNewsArray" message:exception.reason];
+        }
     }
 }
 
@@ -446,26 +451,31 @@
 {
     NSArray* offersObject = [responseObject valueForKey:@"news"];
     for (NSDictionary *obj in offersObject) {
-        NewsModel *newsModel = [[NewsModel alloc] init];
-        newsModel._id = [obj valueForKey:@"id"];
-        newsModel.category_id = [obj valueForKey:@"category_id"];
-        newsModel.title = [obj valueForKey:@"title"];
-        newsModel.summary = [obj valueForKey:@"summary"];
-        newsModel.category = [obj valueForKey:@"category"];
-        newsModel.content = [obj valueForKey:@"content"];
-        newsModel.event_date = [obj valueForKey:@"event_date"];
-        newsModel.image = [NSString stringWithFormat:@"%@media/photos/news/%@", BASE_URL, [obj valueForKey:@"image"]];
-        newsModel.timebar = purpose;
-        
-        NSDate *eventDateTime = [Functions convertStringToDate:[Functions checkNullValueWithDate:[obj valueForKey:@"event_date"]] format:@"yyyy-MM-dd HH:mm:ss"];
-        NSString *dayOfWeek = [Functions convertDateToString:eventDateTime format:@"ccc"];
-        NSString *month = [Functions convertDateToString:eventDateTime format:@"LLL"];
-        NSString *day = [Functions convertDateToString:eventDateTime format:@"dd"];
-        newsModel.dayOfWeek = dayOfWeek;
-        newsModel.month = month;
-        newsModel.day = day;
-        
-        [offersArray addObject:newsModel];
+        @try {
+            NewsModel *newsModel = [[NewsModel alloc] init];
+            newsModel._id = [obj valueForKey:@"id"];
+            newsModel.category_id = [obj valueForKey:@"category_id"];
+            newsModel.title = [obj valueForKey:@"title"];
+            newsModel.summary = [obj valueForKey:@"summary"];
+            newsModel.category = [obj valueForKey:@"category"];
+            newsModel.content = [obj valueForKey:@"content"];
+            newsModel.event_date = [obj valueForKey:@"event_date"];
+            newsModel.image = [NSString stringWithFormat:@"%@media/photos/news/%@", BASE_URL, [obj valueForKey:@"image"]];
+            newsModel.timebar = purpose;
+            
+            NSDate *eventDateTime = [Functions convertStringToDate:[Functions checkNullValueWithDate:[obj valueForKey:@"event_date"]] format:@"yyyy-MM-dd HH:mm:ss"];
+            NSString *dayOfWeek = [Functions convertDateToString:eventDateTime format:@"ccc"];
+            NSString *month = [Functions convertDateToString:eventDateTime format:@"LLL"];
+            NSString *day = [Functions convertDateToString:eventDateTime format:@"dd"];
+            newsModel.dayOfWeek = dayOfWeek;
+            newsModel.month = month;
+            newsModel.day = day;
+            
+            [offersArray addObject:newsModel];
+        }
+        @catch (NSException *exception) {
+            [Functions showAlert:@"HomeView:parseOffersArray" message:exception.reason];
+        }
     }
 }
 
@@ -473,32 +483,42 @@
 {
     NSArray* booksObject = [responseObject valueForKey:@"bookings"];
     for (NSDictionary *obj in booksObject) {
-        NewsModel *bookModel = [[NewsModel alloc] init];
-        bookModel.room = [obj valueForKey:@"room"];
-        bookModel.schedule = [obj valueForKey:@"schedule"];
-        bookModel.trainer = [obj valueForKey:@"trainer"];
-        bookModel.course = [obj valueForKey:@"course"];
-        bookModel.start_date = [obj valueForKey:@"start_date"];
-        bookModel.end_date = [obj valueForKey:@"end_date"];
-        bookModel.schedule_id = [obj valueForKey:@"schedule_id"];
-        bookModel.category = @"Bookings";
-        bookModel.timebar = purpose;
-        
-        NSDate *startDateTime = [Functions convertStringToDate:[obj valueForKey:@"start_date"] format:@"yyyy-MM-dd HH:mm:ss"];
-        NSString *startTimeStr = [[Functions convertDateToString:startDateTime format:@"h:mm a"] lowercaseString];
-        NSDate *endDateTime = [Functions convertStringToDate:[obj valueForKey:@"end_date"] format:@"yyyy-MM-dd HH:mm:ss"];
-        NSString *endTimeStr = [[Functions convertDateToString:endDateTime format:@"h:mm a"] lowercaseString];
-        bookModel.start_to_end = [NSString stringWithFormat:@"%@ - %@", startTimeStr, endTimeStr];
-        
-        NSString *dayOfWeek = [Functions convertDateToString:startDateTime format:@"ccc"];
-        NSString *month = [Functions convertDateToString:startDateTime format:@"LLL"];
-        NSString *day = [Functions convertDateToString:startDateTime format:@"dd"];
-        bookModel.dayOfWeek = dayOfWeek;
-        bookModel.month = month;
-        bookModel.day = day;
-        bookModel.time_prompt = [startDateTime timeAgo];
-        
-        [bookArray addObject:bookModel];
+        @try {
+            NewsModel *bookModel = [[NewsModel alloc] init];
+            bookModel.room = [obj valueForKey:@"room"];
+            bookModel.schedule = [obj valueForKey:@"schedule"];
+            bookModel.trainer = [obj valueForKey:@"trainer"];
+            bookModel.course = [obj valueForKey:@"course"];
+            bookModel.start_date = [obj valueForKey:@"start_date"];
+            bookModel.end_date = [obj valueForKey:@"end_date"];
+            bookModel.schedule_id = [obj valueForKey:@"schedule_id"];
+            bookModel.category = @"Bookings";
+            bookModel.timebar = purpose;
+            
+            NSArray *timeSlots = [obj objectForKey:@"timeslots"];
+            NSDictionary *slotObj = [timeSlots objectAtIndex:0];
+            bookModel.slot_start_date = [slotObj valueForKey:@"start_date"];
+            bookModel.slot_end_date = [slotObj valueForKey:@"end_date"];
+            
+            NSDate *startDateTime = [Functions convertStringToDate:bookModel.slot_start_date format:MAIN_DATE_FORMAT];
+            NSString *startTimeStr = [[Functions convertDateToString:startDateTime format:@"h:mm a"] lowercaseString];
+            NSDate *endDateTime = [Functions convertStringToDate:bookModel.slot_end_date format:MAIN_DATE_FORMAT];
+            NSString *endTimeStr = [[Functions convertDateToString:endDateTime format:@"h:mm a"] lowercaseString];
+            bookModel.start_to_end = [NSString stringWithFormat:@"%@ - %@", startTimeStr, endTimeStr];
+            
+            NSString *dayOfWeek = [Functions convertDateToString:startDateTime format:@"ccc"];
+            NSString *month = [Functions convertDateToString:startDateTime format:@"LLL"];
+            NSString *day = [Functions convertDateToString:startDateTime format:@"dd"];
+            bookModel.dayOfWeek = dayOfWeek;
+            bookModel.month = month;
+            bookModel.day = day;
+            bookModel.time_prompt = [startDateTime timeAgo];
+            
+            [bookArray addObject:bookModel];
+        }
+        @catch (NSException *exception) {
+            [Functions showAlert:@"HomeView:parseBooksArray" message:exception.reason];
+        }
     }
 }
 
@@ -618,7 +638,7 @@
     if (option == iCarouselOptionSpacing) {
         return value * 1.1;
     } else if (option == iCarouselOptionWrap) {
-        return YES;
+        return NO;
     }
     return value;
 }
@@ -716,72 +736,9 @@
     UILabel *personlbl = (UILabel*)[cell viewWithTag:24];
     UILabel *contentlbl = (UILabel*)[cell viewWithTag:25];
     
-    if ([category isEqualToString:@"News"]) {
-        [headerImg setImage:[UIImage imageNamed:@"newspaper.png"]];
-        roomImg.hidden = YES;
-        timeImg.hidden = YES;
-        personImg.hidden = YES;
-        roomlbl.hidden = YES;
-        timelbl.hidden = YES;
-        personlbl.hidden = YES;
-        contentlbl.hidden = NO;
-        
-        if ([filterNewsArray count] > 0) {
-            NewsModel *item = [filterNewsArray objectAtIndex:indexPath.row];
-            dayOfWeeklbl.text = item.dayOfWeek;
-            daylbl.text = item.day;
-            monthlbl.text = item.month;
-            titlelbl.text = item.title;
-            contentlbl.text = item.summary;
-            [contentlbl sizeToFit];
-        }
-    } else if ([category isEqualToString:@"Offers"]) {
-        [headerImg setImage:[UIImage imageNamed:@"thumbs_up.png"]];
-        roomImg.hidden = YES;
-        timeImg.hidden = YES;
-        personImg.hidden = YES;
-        roomlbl.hidden = YES;
-        timelbl.hidden = YES;
-        personlbl.hidden = YES;
-        contentlbl.hidden = NO;
-        
-        if ([filterOffersArray count] > 0) {
-            NewsModel *item = [filterOffersArray objectAtIndex:indexPath.row];
-            dayOfWeeklbl.text = item.dayOfWeek;
-            daylbl.text = item.day;
-            monthlbl.text = item.month;
-            titlelbl.text = item.title;
-            contentlbl.text = item.summary;
-            [contentlbl sizeToFit];
-        }
-    } else if ([category isEqualToString:@"Bookings"]) {
-        [headerImg setImage:[UIImage imageNamed:@"calendar.png"]];
-        roomImg.hidden = NO;
-        timeImg.hidden = NO;
-        personImg.hidden = NO;
-        roomlbl.hidden = NO;
-        timelbl.hidden = NO;
-        personlbl.hidden = NO;
-        contentlbl.hidden = YES;
-        
-        if ([filterBookArray count] > 0) {
-            NewsModel *item = [filterBookArray objectAtIndex:indexPath.row];
-            dayOfWeeklbl.text = item.dayOfWeek;
-            daylbl.text = item.day;
-            monthlbl.text = item.month;
-            titlelbl.text = item.course;
-            roomlbl.text = item.room;
-            timelbl.text = item.start_to_end;
-            personlbl.text = item.trainer;
-        }
-    } else if ([category isEqualToString:@"View"]) {
-        NewsModel *item = [filterFeedArray objectAtIndex:indexPath.row];
-        if ([item.category isEqualToString:@"News"] || [item.category isEqualToString:@"Offers"]) {
-            if ([item.category isEqualToString:@"News"]) {
-                [headerImg setImage:[UIImage imageNamed:@"newspaper.png"]];
-            } else
-                [headerImg setImage:[UIImage imageNamed:@"thumbs_up.png"]];
-            
+    @try {
+        if ([category isEqualToString:@"News"]) {
+            [headerImg setImage:[UIImage imageNamed:@"newspaper.png"]];
             roomImg.hidden = YES;
             timeImg.hidden = YES;
             personImg.hidden = YES;
@@ -790,13 +747,35 @@
             personlbl.hidden = YES;
             contentlbl.hidden = NO;
             
-            dayOfWeeklbl.text = item.dayOfWeek;
-            daylbl.text = item.day;
-            monthlbl.text = item.month;
-            titlelbl.text = item.title;
-            contentlbl.text = item.summary;
-            [contentlbl sizeToFit];
-        } else if ([item.category isEqualToString:@"Bookings"]) {
+            if ([filterNewsArray count] > 0) {
+                NewsModel *item = [filterNewsArray objectAtIndex:indexPath.row];
+                dayOfWeeklbl.text = item.dayOfWeek;
+                daylbl.text = item.day;
+                monthlbl.text = item.month;
+                titlelbl.text = item.title;
+                contentlbl.text = item.summary;
+                [contentlbl sizeToFit];
+            }
+        } else if ([category isEqualToString:@"Offers"]) {
+            [headerImg setImage:[UIImage imageNamed:@"thumbs_up.png"]];
+            roomImg.hidden = YES;
+            timeImg.hidden = YES;
+            personImg.hidden = YES;
+            roomlbl.hidden = YES;
+            timelbl.hidden = YES;
+            personlbl.hidden = YES;
+            contentlbl.hidden = NO;
+            
+            if ([filterOffersArray count] > 0) {
+                NewsModel *item = [filterOffersArray objectAtIndex:indexPath.row];
+                dayOfWeeklbl.text = item.dayOfWeek;
+                daylbl.text = item.day;
+                monthlbl.text = item.month;
+                titlelbl.text = item.title;
+                contentlbl.text = item.summary;
+                [contentlbl sizeToFit];
+            }
+        } else if ([category isEqualToString:@"Bookings"]) {
             [headerImg setImage:[UIImage imageNamed:@"calendar.png"]];
             roomImg.hidden = NO;
             timeImg.hidden = NO;
@@ -806,14 +785,60 @@
             personlbl.hidden = NO;
             contentlbl.hidden = YES;
             
-            dayOfWeeklbl.text = item.dayOfWeek;
-            daylbl.text = item.day;
-            monthlbl.text = item.month;
-            titlelbl.text = item.course;
-            roomlbl.text = item.room;
-            timelbl.text = item.start_to_end;
-            personlbl.text = item.trainer;
+            if ([filterBookArray count] > 0) {
+                NewsModel *item = [filterBookArray objectAtIndex:indexPath.row];
+                dayOfWeeklbl.text = item.dayOfWeek;
+                daylbl.text = item.day;
+                monthlbl.text = item.month;
+                titlelbl.text = item.course;
+                roomlbl.text = item.room;
+                timelbl.text = item.start_to_end;
+                personlbl.text = item.trainer;
+            }
+        } else if ([category isEqualToString:@"View"]) {
+            NewsModel *item = [filterFeedArray objectAtIndex:indexPath.row];
+            if ([item.category isEqualToString:@"News"] || [item.category isEqualToString:@"Offers"]) {
+                if ([item.category isEqualToString:@"News"]) {
+                    [headerImg setImage:[UIImage imageNamed:@"newspaper.png"]];
+                } else
+                    [headerImg setImage:[UIImage imageNamed:@"thumbs_up.png"]];
+                
+                roomImg.hidden = YES;
+                timeImg.hidden = YES;
+                personImg.hidden = YES;
+                roomlbl.hidden = YES;
+                timelbl.hidden = YES;
+                personlbl.hidden = YES;
+                contentlbl.hidden = NO;
+                
+                dayOfWeeklbl.text = item.dayOfWeek;
+                daylbl.text = item.day;
+                monthlbl.text = item.month;
+                titlelbl.text = item.title;
+                contentlbl.text = item.summary;
+                [contentlbl sizeToFit];
+            } else if ([item.category isEqualToString:@"Bookings"]) {
+                [headerImg setImage:[UIImage imageNamed:@"calendar.png"]];
+                roomImg.hidden = NO;
+                timeImg.hidden = NO;
+                personImg.hidden = NO;
+                roomlbl.hidden = NO;
+                timelbl.hidden = NO;
+                personlbl.hidden = NO;
+                contentlbl.hidden = YES;
+                
+                dayOfWeeklbl.text = item.dayOfWeek;
+                daylbl.text = item.day;
+                monthlbl.text = item.month;
+                titlelbl.text = item.course;
+                roomlbl.text = item.room;
+                timelbl.text = item.start_to_end;
+                personlbl.text = item.trainer;
+            }
         }
+    }
+    @catch (NSException *exception) {
+        [Functions showAlert:@"HomeView:cellForRowAtIndexPath" message:exception.reason];
     }
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;

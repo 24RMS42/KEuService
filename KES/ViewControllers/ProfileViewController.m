@@ -74,6 +74,14 @@
             _phoneField.text = obj.value;
         }
     }
+    
+    CGRect frame = _emailField.frame;
+    frame.origin.y = 0;
+    _emailField.frame = frame;
+    
+    CGRect pFrame = _passwordField.frame;
+    pFrame.origin.y = 0;
+    _passwordField.frame = pFrame;
 }
 
 - (void)didReceiveMemoryWarning {

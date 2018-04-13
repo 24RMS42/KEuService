@@ -27,7 +27,7 @@
 
 //Delegate
 @property(nonatomic, weak) id <WebServicesDelegate> delegate;
-
+@property(nonatomic, retain) UIView *loadingView;
 
 //Api Call
 -(void)callApiWithParameters:(NSDictionary *)parameters apiName:(NSString *)apiName type:(NSString*)type loader:(BOOL)isLoaderNeed view:(UIViewController *)view;

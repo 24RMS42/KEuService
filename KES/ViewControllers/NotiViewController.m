@@ -84,7 +84,7 @@
         {
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
-                
+                [Functions showSuccessAlert:@"" message:PROFILE_UPDATED image:@""];
             } else {
                 [Functions checkError:responseDict];
             }

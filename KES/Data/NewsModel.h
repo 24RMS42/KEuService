@@ -34,6 +34,8 @@
 @property (strong ,nonatomic) NSString *course;
 @property (strong ,nonatomic) NSString *profile_img_url;
 @property (strong ,nonatomic) NSString *time_prompt;
+@property (strong ,nonatomic) NSString *slot_start_date;
+@property (strong ,nonatomic) NSString *slot_end_date;
 @property (strong ,nonatomic) UIColor *color;
 
 @property (strong ,nonatomic) NSString *start_to_end;

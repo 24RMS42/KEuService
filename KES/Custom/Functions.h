@@ -47,7 +47,6 @@
 + (void)makeRoundImageView:(UIImageView*)imageView;
 + (void)makeBorderView:(UIView*)view;
 + (NSString*)getCurrentDateTime;
-+ (void)configureButton: (UIButton*)button;
 + (NSDate*)convertStringToDate: (NSString*)strDate format:(NSString*)format;
 + (NSString*)convertDateToString: (NSDate*)date format:(NSString*)format;
 + (NSDate *)startDateOfMonth;

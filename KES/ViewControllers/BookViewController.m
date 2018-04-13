@@ -98,8 +98,8 @@
         locationObj.parent_id = [Functions checkNullValue:[obj valueForKey:@"parent_id"]];
         locationObj.name = [obj valueForKey:@"name"];
         locationObj.directions = [Functions checkNullValue:[obj valueForKey:@"directions"]];
-        locationObj.lat = 53.472517;//[[obj valueForKey:@"lat"] floatValue];
-        locationObj.lng = -8.268276;//[[obj valueForKey:@"lng"] floatValue];
+        locationObj.lat = 52.662529;//[[obj valueForKey:@"lat"] floatValue];
+        locationObj.lng = -8.6306817;//[[obj valueForKey:@"lng"] floatValue];
         
         [appDelegate.locationArray addObject:locationObj];
     }
@@ -124,6 +124,8 @@
         SubjectModel *subjectObj = [[SubjectModel alloc] init];
         subjectObj.subject_id = [obj valueForKey:@"id"];
         subjectObj.color = [obj valueForKey:@"color"];
+        subjectObj.name = [obj valueForKey:@"name"];
+        subjectObj.cycle = [Functions checkNullValue:[obj valueForKey:@"cycle"]];
         
         [appDelegate.subjectArray addObject:subjectObj];
     }

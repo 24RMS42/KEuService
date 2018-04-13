@@ -60,6 +60,7 @@
     _carousel.delegate = self;
     _carousel.dataSource =self;
     _carousel.type = iCarouselTypeLinear;
+    
     _selectedIndex = 1;
     [_carousel scrollToItemAtIndex:_selectedIndex animated:NO];
     
@@ -138,7 +139,7 @@
         analyticsModel.hour = [self convertMinuteToHourByFloat:analyticsModel.minute];
         analyticsModel.timebar = purpose;
         
-        CGFloat percent = analyticsModel.quantity * 100 / analyticsModel.total_quantity;
+        CGFloat percent = analyticsModel.minute * 100 / analyticsModel.total_minute;
         analyticsModel.percent = [NSString stringWithFormat:@"%ld", (long)percent];
         
         [categoryArray addObject:analyticsModel];
@@ -156,7 +157,7 @@
         analyticsModel.hour = [self convertMinuteToHourByFloat:analyticsModel.minute];
         analyticsModel.timebar = purpose;
         
-        CGFloat percent = analyticsModel.quantity * 100 / analyticsModel.total_quantity;
+        CGFloat percent = analyticsModel.minute * 100 / analyticsModel.total_minute;
         analyticsModel.percent = [NSString stringWithFormat:@"%ld", (long)percent];
         
         [subjectArray addObject:analyticsModel];
@@ -174,7 +175,7 @@
         analyticsModel.hour = [self convertMinuteToHourByFloat:analyticsModel.minute];
         analyticsModel.timebar = purpose;
         
-        CGFloat percent = analyticsModel.quantity * 100 / analyticsModel.total_quantity;
+        CGFloat percent = analyticsModel.minute * 100 / analyticsModel.total_minute;
         analyticsModel.percent = [NSString stringWithFormat:@"%ld", (long)percent];
         
         [teacherArray addObject:analyticsModel];
@@ -358,6 +359,18 @@
     }
     
     label.text = [NSString stringWithFormat:@"%@",aryPrice[index]];
+    NSInteger hour = [label.text integerValue];
+    if (hour >= 10) {
+        CGRect labelFrame = label.frame;
+        labelFrame.size.width = _width*0.6;
+        label.frame = labelFrame;
+        
+        CGRect hrLabelFrame = hrLabel.frame;
+        hrLabelFrame.origin.x = _width*0.6;
+        hrLabelFrame.size.width = _width*0.4;
+        hrLabel.frame = hrLabelFrame;
+    }
+    
     if (index == 0) {
         catLabel.text = _lastMonthName;
     } else if (index == 1) {
@@ -375,7 +388,7 @@
     {
         return value * 1.1;
     } else if (option == iCarouselOptionWrap) {
-        return YES;
+        return NO;
     }
     return value;
 }

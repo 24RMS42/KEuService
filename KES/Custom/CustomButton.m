@@ -23,6 +23,7 @@
     self = [super initWithCoder:aDecoder];
     if(self) {
         [self setBackgroundColor:[UIColor colorWithHex:COLOR_SECONDARY]];
+        self.titleLabel.font = [UIFont fontWithName:@"Roboto-Medium" size:16.0f];
         
         self.layer.shadowOpacity = 1.0;
         self.layer.shadowRadius = 2.0;

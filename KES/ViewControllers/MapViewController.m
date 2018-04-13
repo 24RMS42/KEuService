@@ -82,8 +82,8 @@
     zoomLocation.latitude =   lat;
     zoomLocation.longitude =  lng;
     
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(zoomLocation, 1.5*METERS_PER_MILE, 1.5*METERS_PER_MILE);
-    [_mapView setRegion:viewRegion animated:YES];
+//    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(zoomLocation, 1.5*METERS_PER_MILE, 1.5*METERS_PER_MILE);
+//    [_mapView setRegion:viewRegion animated:YES];
     
     //for make marker
     MyAnnotation *annotation = [[MyAnnotation alloc] init];
@@ -172,7 +172,7 @@
     m_langitude = currentLocation.coordinate.longitude;
     m_latitude =  currentLocation.coordinate.latitude;
     
-    //[self showUserLocation];
+    [self showUserLocation];
 }
 
 - (IBAction)OnCloseClicked:(id)sender {

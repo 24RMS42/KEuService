@@ -24,7 +24,7 @@
     _ConfirmField.clearButtonMode = UITextFieldViewModeNever;
     
     CGRect frame= _RoleSegment.frame;
-    [_RoleSegment setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height + 10)];
+    [_RoleSegment setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height + 15)];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

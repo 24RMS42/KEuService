@@ -30,7 +30,8 @@
             
             if (isLoaderNeed == YES)
             {
-                [[Utility sharedInstance] ShowProgress];
+                //[[Utility sharedInstance] ShowProgress];
+                [self showAnimatedView:view];
             }
             else
             {
@@ -57,7 +58,8 @@
  
                   if (isLoaderNeed == YES)
                   {
-                      [[Utility sharedInstance] hideProgress];
+                      //[[Utility sharedInstance] hideProgress];
+                      [self hideAnimatedView];
                   }
                   else
                   {
@@ -80,7 +82,8 @@
  
                   if (isLoaderNeed == YES)
                   {
-                      [[Utility sharedInstance] hideProgress];
+                      //[[Utility sharedInstance] hideProgress];
+                      [self hideAnimatedView];
                   }
                   else
                   {
@@ -95,7 +98,8 @@
             __block NSDictionary * dictResponse = nil;
             if (isLoaderNeed == YES)
             {
-                [[Utility sharedInstance] ShowProgress];
+                //[[Utility sharedInstance] ShowProgress];
+                [self showAnimatedView:view];
             }
             else
             {
@@ -126,7 +130,8 @@
                  
                  if (isLoaderNeed == YES)
                  {
-                     [[Utility sharedInstance] hideProgress];
+                     //[[Utility sharedInstance] hideProgress];
+                     [self hideAnimatedView];
                  }
                  else
                  {
@@ -149,7 +154,8 @@
                  
                  if (isLoaderNeed == YES)
                  {
-                     [[Utility sharedInstance] hideProgress];
+                     //[[Utility sharedInstance] hideProgress];
+                     [self hideAnimatedView];
                  }
                  else
                  {
@@ -164,6 +170,33 @@
 //    {
 //        NSLog(@"Please connect to internet.");
 //    }
+}
+
+- (void)showAnimatedView:(UIViewController *)vc {
+    UIWindow* mainWindow = [[UIApplication sharedApplication] keyWindow];
+    
+    self.loadingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, mainWindow.frame.size.width, mainWindow.frame.size.height)];
+    //self.loadingView.backgroundColor = [UIColor lightGrayColor];
+    //self.loadingView.alpha = 0.25;
+    
+    NSArray *imageNames = @[@"l1.png", @"l2.png", @"l3.png",@"l4.png", @"l5.png", @"l6.png",@"l7.png", @"l8.png", @"l9.png"];
+    NSMutableArray *images = [[NSMutableArray alloc] init];
+    for (int i = 0; i < imageNames.count; i++)
+    {
+        [images addObject:[UIImage imageNamed:[imageNames objectAtIndex:i]]];
+    }
+    
+    UIImageView *animationImageView = [[UIImageView alloc] initWithFrame:CGRectMake((375 - 120)/2, 230, 120, 120)];
+    animationImageView.animationImages = images;
+    animationImageView.animationDuration = 1.0;
+    [self.loadingView addSubview:animationImageView];
+    [animationImageView startAnimating];
+    
+    [mainWindow addSubview:self.loadingView];
+}
+
+- (void)hideAnimatedView {
+    [self.loadingView removeFromSuperview];
 }
 
 @end

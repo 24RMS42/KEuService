@@ -8,14 +8,21 @@
 
 #import <UIKit/UIKit.h>
 #import "macro.h"
+#import "WebServices.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
-@interface HelpViewController : UIViewController
+@interface HelpViewController : UIViewController<WebServicesDelegate>
+{
+    WebServices *objWebServices;
+    NSString *contentApi;
+}
 
 @property (nonatomic, strong) NSString *info;
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLbl;
 @property (weak, nonatomic) IBOutlet UIView *versionView;
 @property (weak, nonatomic) IBOutlet UILabel *versionLbl;
+@property (weak, nonatomic) IBOutlet UIImageView *bannerImgView;
 
 - (IBAction)OnBackClicked:(id)sender;
 @end
