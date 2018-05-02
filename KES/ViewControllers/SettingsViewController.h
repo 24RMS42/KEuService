@@ -16,7 +16,7 @@
 {
     NSUserDefaults *userInfo;
     WebServices *objWebServices;
-    NSString *loginAsApi, *loginBackApi, *userListApi, *countryApi, *nationalityApi, *schoolApi, *yearApi, *academicYearApi, *preferenceApi, *countyApi;
+    NSString *loginAsApi, *loginBackApi, *userListApi, *countryApi, *nationalityApi, *schoolApi, *yearApi, *academicYearApi, *preferenceApi, *countyApi, *calendarEventApi;
 }
 
 @property (nonatomic, strong) NIDropDown *menuDrop;

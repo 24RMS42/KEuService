@@ -31,6 +31,7 @@
 #import "ContactData.h"
 #import "ContactNotification.h"
 #import "PreferenceType.h"
+#import "CalendarEvent.h"
 #import "AppDelegate.h"
 
 @interface Functions : NSObject

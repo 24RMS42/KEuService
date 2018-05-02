@@ -179,7 +179,7 @@
     //self.loadingView.backgroundColor = [UIColor lightGrayColor];
     //self.loadingView.alpha = 0.25;
     
-    NSArray *imageNames = @[@"l1.png", @"l2.png", @"l3.png",@"l4.png", @"l5.png", @"l6.png",@"l7.png", @"l8.png", @"l9.png"];
+    NSArray *imageNames = @[@"l1.png", @"l2.png", @"l3.png",@"l4.png", @"l5.png", @"l6.png",@"l7.png", @"l8.png", @"l9.png", @"l10.png", @"l11.png"];
     NSMutableArray *images = [[NSMutableArray alloc] init];
     for (int i = 0; i < imageNames.count; i++)
     {

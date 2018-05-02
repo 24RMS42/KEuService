@@ -57,6 +57,9 @@
     preferenceApi = [NSString stringWithFormat:@"%@%@", BASE_URL, PREFERENCE_TYPE];
     [objWebServices callApiWithParameters:nil apiName:preferenceApi type:GET_REQUEST loader:NO view:self];
     
+    calendarEventApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CALENDAR_EVENT];
+    [objWebServices callApiWithParameters:nil apiName:calendarEventApi type:GET_REQUEST loader:NO view:self];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(displayUserInfo:)
                                                  name:NOTI_SETTING_USERINFO
@@ -205,6 +208,20 @@
         [appDelegate.countyArray addObject:countryModel];
     }
     NSLog(@"county count:%lu", (unsigned long)appDelegate.countyArray.count);
+}
+
+- (void)parseCalendarEvents:(id)responseObject {
+    NSDictionary *events = [responseObject valueForKey:@"events"];
+    for (NSDictionary *obj in events) {
+        CalendarEvent *model = [[CalendarEvent alloc] init];
+        NSDate *dateVal = [Functions convertStringToDate:[obj valueForKey:@"date"] format:MAIN_DATE_FORMAT];
+        model.date = [Functions convertDateToString:dateVal format:@"dd/MM/yyyy"];
+        model.title = [obj valueForKey:@"title"];
+        model.color = [obj valueForKey:@"color"];
+        
+        [appDelegate.calendarEventArray addObject:model];
+    }
+    NSLog(@"calendarEventArray count:%lu", (unsigned long)appDelegate.calendarEventArray.count);
 }
 
 - (void)showUserList {
@@ -385,6 +402,15 @@
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
                 [self parseCountyArray:responseDict];
+            } else {
+                [Functions checkError:responseDict];
+            }
+        }
+    } else if ([apiName isEqualToString:calendarEventApi]) {
+        if(responseDict != nil) {
+            int success = [[responseDict valueForKey:@"success"] intValue];
+            if (success == 1) {
+                [self parseCalendarEvents:responseDict];
             } else {
                 [Functions checkError:responseDict];
             }

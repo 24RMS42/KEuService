@@ -12,7 +12,9 @@
 
 @interface TimeTableViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, WebServicesDelegate>
 {
-    NSMutableArray *totalTimeTableArray, *monthTTArray;
+    NSMutableArray *totalTimeTableArray, *monthTTArray, *dayTTArray;
+    NSMutableDictionary *groupTTDic;
+    NSMutableArray *groupTitleArray;
     WebServices *objWebServices;
     NSString *bookApi;
 }
@@ -28,6 +30,7 @@
 @property (weak, nonatomic) IBOutlet UIView *classDetailView;
 @property (weak, nonatomic) IBOutlet UILabel *noMonthItemLbl;
 @property (weak, nonatomic) IBOutlet UILabel *noListItemLbl;
+@property (weak, nonatomic) IBOutlet UITableView *monthListTableView;
 
 - (IBAction)OnMonthListChanged:(id)sender;
 - (IBAction)OnPrevClicked:(id)sender;

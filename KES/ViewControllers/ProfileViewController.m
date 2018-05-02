@@ -45,6 +45,13 @@
     [_nationalBtn setTitle:appDelegate.contactData.nationality forState:UIControlStateNormal];
     _genderSwitch.selectedSegmentIndex = [appDelegate.contactData.gender isEqualToString:@"M"] ? 1 : 0;
     
+    NSInteger nationalityIndex = [appDelegate.nationalityArray indexOfObject:appDelegate.contactData.nationality];
+    if (nationalityIndex != NSNotFound) {
+        [_nationalityPicker selectRow:nationalityIndex inComponent:0 animated:NO];
+    } else {
+        [_nationalityPicker selectRow:[appDelegate.nationalityArray indexOfObject:@"Irish"] inComponent:0 animated:NO];
+    }
+    
     UILongPressGestureRecognizer *tap1 = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongTap1:)];
     UILongPressGestureRecognizer *tap2 = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongTap2:)];
     UILongPressGestureRecognizer *tap3 = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongTap3:)];

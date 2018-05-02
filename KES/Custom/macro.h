@@ -50,6 +50,7 @@
 #define USER_LOGINBACK  @"api/user/login_back"
 #define PAGE_CONTENT    @"api/pages/details"
 #define APP_SETTINGS    @"api/settings/variables"
+#define CALENDAR_EVENT  @"api/calendar/events"
 
 #define CREATE_BOOK_URL @"http://kilmartin.uat.ibplatform.ie/available-results.html"
 #define HELP_URL        @"http://www.kes.ie/help.html"

@@ -11,6 +11,7 @@
 @interface TimeTableViewController ()
 
 @property (strong, nonatomic) NSMutableArray *datesWithEvent;
+@property (strong, nonatomic) NSMutableDictionary *datesWithHoliday;
 @property (strong, nonatomic) NSDateFormatter *dateFormatter1;
 @property (strong, nonatomic) NSCalendar *gregorian;
 
@@ -25,6 +26,7 @@
     self.dateFormatter1.dateFormat = @"dd/MM/yyyy";
     self.gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     _datesWithEvent = [[NSMutableArray alloc] init];
+    _datesWithHoliday = [[NSMutableDictionary alloc] init];
     
     _calendarView.backgroundColor = [UIColor whiteColor];
     _calendarView.appearance.headerMinimumDissolvedAlpha = 0;
@@ -72,7 +74,7 @@
         
         NSDate *startDateTime = [Functions convertStringToDate:[obj valueForKey:@"start"] format:@"yyyy-MM-dd HH:mm:ss"];
         NSDate *endDateTime = [Functions convertStringToDate:[obj valueForKey:@"end"] format:@"yyyy-MM-dd HH:mm:ss"];
-        NSString *startDateStr = [Functions convertDateToString:startDateTime format:@"LLL d, yyyy"];
+        NSString *startDateStr = [Functions convertDateToString:startDateTime format:@"ccc d LLL, yyyy"];
         NSString *startTimeStr = [Functions convertDateToString:startDateTime format:@"h:mm a"];
         NSString *endTimeStr = [Functions convertDateToString:endDateTime format:@"h:mm a"];
         NSString *dayOfWeek = [Functions convertDateToString:startDateTime format:@"cccc"];
@@ -89,6 +91,20 @@
     }
 }
 
+- (void)groupByDate {
+    groupTTDic = [NSMutableDictionary new];
+    groupTitleArray = [[NSMutableArray alloc] init];
+    
+    NSArray *groups = [monthTTArray valueForKeyPath:@"@distinctUnionOfObjects.date"];
+    for (NSString *groupId in groups)
+    {
+        [groupTitleArray addObject:groupId];
+        NSArray *groupNames = [monthTTArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"date = %@", groupId]];
+        [groupTTDic setObject:groupNames forKey:groupId];
+    }
+    //NSLog(@"%@", groupTTDic);
+}
+
 - (void)getMonthTTArray:(NSString *)targetMonthStr {
     monthTTArray = [[NSMutableArray alloc] init];
     for (TimetableModel *obj in totalTimeTableArray) {
@@ -96,22 +112,22 @@
             [monthTTArray addObject:obj];
         }
     }
+    [self groupByDate];
 }
 
 - (void)getBookingFromTimetable:(NSString *)targetDateStr {
+    dayTTArray = [[NSMutableArray alloc] init];
     _classDetailView.hidden = YES;
     _noMonthItemLbl.hidden = YES;
     for (TimetableModel *obj in totalTimeTableArray) {
         if ([obj.date isEqualToString:targetDateStr]) {
             _dateLbl.text = [NSString stringWithFormat:@"%@, %@", obj.dayOfWeek, obj.format_date];
-            _startTimeLbl.text = obj.start;
-            _endTimeLbl.text = obj.end;
-            _bookTitleLbl.text = obj.title;
-            _locationLbl.text = obj.location;
-            _crossImgView.hidden = NO;
+            [dayTTArray addObject:obj];
             _classDetailView.hidden = NO;
         }
     }
+    
+    [self.monthListTableView reloadData];
     
     if (_classDetailView.hidden) {
         _noMonthItemLbl.hidden = NO;
@@ -143,6 +159,12 @@
     }
 }
 
+- (void)getHolidayDates {
+    for (CalendarEvent *obj in appDelegate.calendarEventArray) {
+        [_datesWithHoliday setValue:[UIColor grayColor] forKey:obj.date];
+    }
+}
+
 - (void)checkNoItemsOnList {
     if (!_tableView.hidden) {
         _noListItemLbl.hidden = monthTTArray.count > 0;
@@ -162,6 +184,7 @@
                 [self getBookingFromTimetable:[Functions convertDateToString:[NSDate date] format:self.dateFormatter1.dateFormat]];
                 [self getMonthTTArray:[Functions convertDateToString:[NSDate date] format:@"yyyy-MM"]];
                 [self getNextClass];
+                [self getHolidayDates];
                 
                 [self.tableView reloadData];
                 [self.calendarView reloadData];
@@ -175,45 +198,100 @@
 #pragma mark - TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    [self checkNoItemsOnList];
-    if ([monthTTArray count] == 0) {
-        return 0;
+    if (tableView == self.tableView) {
+        [self checkNoItemsOnList];
+        if ([monthTTArray count] == 0) {
+            return 0;
+        }
+        else {
+            NSString *sectionTitle = [groupTitleArray objectAtIndex:section];
+            NSArray *sectionArrays = [groupTTDic objectForKey:sectionTitle];
+            return [sectionArrays count];
+        }
+    } else if (tableView == self.monthListTableView) {
+        if ([dayTTArray count] == 0) {
+            return 0;
+        }
+        else {
+            return [dayTTArray count];
+        }
     }
-    else {
-        return [monthTTArray count];
-    }
+    return 0;
 }
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if (tableView == self.tableView) {
+        return [groupTitleArray count];
+    } else
+        return 1;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (tableView == self.tableView) {
+        TimetableModel *obj = [[groupTTDic objectForKey:[groupTitleArray objectAtIndex:section]] objectAtIndex:0];
+        return obj.format_date;
+    } else
+        return @"";
+}
+
+//- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
+//    return groupTitleArray;
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *simpleTableIdentifier = @"TimeListCell";
-    
-    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+    if (tableView == self.tableView) {
+        static NSString *simpleTableIdentifier = @"TimeListCell";
+        
+        UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+        }
+        
+        UILabel *startTimelbl = (UILabel*)[cell viewWithTag:21];
+        UILabel *endTimelbl = (UILabel*)[cell viewWithTag:22];
+        UILabel *titlelbl = (UILabel*)[cell viewWithTag:23];
+        UILabel *locationlbl = (UILabel*)[cell viewWithTag:24];
+        
+        if (monthTTArray.count > 0) {
+            TimetableModel *obj = [[groupTTDic objectForKey:[groupTitleArray objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
+            startTimelbl.text = obj.start;
+            endTimelbl.text = obj.end;
+            titlelbl.text = obj.title;
+            locationlbl.text = obj.location;
+        }
+        
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+        
+        return cell;
+    } else {
+        NSString *simpleTableIdentifier = @"MonthListCell";
+        
+        UITableViewCell *cell = [self.monthListTableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+        }
+        
+        UILabel *startTimelbl = (UILabel*)[cell viewWithTag:31];
+        UILabel *endTimelbl = (UILabel*)[cell viewWithTag:32];
+        UILabel *titlelbl = (UILabel*)[cell viewWithTag:33];
+        UILabel *locationlbl = (UILabel*)[cell viewWithTag:34];
+        
+        if (dayTTArray.count > 0) {
+            TimetableModel *obj = [dayTTArray objectAtIndex:indexPath.row];
+            startTimelbl.text = obj.start;
+            endTimelbl.text = obj.end;
+            titlelbl.text = obj.title;
+            locationlbl.text = obj.location;
+        }
+        
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        self.monthListTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+        self.monthListTableView.separatorColor = [UIColor clearColor];
+        
+        return cell;
     }
-    
-    UILabel *datelbl = (UILabel*)[cell viewWithTag:20];
-    UILabel *dayOfWeeklbl = (UILabel*)[cell viewWithTag:25];
-    UILabel *startTimelbl = (UILabel*)[cell viewWithTag:21];
-    UILabel *endTimelbl = (UILabel*)[cell viewWithTag:22];
-    UILabel *titlelbl = (UILabel*)[cell viewWithTag:23];
-    UILabel *locationlbl = (UILabel*)[cell viewWithTag:24];
-    
-    if (monthTTArray.count > 0) {
-        TimetableModel *obj = [monthTTArray objectAtIndex:indexPath.row];
-        datelbl.text = obj.format_date;
-        startTimelbl.text = obj.start;
-        endTimelbl.text = obj.end;
-        titlelbl.text = obj.title;
-        locationlbl.text = obj.location;
-        dayOfWeeklbl.text = obj.dayOfWeek;
-    }
-    
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    
-    return cell;
 }
 
 #pragma mark - FSCalendarDataSource
@@ -238,6 +316,15 @@
 - (void)calendarCurrentPageDidChange:(FSCalendar *)calendar
 {
     NSLog(@"did change to page %@",[self.dateFormatter1 stringFromDate:calendar.currentPage]);
+}
+
+- (UIColor *)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance fillDefaultColorForDate:(NSDate *)date
+{
+    NSString *key = [self.dateFormatter1 stringFromDate:date];
+    if ([_datesWithHoliday.allKeys containsObject:key]) {
+        return _datesWithHoliday[key];
+    }
+    return nil;
 }
 
 - (CGPoint)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance titleOffsetForDate:(NSDate *)date

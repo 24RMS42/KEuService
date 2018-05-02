@@ -75,6 +75,7 @@
 - (void)parseCourse:(id)responseObject {
     CourseModel *courseObj = [[CourseModel alloc] init];
     
+    @try {
     id courseObject = [responseObject valueForKey:@"course"];
     courseObj.course_id = [courseObject valueForKey:@"id"];
     courseObj.category_id = [courseObject valueForKey:@"category_id"];
@@ -110,6 +111,10 @@
     if ([courseObj.summary isEqualToString:@""] && [courseObj.descript isEqualToString:@""]) {
         _readMoreBtn.hidden = YES;
         _viewSummaryBtn.hidden = YES;
+    }
+    }
+    @catch (NSException *exception) {
+        [Functions showAlert:@"ClassDetail:parseCourse" message:exception.reason];
     }
 }
 

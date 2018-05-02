@@ -32,6 +32,7 @@
     _yearArray = [[NSMutableArray alloc]init];
     _academicYearArray = [[NSMutableArray alloc]init];
     _preferenceTypeArray = [[NSMutableArray alloc]init];
+    _calendarEventArray = [[NSMutableArray alloc]init];
     _contactData = [[ContactData alloc] init];
     
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"ed1703e474d74b21ac6efab2de10e685"];

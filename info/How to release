@@ -1,0 +1,23 @@
+
+
+- Clone latest branch (rc1.0.20-1)
+
+- Go to root project directory and pod install on terminal (Make sure you have already installed cocoa pod in your machine)
+  cd kes-ios
+  pod install
+
+- Run the project (Double click following file)
+  KES.xcworkspace
+
+- Install certificate and provision profile (double click following file in /info folder)
+  uTicket.p12
+  KESAppStore.mobileprovision
+
+- Select Generic iOS Device in device list
+  https://prnt.sc/hqjs7z
+
+- Run Product/Archive in menu
+  https://prnt.sc/hqjt7f
+
+- Upload app package to TestFlight linked with apple account
+  You can see uploaded app on TestFlight a few minutes later
