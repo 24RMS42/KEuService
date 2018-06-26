@@ -22,11 +22,13 @@
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *PasswordField;
 @property (weak, nonatomic) IBOutlet UISwitch *RememberSwitch;
 @property (weak, nonatomic) IBOutlet UIButton *PwdToggleButton;
+@property (weak, nonatomic) IBOutlet UITextView *TOSTextView;
 
 - (IBAction)OnLoginClicked:(id)sender;
 - (IBAction)OnSignupClicked:(id)sender;
 - (IBAction)OnForgotClicked:(id)sender;
 - (IBAction)OnPwdShowClicked:(id)sender;
 - (IBAction)OnQuestionClicked:(id)sender;
+- (IBAction)OnContinueClicked:(id)sender;
 
 @end

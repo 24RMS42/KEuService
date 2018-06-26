@@ -54,15 +54,15 @@
             label.textColor = [UIColor colorWithHex:COLOR_FONT];
             label.text = subjectObj.name;
             
-            UISwitch *uswitch = [[UISwitch alloc] initWithFrame:CGRectMake(156, 4, 51, 31)];
+            UISwitch *uswitch = [[UISwitch alloc] initWithFrame:CGRectMake(SCREEN_WIDTH * 0.42, 4, 51, 31)];
             [uswitch addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
             uswitch.tag = tag;
             
             NSArray *itemArray = [NSArray arrayWithObjects: @"F", @"O", @"H", nil];
             UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:itemArray];
-            seg.frame = CGRectMake(227, 5, 126, 29);
+            seg.frame = CGRectMake(SCREEN_WIDTH * 0.6, 5, 126, 29);
             seg.tintColor = [UIColor colorWithHex:COLOR_THIRD];
-            seg.selectedSegmentIndex = 0;
+            seg.selectedSegmentIndex = 1;
             seg.tag = tag + 100;
             seg.hidden = YES;
             

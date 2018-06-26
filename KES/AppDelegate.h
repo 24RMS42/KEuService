@@ -28,6 +28,7 @@
 @property (strong, nonatomic) NSMutableArray *preferenceTypeArray;
 @property (strong, nonatomic) NSMutableArray *calendarEventArray;
 @property (strong, nonatomic) ContactData *contactData;
+@property (strong, nonatomic) NSMutableArray *userRoleArray;
 
 @property (strong, nonatomic) NSMutableArray *UserArray;
 @property (strong, nonatomic) NSMutableArray *UserEmailArray;

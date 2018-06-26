@@ -49,6 +49,10 @@
         [yearPickerData addObject:obj.year];
     }
     
+    CGRect frame = _decisionView.frame;
+    frame.origin.y = _pickerView.frame.origin.y - _decisionView.frame.size.height;
+    _decisionView.frame = frame;
+    
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
 }

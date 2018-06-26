@@ -17,6 +17,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //Init
+    appDelegate.topicArray = [[NSMutableArray alloc] init];
+    appDelegate.locationArray = [[NSMutableArray alloc] init];
+    appDelegate.categoryArray = [[NSMutableArray alloc] init];
+    appDelegate.subjectArray = [[NSMutableArray alloc] init];
+    
     [_TopView setBackgroundColor:[UIColor colorWithHex:COLOR_PRIMARY]];
     [self setForm];
     
@@ -56,7 +62,7 @@
     
     NSDictionary *parameters = @{
                                  CAPSPageMenuOptionScrollMenuBackgroundColor: [UIColor colorWithHex:COLOR_PRIMARY],
-                                 CAPSPageMenuOptionViewBackgroundColor: [UIColor colorWithHex:COLOR_PRIMARY],
+                                 CAPSPageMenuOptionViewBackgroundColor: [UIColor colorWithHex:0xFFFFFF],
                                  CAPSPageMenuOptionSelectionIndicatorColor: [UIColor colorWithHex:COLOR_THIRD],
                                  CAPSPageMenuOptionUnselectedMenuItemLabelColor: [UIColor colorWithHex:0x99e8f8],
                                  CAPSPageMenuOptionMenuItemFont: [UIFont fontWithName:@"Roboto-Regular" size:PageMenuOptionMenuItemFont],
@@ -66,7 +72,8 @@
                                  CAPSPageMenuOptionMenuItemWidth: @(SCREEN_WIDTH/2 - 30)
                                  };
     
-    _pagemenu = [[CAPSPageMenu alloc] initWithViewControllers:controllerArray frame:CGRectMake(0.0, _TopView.frame.origin.y + _TopView.frame.size.height, self.view.frame.size.width, self.view.frame.size.height) options:parameters];
+    CGFloat offset = [Functions isiPhoneX] ? 20 : 0;
+    _pagemenu = [[CAPSPageMenu alloc] initWithViewControllers:controllerArray frame:CGRectMake(0.0, _TopView.frame.origin.y + _TopView.frame.size.height + offset, self.view.frame.size.width, self.view.frame.size.height) options:parameters];//Add 20 for timing issue
     
     [self.view addSubview:_pagemenu.view];
 }

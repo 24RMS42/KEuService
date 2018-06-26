@@ -21,14 +21,18 @@
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *EmailField;
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *PasswordField;
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *ConfirmField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *FirstNameField;
+@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *LastNameField;
 @property (weak, nonatomic) IBOutlet UIButton *PwdToggleButton;
 @property (weak, nonatomic) IBOutlet UIButton *ConfirmToggleBtn;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *RoleSegment;
+@property (weak, nonatomic) IBOutlet UITextView *TOSTextView;
 
 - (IBAction)OnSignupClicked:(id)sender;
 - (IBAction)OnLoginClicked:(id)sender;
 - (IBAction)OnShowPwdClicked:(id)sender;
 - (IBAction)OnShowConfirmClicked:(id)sender;
 - (IBAction)OnRoleChanged:(id)sender;
+- (IBAction)OnContinueClicked:(id)sender;
 
 @end

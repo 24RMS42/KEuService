@@ -41,6 +41,7 @@
 + (id)checkNullValueWithDate:(id)value;
 + (id)checkNullValue:(id)value;
 + (void)showAlert: (NSString*)title message:(NSString*)message;
++ (void)showAlert: (NSString*)title message:(NSString*)message vc:(UIViewController*)vc;
 + (void)showSuccessAlert: (NSString*)title message:(NSString*)message image:(NSString*)image;
 + (void)makeFloatingField: (JVFloatLabeledTextField*)textfield placeholder:(NSString*)placeholder;
 + (void)makeShadowLabel: (UILabel*)label;
@@ -56,6 +57,11 @@
 + (NSDate *)endDateOfLastMonth;
 + (UIColor*)convertToHexColor:(NSString*)colorValue;
 + (NSMutableDictionary*)getProfileParameter;
++ (BOOL)isiPhoneX;
++ (BOOL)validateEmailField:(NSString*)targetStr;
++ (BOOL)validateNumberField:(NSString*)targetStr;
++ (BOOL)validateNormalField:(NSString*)targetStr;
++ (void)openURl:(NSString*)url;
 
 + (void)parseError: (NSError*)error;
 + (void)checkError: (id)responseObject;

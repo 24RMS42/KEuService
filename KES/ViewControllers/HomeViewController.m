@@ -161,7 +161,7 @@
     bookArray = [[NSMutableArray alloc] init];
     if (selectedIndex == 0) {
         //===== Last month Books call ======//
-        lastMonthBookApi = [NSString stringWithFormat:@"%@%@?before=%@&after=%@",
+        lastMonthBookApi = [NSString stringWithFormat:@"%@%@?before=%@&after=%@&sort=date",
                     BASE_URL,
                     BOOK_SEARCH,
                     [Functions convertDateToString:endOfLastMonth format:@"yyyy-MM-dd HH:mm:ss"],
@@ -170,7 +170,7 @@
         [objWebServices callApiWithParameters:nil apiName:lastMonthBookApi type:GET_REQUEST loader:NO view:self];
     } else if (selectedIndex == 1) {
         //===== This month Books call ======//
-        booksApi = [NSString stringWithFormat:@"%@%@?before=%@&after=%@",
+        booksApi = [NSString stringWithFormat:@"%@%@?before=%@&after=%@&sort=date",
                     BASE_URL,
                     BOOK_SEARCH,
                     [Functions convertDateToString:endOfMonth format:@"yyyy-MM-dd HH:mm:ss"],
@@ -179,7 +179,7 @@
         [objWebServices callApiWithParameters:nil apiName:booksApi type:GET_REQUEST loader:NO view:self];
     } else if (selectedIndex == 2) {
         //===== Total Books call ======//
-        totalBookApi = [NSString stringWithFormat:@"%@%@",
+        totalBookApi = [NSString stringWithFormat:@"%@%@?sort=date",
                     BASE_URL,
                     BOOK_SEARCH];
         [objWebServices callApiWithParameters:nil apiName:totalBookApi type:GET_REQUEST loader:NO view:self];
@@ -330,7 +330,7 @@
             if (success == 1) {
                 NSDate *nextExamDate = [Functions convertStringToDate:[responseDict valueForKey:@"datetime"] format:MAIN_DATE_FORMAT];
                 NSString *breakDownInterval = [nextExamDate differenceFromToday];
-                [Functions showSuccessAlert:@"" message:[NSString stringWithFormat:@"%@ in just %@", [responseDict valueForKey:@"title"], breakDownInterval] image:@"stopwatch"];
+                [Functions showSuccessAlert:@"" message:[NSString stringWithFormat:@"%@ just %@", [responseDict valueForKey:@"title"], breakDownInterval] image:@"stopwatch"];
                 contactApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_DETAIL];
                 [objWebServices callApiWithParameters:nil apiName:contactApi type:GET_REQUEST loader:NO view:self];
             } else {
@@ -390,7 +390,7 @@
                 for (NSDictionary *obj in preferencesArray) {
                     PreferenceType *pType = [[PreferenceType alloc] init];
                     pType.preference_id = [obj valueForKey:@"preference_id"];
-                    //pType.value = [obj valueForKey:@"value"];
+                    pType.notification_type = [obj valueForKey:@"notification_type"];
                     [contactData.preferenceArray addObject:pType];
                 }
                 
@@ -485,7 +485,7 @@
     for (NSDictionary *obj in booksObject) {
         @try {
             NewsModel *bookModel = [[NewsModel alloc] init];
-            bookModel.room = [obj valueForKey:@"room"];
+            bookModel.room = [Functions checkNullValue:[obj valueForKey:@"room"]];
             bookModel.schedule = [obj valueForKey:@"schedule"];
             bookModel.trainer = [obj valueForKey:@"trainer"];
             bookModel.course = [obj valueForKey:@"course"];

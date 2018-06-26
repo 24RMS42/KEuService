@@ -93,7 +93,7 @@
             bookModel.start_date = [Functions checkNullValue:[obj valueForKey:@"start_date"]];
             bookModel.end_date = [Functions checkNullValue:[obj valueForKey:@"end_date"]];
             bookModel.profile_img_url = [Functions checkNullValue:[obj valueForKey:@"profile_image_url"]];
-            bookModel.color = [Functions convertToHexColor:[obj valueForKey:@"color"]];
+            bookModel.color = [Functions convertToHexColor:[Functions checkNullValue:[obj valueForKey:@"color"]]];
             
             NSArray *timeSlots = [obj objectForKey:@"timeslots"];
             NSDictionary *slotObj = [timeSlots objectAtIndex:0];

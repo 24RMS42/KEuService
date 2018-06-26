@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "Functions.h"
 
 @interface AppDelegate ()
 
@@ -34,11 +35,22 @@
     _preferenceTypeArray = [[NSMutableArray alloc]init];
     _calendarEventArray = [[NSMutableArray alloc]init];
     _contactData = [[ContactData alloc] init];
+    _userRoleArray = [[NSMutableArray alloc]init];
     
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"ed1703e474d74b21ac6efab2de10e685"];
     [[BITHockeyManager sharedHockeyManager] startManager];
     [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
     //[[BITHockeyManager sharedHockeyManager].feedbackManager showFeedbackComposeView];
+    
+    //[[UIApplication sharedApplication] setStatusBarHidden:NO];
+    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    
+    if ([Functions isiPhoneX]) {
+        UIView *statusBar = [[[UIApplication sharedApplication] valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"];
+        if ([statusBar respondsToSelector:@selector(setBackgroundColor:)]) {
+            statusBar.backgroundColor = [UIColor colorWithHex:COLOR_PRIMARY];
+        }
+    }
     
     application.applicationSupportsShakeToEdit = YES;
     return YES;

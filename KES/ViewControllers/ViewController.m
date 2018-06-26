@@ -24,7 +24,7 @@
     objWebServices.delegate = self;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(didTapGoToRight:)
+                                             selector:@selector(didTapGoToLeft:)
                                                  name:NOTIFICATION_SIGNUP
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -53,6 +53,11 @@
     
     quoteApi = [NSString stringWithFormat:@"%@%@?category=%@", BASE_URL, NEWS_LIST, @"Quotes"];
     [objWebServices callApiWithParameters:nil apiName:quoteApi type:GET_REQUEST loader:NO view:self];
+    
+    userRoleApi = [NSString stringWithFormat:@"%@%@", BASE_URL, USER_ROLE];
+    [objWebServices callApiWithParameters:nil apiName:userRoleApi type:GET_REQUEST loader:NO view:self];
+    
+    [TSMessage addCustomDesignFromFileWithName:@"AlternativeDesign.json"];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -142,12 +147,12 @@
     loginController.title = @"Log in";
     signupController = [self.storyboard instantiateViewControllerWithIdentifier:@"signup"];
     signupController.title = @"Sign up";
-    [controllerArray addObject:loginController];
     [controllerArray addObject:signupController];
+    [controllerArray addObject:loginController];
     
     NSDictionary *parameters = @{
                                  CAPSPageMenuOptionScrollMenuBackgroundColor: [UIColor colorWithHex:COLOR_PRIMARY],
-                                 CAPSPageMenuOptionViewBackgroundColor: [UIColor colorWithHex:COLOR_PRIMARY],
+                                 CAPSPageMenuOptionViewBackgroundColor: [UIColor colorWithHex:0xFFFFFF],
                                  CAPSPageMenuOptionSelectionIndicatorColor: [UIColor colorWithHex:COLOR_THIRD],
                                  CAPSPageMenuOptionUnselectedMenuItemLabelColor: [UIColor colorWithHex:0x99e8f8],
                                  CAPSPageMenuOptionMenuItemFont: [UIFont fontWithName:@"Roboto-Regular" size:PageMenuOptionMenuItemFont],
@@ -218,26 +223,31 @@
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
                 NSArray* quoteObject = [responseDict valueForKey:@"news"];
-                for (NSDictionary *obj in quoteObject) {
-                    NSAttributedString *quoteAttributedString = [[NSAttributedString alloc]
-                                                                  initWithData: [[obj valueForKey:@"content"] dataUsingEncoding:NSUnicodeStringEncoding]
-                                                                  options: @{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType }
-                                                                  documentAttributes: nil
-                                                                  error: nil
-                                                                  ];
-                    _quoteTxt.attributedText = quoteAttributedString;
-                    _quoteTxt.textAlignment = NSTextAlignmentCenter;
-                    _quoteTxt.textColor = [UIColor whiteColor];
-                    [_quoteTxt setFont:[UIFont fontWithName:@"Roboto-Regular" size:13]];
-                    [_quoteTxt sizeToFit];
-                    
-                    _citiationStartImg.hidden = NO;
-                    _citiationEndImg.hidden = NO;
-                    CGRect citiationFrame = _citiationEndImg.frame;
-                    citiationFrame.origin.y = _quoteTxt.frame.origin.y + _quoteTxt.frame.size.height - 60;
-                    _citiationEndImg.frame = citiationFrame;
-                    
-                    break;
+                @try {
+                    for (NSDictionary *obj in quoteObject) {
+                        NSAttributedString *quoteAttributedString = [[NSAttributedString alloc]
+                                                                     initWithData: [[obj valueForKey:@"content"] dataUsingEncoding:NSUnicodeStringEncoding]
+                                                                     options: @{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType }
+                                                                     documentAttributes: nil
+                                                                     error: nil
+                                                                     ];
+                        _quoteTxt.attributedText = quoteAttributedString;
+                        _quoteTxt.textAlignment = NSTextAlignmentCenter;
+                        _quoteTxt.textColor = [UIColor whiteColor];
+                        [_quoteTxt setFont:[UIFont fontWithName:@"Roboto-Regular" size:13]];
+                        [_quoteTxt sizeToFit];
+                        
+                        _citiationStartImg.hidden = NO;
+                        _citiationEndImg.hidden = NO;
+                        CGRect citiationFrame = _citiationEndImg.frame;
+                        citiationFrame.origin.y = _quoteTxt.frame.origin.y + _quoteTxt.frame.size.height - 60;
+                        _citiationEndImg.frame = citiationFrame;
+                        
+                        break;
+                    }
+                }
+                @catch (NSException *exception) {
+                    NSLog(@"crash");
                 }
                 [self startTimer];
             } else {
@@ -253,6 +263,20 @@
                 NSDictionary *settingObj = [responseDict objectForKey:@"variables"];
                 NSString *julieImgUrl = [NSString stringWithFormat:@"%@%@", BASE_URL, [settingObj valueForKey:@"app_home_banner"]];
                 [_julieImgView sd_setImageWithURL:[NSURL URLWithString:julieImgUrl]];
+            }
+        }
+    }
+    else if ([apiName isEqualToString:userRoleApi]) {
+        if(responseDict != nil)
+        {
+            int success = [[responseDict valueForKey:@"success"] intValue];
+            if (success == 1) {
+                appDelegate.userRoleArray = [[NSMutableArray alloc]init];
+                NSArray* resultObject = [responseDict valueForKey:@"result"];
+                for (NSDictionary *obj in resultObject) {
+                    [appDelegate.userRoleArray addObject:[obj valueForKey:@"role"]];
+                }
+                NSLog(@"role count:%lu", (unsigned long)appDelegate.userRoleArray.count);
             }
         }
     }

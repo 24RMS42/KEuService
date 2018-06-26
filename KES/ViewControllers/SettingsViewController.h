@@ -29,6 +29,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
 @property (weak, nonatomic) IBOutlet UIButton *versionBtn;
 @property (weak, nonatomic) IBOutlet UISwitch *shakeAppSwitch;
+@property (weak, nonatomic) IBOutlet UIButton *subjectBtn;
+@property (weak, nonatomic) IBOutlet UIButton *notificationBtn;
 
 - (IBAction)OnUserMngClicked:(id)sender;
 - (IBAction)OnLogBackClicked:(id)sender;

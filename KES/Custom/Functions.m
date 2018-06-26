@@ -65,6 +65,15 @@
                                        duration:3.0];
 }
 
++ (void)showAlert: (NSString*)title message:(NSString*)message vc:(UIViewController*)vc
+{
+    [TSMessage showNotificationInViewController:vc
+                                          title:title
+                                       subtitle:message
+                                           type:TSMessageNotificationTypeError
+                                       duration:3.0];
+}
+
 + (void)showSuccessAlert: (NSString*)title message:(NSString*)message image:(NSString*)image
 {
     [TSMessage showNotificationInViewController:[UIApplication sharedApplication].keyWindow.rootViewController
@@ -133,15 +142,22 @@
     return [dateFormatter stringFromDate:[NSDate date]];
 }
 
-+ (NSDate*)convertStringToDate: (NSString*)strDate format:(NSString*)format {
-    NSDateFormatter *formatter=[[NSDateFormatter alloc] init];
++ (NSDate*)convertStringToDate:(NSString*)strDate format:(NSString*)format {
+    if (strDate.length == 19 && format.length == 19) {
+        //https://stackoverflow.com/questions/17009503/nsdateformatter-in-ipad-issue
+        strDate = [NSString stringWithFormat:@"%@Z", strDate];
+        format = [NSString stringWithFormat:@"%@z", format];
+    }
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
     [formatter setDateFormat:format];
     NSDate *dateTime = [formatter dateFromString:strDate];
     return dateTime;
 }
 
-+ (NSString*)convertDateToString: (NSDate*)date format:(NSString*)format {
-    NSDateFormatter *formatter=[[NSDateFormatter alloc] init];
++ (NSString*)convertDateToString:(NSDate*)date format:(NSString*)format {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:format];
     NSString  *dateStr = [formatter stringFromDate:date];
     return dateStr;
@@ -194,6 +210,9 @@
 }
 
 + (UIColor*)convertToHexColor:(NSString*)colorValue {
+    if ([colorValue isEqualToString:@""]) {
+        colorValue = @"rgb(133, 150, 150)";
+    }
     NSString *haystackPrefix = @"rgb(";
     NSString *haystackSuffix = @")";
     NSRange needleRange = NSMakeRange(haystackPrefix.length,
@@ -240,7 +259,9 @@
     
     for (int i = 0; i < appDelegate.contactData.preferenceArray.count; i++) {
         PreferenceType *pType = [appDelegate.contactData.preferenceArray objectAtIndex:i];
-        [parameters setValue:pType.preference_id forKey:[NSString stringWithFormat:@"preferences[%d]", i]];
+        [parameters setValue:pType.preference_id forKey:[NSString stringWithFormat:@"preferences[%d][preference_id]", i]];
+        [parameters setValue:@(1) forKey:[NSString stringWithFormat:@"preferences[%d][value]", i]];
+        [parameters setValue:pType.notification_type forKey:[NSString stringWithFormat:@"preferences[%d][notification_type]", i]];
     }
     
     for (int i = 0; i < appDelegate.contactData.contactDetails.count; i++) {
@@ -251,6 +272,52 @@
     }
     
     return parameters;
+}
+
++ (BOOL)isiPhoneX {
+    BOOL iPhoneX = NO;
+    if (@available(iOS 11.0, *)) {
+        UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
+        if (mainWindow.safeAreaInsets.top > 0.0) {
+            iPhoneX = YES;
+        }
+    }
+    return iPhoneX;
+}
+
++ (BOOL)validateEmailField:(NSString*)targetStr {
+    NSString *_regex = @"\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
+    NSPredicate *_predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", _regex];
+    
+    if ([_predicate evaluateWithObject:targetStr] == NO) {
+        return NO;
+    } else
+        return YES;
+}
+
++ (BOOL)validateNumberField:(NSString*)targetStr {
+    NSString *_regex = @"^[0-9]+(?:\\.[0-9]{2})?$";
+    NSPredicate *_predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", _regex];
+    
+    if ([_predicate evaluateWithObject:targetStr] == NO) {
+        return NO;
+    } else
+        return YES;
+}
+
++ (BOOL)validateNormalField:(NSString*)targetStr {
+    NSString *_regex = @"^[A-Za-z]+$";
+    NSPredicate *_predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", _regex];
+    
+    if ([_predicate evaluateWithObject:targetStr] == NO) {
+        return NO;
+    } else
+        return YES;
+}
+
++ (void)openURl:(NSString*)url {
+    UIApplication *application = [UIApplication sharedApplication];
+    [application openURL:[NSURL URLWithString:url] options:@{} completionHandler:nil];
 }
 
 + (void)parseError:(NSError*)error {

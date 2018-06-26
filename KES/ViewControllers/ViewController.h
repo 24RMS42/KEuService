@@ -22,7 +22,7 @@
     LoginViewController *loginController;
     SignupViewController *signupController;
     WebServices *objWebServices;
-    NSString *quoteApi, *settingsApi;
+    NSString *quoteApi, *settingsApi, *userRoleApi;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *TopView;

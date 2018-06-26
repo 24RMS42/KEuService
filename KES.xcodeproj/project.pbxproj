@@ -26,6 +26,8 @@
 		712D60612040714000284810 /* CustomButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 712D60602040714000284810 /* CustomButton.m */; };
 		712D606420407D4800284810 /* CategoryModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 712D606320407D4800284810 /* CategoryModel.m */; };
 		712D6068204094A300284810 /* TimeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 712D6067204094A300284810 /* TimeTableViewController.m */; };
+		71331C8820C91607007FB01A /* AlternativeDesign.json in Resources */ = {isa = PBXBuildFile; fileRef = 71331C8720C91607007FB01A /* AlternativeDesign.json */; };
+		71331C8A20C92531007FB01A /* error_dismiss.png in Resources */ = {isa = PBXBuildFile; fileRef = 71331C8920C92531007FB01A /* error_dismiss.png */; };
 		713409CA2035FC9F00430F39 /* analytics.png in Resources */ = {isa = PBXBuildFile; fileRef = 713409C82035FC9F00430F39 /* analytics.png */; };
 		713409CB2035FC9F00430F39 /* home_select.png in Resources */ = {isa = PBXBuildFile; fileRef = 713409C92035FC9F00430F39 /* home_select.png */; };
 		713409CE2036074E00430F39 /* NewsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 713409CD2036074E00430F39 /* NewsModel.m */; };
@@ -47,6 +49,7 @@
 		714829AE206243C900DD4A86 /* paper_plane.png in Resources */ = {isa = PBXBuildFile; fileRef = 714829AD206243C900DD4A86 /* paper_plane.png */; };
 		714829B120624D1B00DD4A86 /* BasicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 714829B020624D1B00DD4A86 /* BasicViewController.m */; };
 		714829B42062522B00DD4A86 /* MApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 714829B32062522B00DD4A86 /* MApplication.m */; };
+		71533D6420B7AF5A0041EBAF /* CustomField.m in Sources */ = {isa = PBXBuildFile; fileRef = 71533D6320B7AF5A0041EBAF /* CustomField.m */; };
 		7154BDF920495E110047F8C8 /* NSDate+TimeAgo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7154BDF820495E110047F8C8 /* NSDate+TimeAgo.m */; };
 		7154BDFB20495EF70047F8C8 /* NSDateTimeAgo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7154BDFA20495EF70047F8C8 /* NSDateTimeAgo.bundle */; };
 		7161973D2044887C0013AB51 /* TimetableModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7161973C2044887C0013AB51 /* TimetableModel.m */; };
@@ -126,6 +129,7 @@
 		71D63E00203C6A8E00337B09 /* PastBookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71D63DFD203C6A8E00337B09 /* PastBookViewController.m */; };
 		71D63E01203C6A8E00337B09 /* UpBookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71D63DFF203C6A8E00337B09 /* UpBookViewController.m */; };
 		71D6FEEF205E760E005906D2 /* NSMutableDictionary+AddItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 71D6FEEE205E760E005906D2 /* NSMutableDictionary+AddItem.m */; };
+		71D790EA20B82679006B41F0 /* comodo-big.png in Resources */ = {isa = PBXBuildFile; fileRef = 71D790E920B82678006B41F0 /* comodo-big.png */; };
 		71E2C4802045BDF300297590 /* map_pin.png in Resources */ = {isa = PBXBuildFile; fileRef = 71E2C47F2045BDF300297590 /* map_pin.png */; };
 		71ED798320333AC700C6C2B9 /* MainTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71ED798220333AC700C6C2B9 /* MainTabViewController.m */; };
 		71ED798720333E4100C6C2B9 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71ED798620333E4100C6C2B9 /* HomeViewController.m */; };
@@ -169,6 +173,8 @@
 		712D606320407D4800284810 /* CategoryModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CategoryModel.m; path = Data/CategoryModel.m; sourceTree = "<group>"; };
 		712D6066204094A300284810 /* TimeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeTableViewController.h; sourceTree = "<group>"; };
 		712D6067204094A300284810 /* TimeTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeTableViewController.m; sourceTree = "<group>"; };
+		71331C8720C91607007FB01A /* AlternativeDesign.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AlternativeDesign.json; sourceTree = "<group>"; };
+		71331C8920C92531007FB01A /* error_dismiss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = error_dismiss.png; sourceTree = "<group>"; };
 		713409C82035FC9F00430F39 /* analytics.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = analytics.png; sourceTree = "<group>"; };
 		713409C92035FC9F00430F39 /* home_select.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home_select.png; sourceTree = "<group>"; };
 		713409CC2036074E00430F39 /* NewsModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NewsModel.h; path = Data/NewsModel.h; sourceTree = "<group>"; };
@@ -194,6 +200,8 @@
 		714829B020624D1B00DD4A86 /* BasicViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicViewController.m; sourceTree = "<group>"; };
 		714829B22062522B00DD4A86 /* MApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MApplication.h; sourceTree = "<group>"; };
 		714829B32062522B00DD4A86 /* MApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MApplication.m; sourceTree = "<group>"; };
+		71533D6220B7AF5A0041EBAF /* CustomField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomField.h; sourceTree = "<group>"; };
+		71533D6320B7AF5A0041EBAF /* CustomField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomField.m; sourceTree = "<group>"; };
 		7154BDF720495E110047F8C8 /* NSDate+TimeAgo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+TimeAgo.h"; sourceTree = "<group>"; };
 		7154BDF820495E110047F8C8 /* NSDate+TimeAgo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+TimeAgo.m"; sourceTree = "<group>"; };
 		7154BDFA20495EF70047F8C8 /* NSDateTimeAgo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = NSDateTimeAgo.bundle; sourceTree = "<group>"; };
@@ -317,6 +325,7 @@
 		71D63DFF203C6A8E00337B09 /* UpBookViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpBookViewController.m; sourceTree = "<group>"; };
 		71D6FEED205E760E005906D2 /* NSMutableDictionary+AddItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+AddItem.h"; sourceTree = "<group>"; };
 		71D6FEEE205E760E005906D2 /* NSMutableDictionary+AddItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+AddItem.m"; sourceTree = "<group>"; };
+		71D790E920B82678006B41F0 /* comodo-big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "comodo-big.png"; sourceTree = "<group>"; };
 		71E2C47F2045BDF300297590 /* map_pin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map_pin.png; sourceTree = "<group>"; };
 		71ED798120333AC700C6C2B9 /* MainTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainTabViewController.h; sourceTree = "<group>"; };
 		71ED798220333AC700C6C2B9 /* MainTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainTabViewController.m; sourceTree = "<group>"; };
@@ -417,6 +426,7 @@
 		7184606E202DD86C00D5A7B8 /* KES */ = {
 			isa = PBXGroup;
 			children = (
+				71331C8720C91607007FB01A /* AlternativeDesign.json */,
 				71EE2BE12034303F00B39438 /* WebService */,
 				71BDA500203215A200520419 /* Custom */,
 				71BDA4F920320FF600520419 /* ViewControllers */,
@@ -487,6 +497,8 @@
 		7184608A202DDDE200D5A7B8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				71331C8920C92531007FB01A /* error_dismiss.png */,
+				71D790E920B82678006B41F0 /* comodo-big.png */,
 				71955A5020874D4200ED9B44 /* l10.png */,
 				71955A5120874D4200ED9B44 /* l11.png */,
 				71380DB1203386DE0063B45A /* analytics_select.png */,
@@ -606,13 +618,14 @@
 			isa = PBXGroup;
 			children = (
 				71BDA501203215A200520419 /* BATabBar */,
-				7154BDF620495DFE0047F8C8 /* NSDate+TimeAgo */,
 				71BDA50C203215A200520419 /* CAPSPageMenu.h */,
 				71BDA50D203215A200520419 /* CAPSPageMenu.m */,
 				7190A638204D7D7600822209 /* CreolePriceSelectionView.h */,
 				7190A639204D7D7600822209 /* CreolePriceSelectionView.m */,
 				712D605F2040714000284810 /* CustomButton.h */,
 				712D60602040714000284810 /* CustomButton.m */,
+				71533D6220B7AF5A0041EBAF /* CustomField.h */,
+				71533D6320B7AF5A0041EBAF /* CustomField.m */,
 				71BDA50E203215A200520419 /* Functions.h */,
 				71BDA50F203215A200520419 /* Functions.m */,
 				71BDA510203215A200520419 /* macro.h */,
@@ -620,10 +633,11 @@
 				71B591FC204052140039BD7E /* MyAnnotation.m */,
 				710CD90C2047F7A400127D7B /* NIDropDown.h */,
 				710CD90D2047F7A400127D7B /* NIDropDown.m */,
-				71EE2BDB20341CDA00B39438 /* Utility.h */,
-				71EE2BDC20341CDA00B39438 /* Utility.m */,
+				7154BDF620495DFE0047F8C8 /* NSDate+TimeAgo */,
 				71D6FEED205E760E005906D2 /* NSMutableDictionary+AddItem.h */,
 				71D6FEEE205E760E005906D2 /* NSMutableDictionary+AddItem.m */,
+				71EE2BDB20341CDA00B39438 /* Utility.h */,
+				71EE2BDC20341CDA00B39438 /* Utility.m */,
 			);
 			path = Custom;
 			sourceTree = "<group>";
@@ -740,7 +754,7 @@
 				TargetAttributes = {
 					7184606B202DD86C00D5A7B8 = {
 						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = 7K2YHQEK4F;
+						DevelopmentTeam = W3S567MX5M;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -785,6 +799,7 @@
 				713409CA2035FC9F00430F39 /* analytics.png in Resources */,
 				7112E131203DD37500EE0F99 /* person_white.png in Resources */,
 				71380DCA203386DF0063B45A /* settings.png in Resources */,
+				71D790EA20B82679006B41F0 /* comodo-big.png in Resources */,
 				712A4AA420454FEA0012EE62 /* online-shopping.png in Resources */,
 				718460B7202DF6E800D5A7B8 /* intro3.png in Resources */,
 				718460B6202DF6E800D5A7B8 /* intro2.png in Resources */,
@@ -805,6 +820,7 @@
 				714829AE206243C900DD4A86 /* paper_plane.png in Resources */,
 				719964E4206A985B00749A87 /* l3.png in Resources */,
 				71380DC9203386DF0063B45A /* settings_select.png in Resources */,
+				71331C8820C91607007FB01A /* AlternativeDesign.json in Resources */,
 				719964EE206A9B1500749A87 /* l7.png in Resources */,
 				712A4AA82045515B0012EE62 /* arrow_right.png in Resources */,
 				7190A63E204DC3C500822209 /* stopwatch.png in Resources */,
@@ -813,6 +829,7 @@
 				718835EE203FC8C50008C7E4 /* page.png in Resources */,
 				71D29A23204FDB4800D96CBA /* julie.png in Resources */,
 				712A4AA72045515B0012EE62 /* arrow_left.png in Resources */,
+				71331C8A20C92531007FB01A /* error_dismiss.png in Resources */,
 				71D63DF6203C579D00337B09 /* smartphone.png in Resources */,
 				71846090202DDDE200D5A7B8 /* Roboto-Light.ttf in Resources */,
 				71380DC1203386DF0063B45A /* book_select.png in Resources */,
@@ -953,6 +970,7 @@
 				7161973D2044887C0013AB51 /* TimetableModel.m in Sources */,
 				71BDA4FF2032100F00520419 /* SignupViewController.m in Sources */,
 				71BE1B0D203F142E00D40303 /* ScheduleModel.m in Sources */,
+				71533D6420B7AF5A0041EBAF /* CustomField.m in Sources */,
 				710CD90E2047F7A400127D7B /* NIDropDown.m in Sources */,
 				71846071202DD86C00D5A7B8 /* main.m in Sources */,
 				71EE2BDA2034146900B39438 /* AnalyticsViewController.m in Sources */,
@@ -1101,14 +1119,17 @@
 			baseConfigurationReference = A01D46853231EDA0840010DF /* Pods-KES.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: IdeaBubble ltd (7K2YHQEK4F)";
-				DEVELOPMENT_TEAM = 7K2YHQEK4F;
+				CODE_SIGN_IDENTITY = "iPhone Developer: LEVEQUE GERALD (E8HX4R5TAP)";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = W3S567MX5M;
 				INFOPLIST_FILE = KES/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bubble.KES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6d4aa6be-57fb-4d0f-b2ae-d1b215d02c1a";
-				PROVISIONING_PROFILE_SPECIFIER = KESAppStore;
+				PROVISIONING_PROFILE = "2c08a3ed-072f-4ee6-afe6-2240a7b82a3d";
+				PROVISIONING_PROFILE_SPECIFIER = ComXamarinGP;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1119,13 +1140,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: IdeaBubble ltd (7K2YHQEK4F)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: IdeaBubble ltd (7K2YHQEK4F)";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 7K2YHQEK4F;
 				INFOPLIST_FILE = KES/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bubble.KES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "6d4aa6be-57fb-4d0f-b2ae-d1b215d02c1a";
 				PROVISIONING_PROFILE_SPECIFIER = KESAppStore;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

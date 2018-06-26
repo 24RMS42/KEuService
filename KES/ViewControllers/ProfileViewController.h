@@ -18,17 +18,19 @@
 {
     NSUserDefaults *userInfo;
     WebServices *objWebServices;
-    NSString *loginAsApi, *updateProfileApi, *updatePasswordApi;
+    NSString *loginApi, *updateProfileApi, *updatePasswordApi;
     NSString *visiblePicker;
     bool addressViewLoaded, educationViewLoaded;
     NSInteger category;
+    NSMutableArray *titlePickerArray;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *categorySegment;
-@property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *titleField;
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *firstNameField;
 @property (weak, nonatomic) IBOutlet JVFloatLabeledTextField *lastNameField;
+@property (weak, nonatomic) IBOutlet UIView *titleSelectionView;
+@property (weak, nonatomic) IBOutlet UIButton *titleBtn;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLbl;
 @property (weak, nonatomic) IBOutlet UIView *dateSelectionView;
 @property (weak, nonatomic) IBOutlet UIView *nationalSelectionView;
@@ -62,4 +64,5 @@
 - (IBAction)OnOKClicked:(id)sender;
 - (IBAction)OnCancelClicked:(id)sender;
 - (IBAction)OnUpdateProfileClicked:(id)sender;
+- (IBAction)OnTitleClicked:(id)sender;
 @end

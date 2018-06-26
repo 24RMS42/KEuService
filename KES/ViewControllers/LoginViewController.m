@@ -17,13 +17,31 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [Functions makeFloatingField:_EmailField placeholder:@"Email"];
+    [Functions makeFloatingField:_EmailField placeholder:@"Your email"];
     [Functions makeFloatingField:_PasswordField placeholder:@"Password"];
     _PasswordField.clearButtonMode = UITextFieldViewModeNever;
     
     NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
-    [_EmailField setText:[userInfo objectForKey:KEY_EMAIL]];
-    [_PasswordField setText:[userInfo objectForKey:KEY_PASSWORD]];
+    if ([[userInfo objectForKey:KEY_REMEMBER] isEqualToString:@"yes"]) {
+        [_EmailField setText:[userInfo objectForKey:KEY_EMAIL]];
+        [_PasswordField setText:[userInfo objectForKey:KEY_PASSWORD]];
+    }
+    
+    NSMutableAttributedString *hogan = [[NSMutableAttributedString alloc] initWithString:@"By signing in, you agree to Kilmartin' \nPrivacy Policy and Terms of use"];
+    [hogan addAttribute:NSForegroundColorAttributeName
+                  value:[UIColor colorWithHex:COLOR_PRIMARY]
+                  range:NSMakeRange(40, 15)];
+    [hogan addAttribute:NSLinkAttributeName
+                  value:[NSString stringWithFormat:@"%@%@", BASE_URL, PRIVACY_POLICY]
+                  range:NSMakeRange(40, 15)];
+    [hogan addAttribute:NSForegroundColorAttributeName
+                  value:[UIColor colorWithHex:COLOR_PRIMARY]
+                  range:NSMakeRange(58, 13)];
+    [hogan addAttribute:NSLinkAttributeName
+                  value:[NSString stringWithFormat:@"%@%@", BASE_URL, TERMS_SERVICE]
+                  range:NSMakeRange(58, 13)];
+    _TOSTextView.attributedText = hogan;
+    [_TOSTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13]];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -47,17 +65,13 @@
 
 - (BOOL)isValid {
     
-    NSString *_regex =@"\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
-    
-    NSPredicate *_predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", _regex];
-    
     if (_EmailField.text == nil || [_EmailField.text length] == 0 ||
         [[_EmailField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0 ) {
         [_EmailField becomeFirstResponder];
         [Functions showAlert:@"" message:@"Please input email address"];
         return FALSE;
     }
-    else if (![_predicate evaluateWithObject:_EmailField.text] == YES) {
+    else if (![Functions validateEmailField:_EmailField.text]) {
         [_EmailField becomeFirstResponder];
         [Functions showAlert:@"" message:@"Please input correct email address"];
         return FALSE;
@@ -85,6 +99,19 @@
     
     getProfileApi = [NSString stringWithFormat:@"%@%@", BASE_URL, PROFILE_API];
     [_objWebServices callApiWithParameters:nil apiName:getProfileApi type:GET_REQUEST loader:NO view:self];
+}
+
+#pragma mark - UITextField delegate
+- (BOOL)textField:(UITextField *) textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    NSUInteger oldLength = [textField.text length];
+    NSUInteger replacementLength = [string length];
+    NSUInteger rangeLength = range.length;
+    
+    NSUInteger newLength = oldLength - rangeLength + replacementLength;
+    
+    BOOL returnKey = [string rangeOfString: @"\n"].location != NSNotFound;
+    
+    return newLength <= MAXFIELDLENGTH || returnKey;
 }
 
 #pragma mark - webservice call delegate
@@ -157,10 +184,19 @@
         _PasswordField.secureTextEntry = NO;
         [_PwdToggleButton setTitle:@"Hide" forState:UIControlStateNormal];
     }
+    
+    NSString *tmpString;
+    tmpString = _PasswordField.text;
+    _PasswordField.text = @" ";
+    _PasswordField.text = tmpString;
 }
 
 - (IBAction)OnQuestionClicked:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_QUESTION object:self];
+}
+
+- (IBAction)OnContinueClicked:(id)sender {
+    [Functions openURl:BASE_URL];
 }
 
 - (IBAction)OnLoginClicked:(id)sender {

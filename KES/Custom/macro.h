@@ -16,6 +16,7 @@
 #define POST_REQUEST    @"POST"
 #define GET_REQUEST     @"GET"
 #define MAIN_DATE_FORMAT @"yyyy-MM-dd HH:mm:ss"
+#define MAXFIELDLENGTH 30
 
 #define BUILD_MODE      @"UAT"
 //#define BASE_URL        @"http://kilmartin.test.ibplatform.ie/"
@@ -51,11 +52,14 @@
 #define PAGE_CONTENT    @"api/pages/details"
 #define APP_SETTINGS    @"api/settings/variables"
 #define CALENDAR_EVENT  @"api/calendar/events"
+#define USER_ROLE       @"api/user/roles"
 
 #define CREATE_BOOK_URL @"http://kilmartin.uat.ibplatform.ie/available-results.html"
 #define HELP_URL        @"http://www.kes.ie/help.html"
 #define ABOUT_URL       @"http://www.kes.ie/history"
 #define KES_BOARD       @"https://kesboard.herokuapp.com/"
+#define PRIVACY_POLICY  @"privacy-policy.html"
+#define TERMS_SERVICE   @"terms-of-use.html"
 
 #define PROFILE_UPDATED @"Your profile has been updated!"
 #define ERROR_MSG       @"An error occurred. Please try again later"

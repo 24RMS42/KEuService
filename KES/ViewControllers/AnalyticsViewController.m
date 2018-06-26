@@ -116,7 +116,7 @@
     if ([purpose isEqualToString:TOTAL_DAY])
     {
         _AllHRLbl.text = [self convertMinuteToHourByInteger:(categoryTotal)];
-        _titleTotalLbl.text = [NSString stringWithFormat:@"%@ hrs", _AllHRLbl.text];
+        //_titleTotalLbl.text = [NSString stringWithFormat:@"%@ hrs", _AllHRLbl.text];
     }
     else if ([purpose isEqualToString:LAST_MONTH])
     {
@@ -139,8 +139,8 @@
         analyticsModel.hour = [self convertMinuteToHourByFloat:analyticsModel.minute];
         analyticsModel.timebar = purpose;
         
-        CGFloat percent = analyticsModel.minute * 100 / analyticsModel.total_minute;
-        analyticsModel.percent = [NSString stringWithFormat:@"%ld", (long)percent];
+        float percent = analyticsModel.minute * 100 / (float)analyticsModel.total_minute;
+        analyticsModel.percent = [NSString stringWithFormat:@"%ld", lroundf(percent)];
         
         [categoryArray addObject:analyticsModel];
     }
@@ -157,8 +157,8 @@
         analyticsModel.hour = [self convertMinuteToHourByFloat:analyticsModel.minute];
         analyticsModel.timebar = purpose;
         
-        CGFloat percent = analyticsModel.minute * 100 / analyticsModel.total_minute;
-        analyticsModel.percent = [NSString stringWithFormat:@"%ld", (long)percent];
+        float percent = analyticsModel.minute * 100 / (float)analyticsModel.total_minute;
+        analyticsModel.percent = [NSString stringWithFormat:@"%ld", lroundf(percent)];
         
         [subjectArray addObject:analyticsModel];
     }
@@ -175,8 +175,8 @@
         analyticsModel.hour = [self convertMinuteToHourByFloat:analyticsModel.minute];
         analyticsModel.timebar = purpose;
         
-        CGFloat percent = analyticsModel.minute * 100 / analyticsModel.total_minute;
-        analyticsModel.percent = [NSString stringWithFormat:@"%ld", (long)percent];
+        float percent = analyticsModel.minute * 100 / (float)analyticsModel.total_minute;
+        analyticsModel.percent = [NSString stringWithFormat:@"%ld", lroundf(percent)];
         
         [teacherArray addObject:analyticsModel];
     }
@@ -492,7 +492,7 @@
         if ([filterSubjectArray count] > 0) {
             AnalyticsModel *item = [filterSubjectArray objectAtIndex:indexPath.row];
             [headerImg sd_setImageWithURL:[NSURL URLWithString:item.image] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
-            namelbl.text = item.name;
+            namelbl.text = [Functions checkNullValue:item.name];
             quantitylbl.text = [NSString stringWithFormat:@"%ld bookings", (long)item.quantity];
             timelbl.text = [NSString stringWithFormat:@"%@ hrs", item.hour];
             percentlbl.text = [NSString stringWithFormat:@"%@%%", item.percent];

@@ -14,5 +14,7 @@
 @property (strong ,nonatomic) NSString *label;
 @property (strong ,nonatomic) NSString *required;
 @property (strong ,nonatomic) NSString *value;
+@property (strong ,nonatomic) NSString *notification_type;
+@property (strong ,nonatomic) NSString *summary;
 
 @end

@@ -106,6 +106,9 @@
 }
 
 - (void)getMonthTTArray:(NSString *)targetMonthStr {
+    _classDetailView.hidden = YES;
+    _noMonthItemLbl.hidden = YES;
+    
     monthTTArray = [[NSMutableArray alloc] init];
     for (TimetableModel *obj in totalTimeTableArray) {
         if ([obj.month isEqualToString:targetMonthStr]) {
@@ -121,7 +124,7 @@
     _noMonthItemLbl.hidden = YES;
     for (TimetableModel *obj in totalTimeTableArray) {
         if ([obj.date isEqualToString:targetDateStr]) {
-            _dateLbl.text = [NSString stringWithFormat:@"%@, %@", obj.dayOfWeek, obj.format_date];
+            _dateLbl.text = [NSString stringWithFormat:@"%@", obj.format_date];
             [dayTTArray addObject:obj];
             _classDetailView.hidden = NO;
         }
@@ -166,7 +169,7 @@
 }
 
 - (void)checkNoItemsOnList {
-    if (!_tableView.hidden) {
+    if (_monthListSegment.selectedSegmentIndex == 1) {
         _noListItemLbl.hidden = monthTTArray.count > 0;
     }
 }
@@ -181,8 +184,8 @@
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
                 [self parseTimeTableArray:responseDict];
-                [self getBookingFromTimetable:[Functions convertDateToString:[NSDate date] format:self.dateFormatter1.dateFormat]];
                 [self getMonthTTArray:[Functions convertDateToString:[NSDate date] format:@"yyyy-MM"]];
+                [self getBookingFromTimetable:[Functions convertDateToString:[NSDate date] format:self.dateFormatter1.dateFormat]];
                 [self getNextClass];
                 [self getHolidayDates];
                 
@@ -316,6 +319,9 @@
 - (void)calendarCurrentPageDidChange:(FSCalendar *)calendar
 {
     NSLog(@"did change to page %@",[self.dateFormatter1 stringFromDate:calendar.currentPage]);
+    [self getMonthTTArray:[Functions convertDateToString:calendar.currentPage format:@"yyyy-MM"]];
+    [self.tableView reloadData];
+    [self checkNoItemsOnList];
 }
 
 - (UIColor *)calendar:(FSCalendar *)calendar appearance:(FSCalendarAppearance *)appearance fillDefaultColorForDate:(NSDate *)date
@@ -359,6 +365,7 @@
     } else {
         _tableView.hidden = NO;
         [_tableView reloadData];
+        [self checkNoItemsOnList];
     }
 }
 
@@ -369,6 +376,7 @@
     
     [self getMonthTTArray:[Functions convertDateToString:previousMonth format:@"yyyy-MM"]];
     [self.tableView reloadData];
+    [self checkNoItemsOnList];
 }
 
 - (IBAction)OnNextClicked:(id)sender {
@@ -378,6 +386,7 @@
     
     [self getMonthTTArray:[Functions convertDateToString:nextMonth format:@"yyyy-MM"]];
     [self.tableView reloadData];
+    [self checkNoItemsOnList];
 }
 
 - (IBAction)OnLogoClicked:(id)sender {

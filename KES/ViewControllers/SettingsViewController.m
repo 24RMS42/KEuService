@@ -19,6 +19,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //Init
+    appDelegate.countryArray = [[NSMutableArray alloc] init];
+    appDelegate.countyArray = [[NSMutableArray alloc] init];
+    appDelegate.nationalityArray = [[NSMutableArray alloc] init];
+    appDelegate.schoolArray = [[NSMutableArray alloc] init];
+    appDelegate.yearArray = [[NSMutableArray alloc] init];
+    appDelegate.academicYearArray = [[NSMutableArray alloc] init];
+    appDelegate.preferenceTypeArray = [[NSMutableArray alloc] init];
+    appDelegate.calendarEventArray = [[NSMutableArray alloc] init];
+    appDelegate.UserArray = [[NSMutableArray alloc] init];
+    appDelegate.UserEmailArray = [[NSMutableArray alloc] init];
+    
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
     userInfo = [NSUserDefaults standardUserDefaults];
@@ -32,6 +44,8 @@
     
     NSString *val = [userInfo valueForKey:KEY_SHAKE_APP];
     [self.shakeAppSwitch setOn:[val isEqualToString:@"1"]];
+    [self.subjectBtn setEnabled:NO];
+    [self.notificationBtn setEnabled:NO];
     
     NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     [_versionBtn setTitle:[NSString stringWithFormat:@"About My KES v%@", version] forState:UIControlStateNormal];
@@ -75,6 +89,8 @@
     _userNameLbl.text = [NSString stringWithFormat:@"%@ %@", appDelegate.contactData.first_name, appDelegate.contactData.last_name];
     NSDate *sinceDate = [Functions convertStringToDate:appDelegate.contactData.date_created format:MAIN_DATE_FORMAT];
     _memberSinceLbl.text = [NSString stringWithFormat:@"Member since %@", [Functions convertDateToString:sinceDate format:@"dd LLLL yyyy"]];
+    [self.subjectBtn setEnabled:YES];//Enable after getting contact data fully
+    [self.notificationBtn setEnabled:YES];
 }
 
 - (void)toggleUserMngView {
@@ -188,12 +204,14 @@
 - (void)parsePreferencesType:(id)responseObject {
     NSDictionary *preferences = [responseObject valueForKey:@"preference_types"];
     for (NSDictionary *obj in preferences) {
-        PreferenceType *model = [[PreferenceType alloc] init];
-        model.preference_id = [obj valueForKey:@"id"];
-        model.label = [obj valueForKey:@"label"];
-        model.required = [obj valueForKey:@"required"];
-        
-        [appDelegate.preferenceTypeArray addObject:model];
+        if ([[obj valueForKey:@"group"] isEqualToString:@"notification"]) {
+            PreferenceType *model = [[PreferenceType alloc] init];
+            model.preference_id = [obj valueForKey:@"id"];
+            model.label = [obj valueForKey:@"label"];
+            model.required = [obj valueForKey:@"required"];
+            model.summary = [Functions checkNullValue:[obj valueForKey:@"summary"]];
+            [appDelegate.preferenceTypeArray addObject:model];
+        }
     }
     NSLog(@"preferences type count:%lu", (unsigned long)appDelegate.preferenceTypeArray.count);
 }

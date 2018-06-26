@@ -186,7 +186,7 @@
         [images addObject:[UIImage imageNamed:[imageNames objectAtIndex:i]]];
     }
     
-    UIImageView *animationImageView = [[UIImageView alloc] initWithFrame:CGRectMake((375 - 120)/2, 230, 120, 120)];
+    UIImageView *animationImageView = [[UIImageView alloc] initWithFrame:CGRectMake((mainWindow.frame.size.width - 120)/2, (mainWindow.frame.size.height - 120)/2, 120, 120)];
     animationImageView.animationImages = images;
     animationImageView.animationDuration = 1.0;
     [self.loadingView addSubview:animationImageView];

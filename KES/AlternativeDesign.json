@@ -1,0 +1,20 @@
+{
+    "error": {
+        "backgroundImageName": "NotificationBackgroundError.png",
+        "borderColor": "#700000",
+        "borderHeight": 1,
+        "buttonBackgroundImageName": "NotificationButtonBackground.png",
+        "buttonTitleTextColor": "#FFFFFF",
+        "buttonTitleShadowColor": "#812929",
+        "buttonTitleShadowOffsetX": 0,
+        "buttonTitleShadowOffsetY": -1,
+        "contentFontSize": 12,
+        "contentTextColor": "#B73556",
+        "imageName": "error_dismiss.png",
+        "shadowOffsetX": 0,
+        "shadowOffsetY": 0,
+        "textColor": "#B73556",
+        "titleFontSize": 14,
+        "backgroundColor": "#F2DFDF"
+    }
+}

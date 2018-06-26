@@ -48,6 +48,11 @@
         }
     }
     
+    CGRect decisionViewFrame = _decisionView.frame;
+    CGRect pickerViewFrame = _pickerView.frame;
+    decisionViewFrame.origin.y = pickerViewFrame.origin.y - decisionViewFrame.size.height;
+    _decisionView.frame = decisionViewFrame;
+    
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
 }

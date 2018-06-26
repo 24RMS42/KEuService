@@ -17,14 +17,37 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [Functions makeFloatingField:_EmailField placeholder:@"Email"];
+    [Functions makeFloatingField:_EmailField placeholder:@"Your email"];
     [Functions makeFloatingField:_PasswordField placeholder:@"Password"];
+    [Functions makeFloatingField:_FirstNameField placeholder:@"First name"];
+    [Functions makeFloatingField:_LastNameField placeholder:@"Last name"];
     [Functions makeFloatingField:_ConfirmField placeholder:@"Confirm Password"];
     _PasswordField.clearButtonMode = UITextFieldViewModeNever;
     _ConfirmField.clearButtonMode = UITextFieldViewModeNever;
     
     CGRect frame= _RoleSegment.frame;
-    [_RoleSegment setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height + 15)];
+    [_RoleSegment setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height + 0)];
+    if (appDelegate.userRoleArray.count != 0) {
+        [_RoleSegment setTitle:appDelegate.userRoleArray[0] forSegmentAtIndex:0];
+        [_RoleSegment setTitle:appDelegate.userRoleArray[1] forSegmentAtIndex:1];
+        [_RoleSegment setTitle:appDelegate.userRoleArray[2] forSegmentAtIndex:2];
+    }
+    
+    NSMutableAttributedString *hogan = [[NSMutableAttributedString alloc] initWithString:@"By signing up, you agree to Kilmartin' \nPrivacy Policy and Terms of use"];
+    [hogan addAttribute:NSForegroundColorAttributeName
+                  value:[UIColor colorWithHex:COLOR_PRIMARY]
+                  range:NSMakeRange(40, 15)];
+    [hogan addAttribute:NSLinkAttributeName
+                  value:[NSString stringWithFormat:@"%@%@", BASE_URL, PRIVACY_POLICY]
+                  range:NSMakeRange(40, 15)];
+    [hogan addAttribute:NSForegroundColorAttributeName
+                  value:[UIColor colorWithHex:COLOR_PRIMARY]
+                  range:NSMakeRange(58, 13)];
+    [hogan addAttribute:NSLinkAttributeName
+                  value:[NSString stringWithFormat:@"%@%@", BASE_URL, TERMS_SERVICE]
+                  range:NSMakeRange(58, 13)];
+    _TOSTextView.attributedText = hogan;
+    [_TOSTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13]];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -38,29 +61,38 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
-    if (theTextField == self.PasswordField) {
-        [self.ConfirmField becomeFirstResponder];
+    if (theTextField == self.FirstNameField) {
+        [self.LastNameField becomeFirstResponder];
+    } else if (theTextField == self.LastNameField) {
+        [self.EmailField becomeFirstResponder];
     } else if (theTextField == self.EmailField) {
         [self.PasswordField becomeFirstResponder];
-    } else if (theTextField == self.ConfirmField) {
+    } else if (theTextField == self.PasswordField) {
         [theTextField resignFirstResponder];
     }
     return YES;
 }
 
 - (BOOL)isValid {
-    
-    NSString *_regex =@"\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
-    
-    NSPredicate *_predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", _regex];
-    
-    if (_EmailField.text == nil || [_EmailField.text length] == 0 ||
+    if (_FirstNameField.text == nil || [_FirstNameField.text length] == 0 ||
+        [[_FirstNameField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0 ) {
+        [_FirstNameField becomeFirstResponder];
+        [Functions showAlert:@"" message:@"Please input first name"];
+        return FALSE;
+    }
+    else if (_LastNameField.text == nil || [_LastNameField.text length] == 0 ||
+        [[_LastNameField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0 ) {
+        [_LastNameField becomeFirstResponder];
+        [Functions showAlert:@"" message:@"Please input last name"];
+        return FALSE;
+    }
+    else if (_EmailField.text == nil || [_EmailField.text length] == 0 ||
         [[_EmailField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0 ) {
         [_EmailField becomeFirstResponder];
         [Functions showAlert:@"" message:@"Please input email address"];
         return FALSE;
     }
-    else if (![_predicate evaluateWithObject:_EmailField.text] == YES) {
+    else if (![Functions validateEmailField:_EmailField.text]) {
         [_EmailField becomeFirstResponder];
         [Functions showAlert:@"" message:@"Please input correct email address"];
         return FALSE;
@@ -71,11 +103,6 @@
         [Functions showAlert:@"" message:@"Please input password"];
         return FALSE;
     }
-    else if (![_PasswordField.text isEqualToString:_ConfirmField.text]) {
-        [_ConfirmField becomeFirstResponder];
-        [Functions showAlert:@"" message:@"Please confirm password"];
-        return FALSE;
-    }
     
     return TRUE;
 }
@@ -84,12 +111,24 @@
     
     NSDictionary * parameters=@{@"email":_EmailField.text,
                                 @"password":_PasswordField.text,
-                                @"mpassword":_ConfirmField.text,
-                                @"is_student":@(1),
-                                @"is_parent":@(0)
+                                @"mpassword":_PasswordField.text,
+                                @"role":[_RoleSegment titleForSegmentAtIndex:_RoleSegment.selectedSegmentIndex]
                                 };
     signupApi = [NSString stringWithFormat:@"%@%@", BASE_URL, SIGNUP_API];
     [_objWebServices callApiWithParameters:parameters apiName:signupApi type:POST_REQUEST loader:YES view:self];
+}
+
+#pragma mark - UITextField delegate
+- (BOOL)textField:(UITextField *) textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    NSUInteger oldLength = [textField.text length];
+    NSUInteger replacementLength = [string length];
+    NSUInteger rangeLength = range.length;
+    
+    NSUInteger newLength = oldLength - rangeLength + replacementLength;
+    
+    BOOL returnKey = [string rangeOfString: @"\n"].location != NSNotFound;
+    
+    return newLength <= MAXFIELDLENGTH || returnKey;
 }
 
 #pragma mark - webservice call delegate
@@ -134,6 +173,11 @@
         _PasswordField.secureTextEntry = NO;
         [_PwdToggleButton setTitle:@"Hide" forState:UIControlStateNormal];
     }
+    
+    NSString *tmpString;
+    tmpString = _PasswordField.text;
+    _PasswordField.text = @" ";
+    _PasswordField.text = tmpString;
 }
 
 - (IBAction)OnShowConfirmClicked:(id)sender {
@@ -148,12 +192,21 @@
         _ConfirmField.secureTextEntry = NO;
         [_ConfirmToggleBtn setTitle:@"Hide" forState:UIControlStateNormal];
     }
+    
+    NSString *tmpString;
+    tmpString = _ConfirmField.text;
+    _ConfirmField.text = @" ";
+    _ConfirmField.text = tmpString;
 }
 
 - (IBAction)OnRoleChanged:(id)sender {
     if (_RoleSegment.selectedSegmentIndex == 1) {
-        _RoleSegment.selectedSegmentIndex = 0;
+        
     }
+}
+
+- (IBAction)OnContinueClicked:(id)sender {
+    [Functions openURl:BASE_URL];
 }
 
 @end
