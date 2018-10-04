@@ -16,16 +16,36 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     UIButton *button = (UIButton *)[self.view viewWithTag:1];
     [button setBackgroundColor:[UIColor colorWithHex:COLOR_PRIMARY]];
+    [_titleView setHidden:_isContained];
+    
+    topicArray = [[NSMutableArray alloc] init];
+    for (TopicModel *obj in appDelegate.topicArray) {
+        if ([obj.topic_id isEqualToString:@"7"] || [obj.topic_id isEqualToString:@"8"] || [obj.topic_id isEqualToString:@"75"] || [obj.topic_id isEqualToString:@"19"] || [obj.topic_id isEqualToString:@"240"]) {
+            [topicArray addObject:obj];
+        }
+    }
     
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
-    scheduleApi = [NSString stringWithFormat:@"%@%@%@", BASE_URL, SCHEDULE_DETAIL, _objBook.schedule_id];
+    scheduleApi = [NSString stringWithFormat:@"%@%@%@", strMainBaseUrl, SCHEDULE_DETAIL, _objBook.schedule_id];
     [objWebServices callApiWithParameters:nil apiName:scheduleApi type:GET_REQUEST loader:YES view:self];
     
+    _selectedIndex = 0;
+    _width = (self.view.frame.size.width-6)/3;
+    _height = self.carousel.frame.size.height;
+    
+    _pageControll.numberOfPages = topicArray.count;
+    _carousel.pagingEnabled = FALSE;
+    _carousel.delegate = self;
+    _carousel.dataSource = self;
     _carousel.type = iCarouselTypeLinear;
+    [_carousel scrollToItemAtIndex:_selectedIndex animated:NO];
+    [_carousel reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -41,7 +61,8 @@
     scheduleObj.course_id = [scheduleObject valueForKey:@"course_id"];
     scheduleObj.payment_type = [scheduleObject valueForKey:@"payment_type"];
     scheduleObj.location_id = [scheduleObject valueForKey:@"location_id"];
-    scheduleObj.fee_amount = [[scheduleObject valueForKey:@"fee_amount"] integerValue];
+    scheduleObj.fee_amount = [[Functions checkNullValueWithZero:[scheduleObject valueForKey:@"fee_amount"]] integerValue];
+    scheduleObj.topicArray = [scheduleObject objectForKey:@"topics"];
     
     locationId = scheduleObj.location_id;
     
@@ -51,8 +72,8 @@
     } else
         [self showRevisionView];
     
-    NSDate *startDate = [Functions convertStringToDate:_objBook.slot_start_date format:MAIN_DATE_FORMAT];
-    NSDate *endDate = [Functions convertStringToDate:_objBook.slot_end_date format:MAIN_DATE_FORMAT];
+    NSDate *startDate = [Functions convertStringToDate:IS_STUDENT ? _objBook.slot_start_date:_objBook.start_date format:MAIN_DATE_FORMAT];
+    NSDate *endDate = [Functions convertStringToDate:IS_STUDENT ? _objBook.slot_end_date:_objBook.end_date format:MAIN_DATE_FORMAT];
     NSString *startDateStr = [Functions convertDateToString:startDate format:@"LLLL ccc d"];
     NSString *startTimeStr = [Functions convertDateToString:startDate format:@"HH:mm"];
     NSString *endTimeStr = [Functions convertDateToString:endDate format:@"HH:mm"];
@@ -68,7 +89,7 @@
     _timePromptLbl.text = [NSString stringWithFormat:@"Starts in %@", _objBook.time_prompt];
     
     //Call course_detail api
-    courseApi = [NSString stringWithFormat:@"%@%@%@", BASE_URL, COURSE_DETAIL, scheduleObj.course_id];
+    courseApi = [NSString stringWithFormat:@"%@%@%@", strMainBaseUrl, COURSE_DETAIL, scheduleObj.course_id];
     [objWebServices callApiWithParameters:nil apiName:courseApi type:GET_REQUEST loader:NO view:self];
 }
 
@@ -82,7 +103,7 @@
     courseObj.type_id = [courseObject valueForKey:@"type_id"];
     courseObj.summary = [Functions checkNullValue:[courseObject valueForKey:@"summary"]];
     courseObj.descript = [Functions checkNullValue:[courseObject valueForKey:@"description"]];
-    courseObj.banner = [NSString stringWithFormat:@"%@media/photos/courses/%@", BASE_URL, [courseObject valueForKey:@"banner"]];
+    courseObj.banner = [NSString stringWithFormat:@"%@media/photos/courses/%@", strMainBaseUrl, [courseObject valueForKey:@"banner"]];
     
     //Fill data
     [_imageView sd_setImageWithURL:[NSURL URLWithString:courseObj.banner]];
@@ -181,49 +202,48 @@
 - (NSInteger)numberOfItemsInCarousel:(iCarousel *)carousel
 {
     //return the total number of items in the carousel
-    return [appDelegate.topicArray count];
+    return [topicArray count];
+}
+
+- (CGFloat)carouselItemWidth:(iCarousel *)carousel
+{
+    return _width-10;
 }
 
 - (UIView *)carousel:(iCarousel *)carousel viewForItemAtIndex:(NSInteger)index reusingView:(UIView *)view
 {
     UILabel *label = nil;
     
-    //create new view if no view is available for recycling
-    if (view == nil)
-    {
-        //don't do anything specific to the index within
-        //this `if (view == nil) {...}` statement because the view will be
-        //recycled and used with other index values later
-        view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 120, 180, 170)];
-        UIGraphicsBeginImageContext(view.frame.size);
-        [[UIImage imageNamed:@"page.png"] drawInRect:view.bounds];
-        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        view.backgroundColor = [UIColor colorWithPatternImage:image];
-
-        //((UIImageView *)view).image = [UIImage imageNamed:@"page.png"];
+    if (view == nil) {
+        view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, _width, _height)];
+        view.backgroundColor = UIColor.clearColor;
         view.contentMode = UIViewContentModeCenter;
-        
-        label = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, 150, 170)];
-        label.backgroundColor = [UIColor clearColor];
+        if (_selectedIndex == index)
+            label = [[UILabel alloc] initWithFrame:CGRectMake(-_width*0.1, _height*0.1, _width*1.2, _height*0.8)];
+        else
+            label = [[UILabel alloc] initWithFrame:CGRectMake(_width*0.1, _height*0.2, _width*0.8, _height*0.6)];
         label.textAlignment = NSTextAlignmentCenter;
-        label.numberOfLines = 0;
-        label.font = [label.font fontWithSize:13];
+        label.numberOfLines = 2;
+        label.font = [UIFont fontWithName:@"Roboto-Light" size:20];
         label.tag = 1;
+        
         [view addSubview:label];
-    }
-    else
-    {
-        //get a reference to the label in the recycled view
+    } else {
         label = (UILabel *)[view viewWithTag:1];
     }
     
-    //set item label
-    //remember to always set any properties of your carousel item
-    //views outside of the `if (view == nil) {...}` check otherwise
-    //you'll get weird issues with carousel item content appearing
-    //in the wrong place in the carousel
-    TopicModel *topicItem = [appDelegate.topicArray objectAtIndex:index];
+    if(_selectedIndex == index) {
+        label.backgroundColor = UIColor.whiteColor;
+        label.textColor = UIColor.blackColor;
+    } else {
+        label.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.0];
+        label.textColor = UIColor.grayColor;
+        label.font = [UIFont fontWithName:@"Roboto-Light" size:14];
+    }
+    
+    [Functions makeBorderView:label];
+    [Functions makeShadowView:label];
+    TopicModel *topicItem = [topicArray objectAtIndex:index];
     label.text = topicItem.name;
     
     return view;
@@ -231,18 +251,57 @@
 
 - (CGFloat)carousel:(iCarousel *)carousel valueForOption:(iCarouselOption)option withDefault:(CGFloat)value
 {
-    if (option == iCarouselOptionSpacing)
-    {
-        return value * 1.1;
+    if (option == iCarouselOptionSpacing) {
+        return value * 1.3;
+    } else if (option == iCarouselOptionWrap) {
+        return NO;
     }
     return value;
+}
+
+- (BOOL)carouselShouldWrap:(iCarousel *)carousel
+{
+    return YES;
+}
+
+- (void)carouselDidEndDragging:(iCarousel *)carousel willDecelerate:(BOOL)decelerate
+{
+    if(decelerate == FALSE)
+    {
+        _selectedIndex = carousel.currentItemIndex;
+        [_pageControll setCurrentPage:_selectedIndex];
+        [_carousel reloadData];
+    }
+}
+
+- (void)carouselDidEndDecelerating:(iCarousel *)carousel
+{
+    _selectedIndex = carousel.currentItemIndex;
+    [_pageControll setCurrentPage:_selectedIndex];
+    [_carousel reloadData];
+}
+
+- (void)carouselDidEndScrollingAnimation:(iCarousel *)carousel
+{
+    if(_isClicked)
+    {
+        _isClicked = FALSE;
+        _selectedIndex = carousel.currentItemIndex;
+        [_pageControll setCurrentPage:_selectedIndex];
+        [_carousel reloadData];
+    }
+}
+
+- (void)carousel:(iCarousel *)carousel didSelectItemAtIndex:(NSInteger)index {
+    _isClicked = TRUE;
 }
 
 #pragma mark - IBAction
 - (IBAction)OnGetDirectionClicked:(id)sender {
     MapViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"mapview"];
     controller.locationId = locationId;
-    [self.navigationController pushViewController:controller animated:YES];
+    [self presentViewController:controller animated:YES completion:nil];
+    //[self.navigationController pushViewController:controller animated:YES];
 }
 
 - (IBAction)OnReadmoreClicked:(id)sender {
@@ -255,5 +314,11 @@
 
 - (IBAction)OnBackClicked:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (IBAction)OnPageChanged:(id)sender {
+    _selectedIndex = _pageControll.currentPage;
+    [_carousel scrollToItemAtIndex:_selectedIndex animated:YES];
+    [_carousel reloadData];
 }
 @end

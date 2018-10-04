@@ -19,7 +19,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     [Functions makeFloatingField:_address1Field placeholder:@"Address 1"];
     [Functions makeFloatingField:_address2Field placeholder:@"Address 2"];
     [Functions makeFloatingField:_address3Field placeholder:@"Address 3"];
@@ -196,7 +198,7 @@
     }
     
     NSMutableDictionary *parameters = [Functions getProfileParameter];
-    updateProfileApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_DETAIL];
+    updateProfileApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_DETAIL];
     [objWebServices callApiWithParameters:parameters apiName:updateProfileApi type:POST_REQUEST loader:YES view:self];
 }
 @end

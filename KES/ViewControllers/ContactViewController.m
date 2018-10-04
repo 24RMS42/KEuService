@@ -16,7 +16,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     [Functions makeFloatingField:_nameField placeholder:@"Name"];
     [Functions makeFloatingField:_addressField placeholder:@"Address"];
     [Functions makeFloatingField:_emailField placeholder:@"Email"];
@@ -106,7 +108,7 @@
         [parameters setValue:_nameField.text forKey:@"subject"];
         [parameters setValue:_messageField.text forKey:@"message"];
         
-        contactApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_US];
+        contactApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_US];
         [objWebServices callApiWithParameters:parameters apiName:contactApi type:POST_REQUEST loader:YES view:self];
     }
 }

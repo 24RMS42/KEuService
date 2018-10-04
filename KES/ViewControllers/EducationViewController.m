@@ -16,7 +16,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     [Functions makeFloatingField:_courseField placeholder:@"Course you would like to get"];
     [Functions makeFloatingField:_pointsField placeholder:@"Points required"];
     
@@ -175,7 +177,7 @@
     appDelegate.contactData.points = _pointsField.text;
     
     NSMutableDictionary *parameters = [Functions getProfileParameter];
-    updateProfileApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_DETAIL];
+    updateProfileApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_DETAIL];
     [objWebServices callApiWithParameters:parameters apiName:updateProfileApi type:POST_REQUEST loader:YES view:self];
 }
 @end

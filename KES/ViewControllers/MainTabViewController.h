@@ -12,10 +12,10 @@
 #import "BATabBarItem.h"
 #import "macro.h"
 #import "NewsModel.h"
-#import "ClassDetailViewController.h"
-#import "HelpViewController.h"
-#import "FeedbackViewController.h"
+#import "LGSideMenuController.h"
 
-@interface MainTabViewController : UIViewController<BATabBarControllerDelegate>
+@interface MainTabViewController : UIViewController<BATabBarControllerDelegate, LGSideMenuDelegate>
+
+@property (nonatomic, strong) BATabBarController* vc;
 
 @end

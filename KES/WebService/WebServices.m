@@ -53,7 +53,7 @@
                   NSLog(@"------------- PARAMETERS -------------");
                   NSLog(@"PARAMETERS: %@",parameters);
                   NSLog(@"------------- RESPONSE -------------");
-                  NSLog(@"RESPONCE: %@",dictResponse);
+                  NSLog(@"RESPONSE: %@",dictResponse);
                   /********API LOG ERROR*********/
  
                   if (isLoaderNeed == YES)
@@ -77,7 +77,7 @@
                  NSLog(@"------------- PARAMETERS -------------");
                  NSLog(@"PARAMETERS: %@",parameters);
                  NSLog(@"------------- RESPONSE -------------");
-                 NSLog(@"RESPONCE: %@",dictResponse);
+                 NSLog(@"RESPONSE: %@",dictResponse);
                  /********API LOG ERROR*********/
  
                   if (isLoaderNeed == YES)
@@ -125,7 +125,7 @@
                  NSLog(@"------------- PARAMETERS -------------");
                  NSLog(@"PARAMETERS: %@",parameters);
                  NSLog(@"------------- RESPONSE -------------");
-                 NSLog(@"RESPONCE: %@",dictResponse);
+                 NSLog(@"RESPONSE: %@",dictResponse);
                  /********API LOG ERROR*********/
                  
                  if (isLoaderNeed == YES)
@@ -149,7 +149,7 @@
                  NSLog(@"------------- PARAMETERS -------------");
                  NSLog(@"PARAMETERS: %@",parameters);
                  NSLog(@"------------- RESPONSE -------------");
-                 NSLog(@"RESPONCE: %@",dictResponse);
+                 NSLog(@"RESPONSE: %@",dictResponse);
                  /********API LOG ERROR*********/
                  
                  if (isLoaderNeed == YES)

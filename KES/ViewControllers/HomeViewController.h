@@ -13,7 +13,7 @@
 #import "iCarousel.h"
 #import "AppDelegate.h"
 
-@interface HomeViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, WebServicesDelegate, iCarouselDataSource, iCarouselDelegate>
+@interface HomeViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, WebServicesDelegate, iCarouselDataSource, iCarouselDelegate, UISearchBarDelegate>
 {
     NSMutableArray *feedArray, *newsArray, *offersArray, *bookArray;
     NSMutableArray *filterFeedArray, *filterNewsArray, *filterOffersArray, *filterBookArray;
@@ -32,6 +32,9 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *categorySeg;
 @property (weak, nonatomic) IBOutlet UILabel *noPromptLbl;
+@property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (strong, nonatomic) IBOutlet UIButton *searchBtn;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *searchBarHeight;
 
 @property (weak, nonatomic) IBOutlet iCarousel *carousel;
 @property (nonatomic, strong) UIColor *selectItemColor, *normalItemColor, *selectedTextColor, *normalTextColor;

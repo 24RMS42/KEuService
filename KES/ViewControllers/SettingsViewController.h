@@ -10,7 +10,6 @@
 #import "AppDelegate.h"
 #import "WebServices.h"
 #import "NIDropDown.h"
-#import "AppDelegate.h"
 
 @interface SettingsViewController : UIViewController<WebServicesDelegate, NIDropDownDelegate>
 {

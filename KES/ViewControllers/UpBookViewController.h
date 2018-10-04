@@ -18,7 +18,7 @@
     UIRefreshControl *refreshControl;
     int offset;
     WebServices *objWebServices;
-    NSString *bookApi, *bookFilterApi;
+    NSString *bookApi, *bookFilterApi, *bookSearchApiEnd;
 }
 @property (nonatomic, assign) bool whileSearch;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -27,6 +27,7 @@
 @property (weak, nonatomic) IBOutlet UIView *SearchView;
 @property (weak, nonatomic) IBOutlet UIButton *SearchButton;
 @property (weak, nonatomic) IBOutlet UIButton *CancelButton;
+@property (strong, nonatomic) IBOutlet UILabel *bookHelplbl;
 
 - (IBAction)OnCreateEventClicked:(id)sender;
 - (IBAction)OnSearchClicked:(id)sender;

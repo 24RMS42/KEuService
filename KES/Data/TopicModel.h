@@ -10,6 +10,7 @@
 
 @interface TopicModel : NSObject
 
+@property (strong ,nonatomic) NSString *topic_id;
 @property (strong ,nonatomic) NSString *name;
 @property (strong ,nonatomic) NSString *descript;
 

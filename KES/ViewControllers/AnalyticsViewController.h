@@ -12,8 +12,9 @@
 #import "CreolePriceSelectionView.h"
 #import "iCarousel.h"
 #import "CustomButton.h"
+#import "MKDropdownMenu.h"
 
-@interface AnalyticsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, WebServicesDelegate, iCarouselDataSource, iCarouselDelegate>
+@interface AnalyticsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, WebServicesDelegate, iCarouselDataSource, iCarouselDelegate, MKDropdownMenuDelegate, MKDropdownMenuDataSource>
 {
     NSMutableArray *categoryArray, *subjectArray, *teacherArray;
     NSMutableArray *filterCategoryArray, *filterSubjectArray, *filterTeacherArray;
@@ -22,6 +23,7 @@
     NSUserDefaults *userInfo;
     NSString *stat;
     NSMutableArray *aryPrice;
+    int lastTotalIncome, thisTotalIncome, allTotalIncome;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *titleTotalLbl;
@@ -41,6 +43,7 @@
 @property (nonatomic, readwrite) float width;
 @property (nonatomic, readwrite) float height;
 @property (nonatomic, strong) NSString *lastMonthName;
+@property (strong, nonatomic) IBOutlet MKDropdownMenu *dropDownMenu;
 
 - (IBAction)OnViewUpBookingsClicked:(id)sender;
 - (IBAction)OnStatChanged:(id)sender;

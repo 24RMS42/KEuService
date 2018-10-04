@@ -20,10 +20,16 @@
     WebServices *objWebServices;
     NSString *scheduleApi, *courseApi;
     NSString *locationId;
+    NSMutableArray *topicArray;
 }
 
 @property (nonatomic, retain) NewsModel *objBook;
+@property (nonatomic) int width, height;
+@property (nonatomic) NSInteger selectedIndex;
+@property (nonatomic) BOOL isClicked;
+@property (nonatomic) BOOL isContained;
 
+@property (weak, nonatomic) IBOutlet UIView *titleView;
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLbl;
 @property (weak, nonatomic) IBOutlet UILabel *dateLbl;
@@ -46,6 +52,7 @@
 @property (weak, nonatomic) IBOutlet UIView *carouselContainView;
 @property (weak, nonatomic) IBOutlet UILabel *carouselLabel;
 @property (weak, nonatomic) IBOutlet CustomButton *viewSummaryBtn;
+@property (weak, nonatomic) IBOutlet UIPageControl *pageControll;
 
 @property (weak, nonatomic) IBOutlet UIView *contentView;
 @property (weak, nonatomic) IBOutlet UITextView *summaryTxtView;
@@ -54,4 +61,5 @@
 - (IBAction)OnGetDirectionClicked:(id)sender;
 - (IBAction)OnReadmoreClicked:(id)sender;
 - (IBAction)OnBackClicked:(id)sender;
+- (IBAction)OnPageChanged:(id)sender;
 @end

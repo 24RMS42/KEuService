@@ -7,6 +7,8 @@
 //
 
 #import "ViewController.h"
+#import "UIViewController+LGSideMenuController.h"
+#import "MainTabViewController.h"
 
 @interface ViewController () <EAIntroDelegate> {
     UIView *rootView;
@@ -47,17 +49,22 @@
                                              selector:@selector(loggedOut:)
                                                  name:NOTIFICATION_LOGOUT
                                                object:nil];
-    
-    settingsApi = [NSString stringWithFormat:@"%@%@", BASE_URL, APP_SETTINGS];
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
+    settingsApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, APP_SETTINGS];
     [objWebServices callApiWithParameters:nil apiName:settingsApi type:GET_REQUEST loader:NO view:self];
     
-    quoteApi = [NSString stringWithFormat:@"%@%@?category=%@", BASE_URL, NEWS_LIST, @"Quotes"];
+    quoteApi = [NSString stringWithFormat:@"%@%@?category=%@", strMainBaseUrl, NEWS_LIST, @"Quotes"];
     [objWebServices callApiWithParameters:nil apiName:quoteApi type:GET_REQUEST loader:NO view:self];
     
-    userRoleApi = [NSString stringWithFormat:@"%@%@", BASE_URL, USER_ROLE];
+    userRoleApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, USER_ROLES];
     [objWebServices callApiWithParameters:nil apiName:userRoleApi type:GET_REQUEST loader:NO view:self];
     
     [TSMessage addCustomDesignFromFileWithName:@"AlternativeDesign.json"];
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+    tapGesture.numberOfTapsRequired = 2;
+    [self.imgLogoTop addGestureRecognizer:tapGesture];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -69,7 +76,38 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+- (void) handleTapGesture:(UITapGestureRecognizer *) tapGesture
+{
+    NSString *strAlert = @"";
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:BUILD_MODE]) {
+        [defaults removeObjectForKey:BUILD_MODE];
+        strAlert = @"You changed from UAT mode to Test mode. You are in TEST mode now.";
+        strMainBaseUrl = BASE_URL;
+    }
+    else
+    {
+        [defaults setObject:@"UAT MODE" forKey:BUILD_MODE];
+        strAlert = @"You changed from test mode to UAT mode. You are in UAT mode now.";
+        strMainBaseUrl = BASE_URL1;
+    }
+    [defaults synchronize];
+    
+    UIAlertController * alert = [UIAlertController
+                                 alertControllerWithTitle:@"Mode Changed"
+                                 message:strAlert
+                                 preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* yesButton = [UIAlertAction
+                                actionWithTitle:NSLocalizedString(@"OK", @"OK action")
+                                style:UIAlertActionStyleDefault
+                                handler:^(UIAlertAction * action) {
+                                    //Handle your yes please button action here
+                                }];
+    
+    [alert addAction:yesButton];
+    [self presentViewController:alert animated:YES completion:nil];
+}
 - (void)initializeView {
     _splashView.hidden = YES;
     
@@ -192,8 +230,18 @@
 }
 
 - (void)goHome:(NSNotification *)notification {
-    UIViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"mainTab"];
-    [self.navigationController pushViewController:controller animated:YES];
+    MainTabViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"mainTab"];
+    UIViewController *leftController = [self.storyboard instantiateViewControllerWithIdentifier:@"leftmenu"];
+    
+    appDelegate.sideMenuController = [[LGSideMenuController alloc] initWithRootViewController:controller leftViewController:leftController rightViewController:nil];
+    appDelegate.sideMenuController.leftViewWidth = self.view.frame.size.width - 100;
+    appDelegate.sideMenuController.leftViewPresentationStyle = LGSideMenuPresentationStyleSlideBelow;
+    appDelegate.sideMenuController.delegate = controller;
+    appDelegate.sideMenuController.leftViewStatusBarHidden = true;
+    
+    appDelegate.mainTabView = controller;
+    
+    [self.navigationController pushViewController:appDelegate.sideMenuController animated:YES];
 }
 
 - (void)loggedOut:(NSNotification *)notification {
@@ -261,7 +309,10 @@
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
                 NSDictionary *settingObj = [responseDict objectForKey:@"variables"];
-                NSString *julieImgUrl = [NSString stringWithFormat:@"%@%@", BASE_URL, [settingObj valueForKey:@"app_home_banner"]];
+                if (strMainBaseUrl.length == 0) {
+                    strMainBaseUrl = BASE_URL;
+                }
+                NSString *julieImgUrl = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, [settingObj valueForKey:@"app_home_banner"]];
                 [_julieImgView sd_setImageWithURL:[NSURL URLWithString:julieImgUrl]];
             }
         }
@@ -290,4 +341,6 @@
 
 - (void)didMoveToPage:(UIViewController *)controller index:(NSInteger)index {
 }
+
+
 @end

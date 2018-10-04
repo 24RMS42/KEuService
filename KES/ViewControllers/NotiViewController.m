@@ -16,7 +16,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
     
@@ -24,15 +26,23 @@
     
     for (PreferenceType *preferenceObj in appDelegate.contactData.preferenceArray) {
         NSInteger tag = [preferenceObj.preference_id integerValue];
-        if ([preferenceObj.notification_type isEqualToString:@"sms"]) {
-            UISwitch *enabledSwitch = (UISwitch*)[self.view viewWithTag:tag*10];
-            [enabledSwitch setOn:YES];
-        } else if ([preferenceObj.notification_type isEqualToString:@"email"]) {
-            UISwitch *enabledSwitch = (UISwitch*)[self.view viewWithTag:tag];
-            [enabledSwitch setOn:YES];
-        } else if ([preferenceObj.notification_type isEqualToString:@"phone"]) {
-            UISwitch *enabledSwitch = (UISwitch*)[self.view viewWithTag:tag*100];
-            [enabledSwitch setOn:YES];
+        NSLog(@"sss=%@", preferenceObj.notification_type);
+        if ([preferenceObj.notification_type isKindOfClass:[NSNull class]]) {
+            
+        }
+        else
+        {
+            if ([preferenceObj.notification_type isEqualToString:@"sms"]) {
+                UISwitch *enabledSwitch = (UISwitch*)[self.view viewWithTag:tag*10];
+                [enabledSwitch setOn:YES];
+            } else if ([preferenceObj.notification_type isEqualToString:@"email"]) {
+                UISwitch *enabledSwitch = (UISwitch*)[self.view viewWithTag:tag];
+                [enabledSwitch setOn:YES];
+            } else if ([preferenceObj.notification_type isEqualToString:@"phone"]) {
+                UISwitch *enabledSwitch = (UISwitch*)[self.view viewWithTag:tag*100];
+                [enabledSwitch setOn:YES];
+            }
+
         }
     }
 }
@@ -166,7 +176,7 @@
     [self updateNotificationValue];
     
     NSMutableDictionary *parameters = [Functions getProfileParameter];
-    updateProfileApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_DETAIL];
+    updateProfileApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_DETAIL];
     [objWebServices callApiWithParameters:parameters apiName:updateProfileApi type:POST_REQUEST loader:YES view:self];
 }
 

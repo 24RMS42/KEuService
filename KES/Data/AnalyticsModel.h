@@ -12,10 +12,12 @@
 
 @property (strong ,nonatomic) NSString *name;
 @property (assign ,nonatomic) NSInteger minute;
+@property (assign ,nonatomic) NSInteger income;
 @property (assign ,nonatomic) NSInteger quantity;
 @property (strong ,nonatomic) NSString *image;
 @property (assign ,nonatomic) NSInteger total_minute;
 @property (assign ,nonatomic) NSInteger total_quantity;
+@property (assign ,nonatomic) NSInteger total_income;
 
 @property (strong ,nonatomic) NSString *hour;
 @property (strong ,nonatomic) NSString *percent;

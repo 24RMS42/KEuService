@@ -27,27 +27,36 @@
         [_PasswordField setText:[userInfo objectForKey:KEY_PASSWORD]];
     }
     
+
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
+    
     NSMutableAttributedString *hogan = [[NSMutableAttributedString alloc] initWithString:@"By signing in, you agree to Kilmartin' \nPrivacy Policy and Terms of use"];
     [hogan addAttribute:NSForegroundColorAttributeName
                   value:[UIColor colorWithHex:COLOR_PRIMARY]
                   range:NSMakeRange(40, 15)];
     [hogan addAttribute:NSLinkAttributeName
-                  value:[NSString stringWithFormat:@"%@%@", BASE_URL, PRIVACY_POLICY]
+                  value:[NSString stringWithFormat:@"%@%@", strMainBaseUrl, PRIVACY_POLICY]
                   range:NSMakeRange(40, 15)];
     [hogan addAttribute:NSForegroundColorAttributeName
                   value:[UIColor colorWithHex:COLOR_PRIMARY]
                   range:NSMakeRange(58, 13)];
     [hogan addAttribute:NSLinkAttributeName
-                  value:[NSString stringWithFormat:@"%@%@", BASE_URL, TERMS_SERVICE]
+                  value:[NSString stringWithFormat:@"%@%@", strMainBaseUrl, TERMS_SERVICE]
                   range:NSMakeRange(58, 13)];
     _TOSTextView.attributedText = hogan;
     [_TOSTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13]];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     _objWebServices = [WebServices sharedInstance];
     _objWebServices.delegate = self;
 }
+
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -91,14 +100,14 @@
     NSDictionary * parameters=@{@"email":_EmailField.text,
                                 @"password":_PasswordField.text
                                 };
-    loginApi = [NSString stringWithFormat:@"%@%@", BASE_URL, LOGIN_API];
+    
+    loginApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, LOGIN_API];
     [_objWebServices callApiWithParameters:parameters apiName:loginApi type:POST_REQUEST loader:YES view:self];
 }
 
 - (void)getProfile {
-    
-    getProfileApi = [NSString stringWithFormat:@"%@%@", BASE_URL, PROFILE_API];
-    [_objWebServices callApiWithParameters:nil apiName:getProfileApi type:GET_REQUEST loader:NO view:self];
+    getProfileApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, PROFILE_API];
+    [_objWebServices callApiWithParameters:nil apiName:getProfileApi type:GET_REQUEST loader:YES view:self];
 }
 
 #pragma mark - UITextField delegate
@@ -117,6 +126,7 @@
 #pragma mark - webservice call delegate
 -(void)response:(NSDictionary *)responseDict apiName:(NSString *)apiName ifAnyError:(NSError *)error
 {
+    NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
     if ([apiName isEqualToString:loginApi])
     {
         if(responseDict != nil)
@@ -132,7 +142,6 @@
         if (responseDict != nil) {
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
-                NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
                 [userInfo setObject:[_RememberSwitch isOn] ? @"yes" : @"no" forKey:KEY_REMEMBER];
                 [userInfo setObject:_PasswordField.text forKey:KEY_PASSWORD];
                 
@@ -145,6 +154,7 @@
                     [userInfo setObject:[Functions checkNullValue:[profileObject valueForKey:@"phone"]]   forKey:KEY_PHONE];
                     [userInfo setObject:[Functions checkNullValue:[profileObject valueForKey:@"address"]] forKey:KEY_ADDRESS];
                     [userInfo setObject:[Functions checkNullValue:[profileObject valueForKey:@"eircode"]] forKey:KEY_EIRCODE];
+                    [userInfo setValue:[profileObject valueForKey:@"avatar"] forKey:KEY_AVATAR];
                     [userInfo setObject:[profileObject valueForKey:@"id"]      forKey:KEY_USERID];
                     [userInfo setObject:[Functions checkNullValue:[profileObject valueForKey:@"registered"]] forKey:KEY_REGISTERED];
                 }
@@ -152,9 +162,21 @@
                 BOOL has_login_as = [[responseDict valueForKey:@"has_login_as"] boolValue];
                 [userInfo setObject:has_login_as == YES ? @"1":@"0" forKey:KEY_SUPER_USER];
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GO_HOME object:self];
+                userRoleApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, USER_ROLE];
+                [_objWebServices callApiWithParameters:nil apiName:userRoleApi type:GET_REQUEST loader:YES view:self];
             } else
                 [Functions showAlert:@"" message:[responseDict valueForKey:@"msg"]];
+        }
+    } else if ([apiName isEqualToString:userRoleApi]) {
+        if(responseDict != nil) {
+            int success = [[responseDict valueForKey:@"success"] intValue];
+            if (success == 1) {
+                id roleObject = [responseDict valueForKey:@"role"];
+                [userInfo setValue:[roleObject valueForKey:@"role"] forKey:@"user_role"];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GO_HOME object:self];
+            } else {
+                [Functions showAlert:@"" message:[responseDict valueForKey:@"msg"]];
+            }
         }
     }
     else

@@ -16,7 +16,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
     
@@ -31,7 +33,7 @@
         pageId = @"history";
     }
     
-    contentApi = [NSString stringWithFormat:@"%@%@?id=%@", BASE_URL, PAGE_CONTENT, pageId];
+    contentApi = [NSString stringWithFormat:@"%@%@?id=%@", strMainBaseUrl, PAGE_CONTENT, pageId];
     [objWebServices callApiWithParameters:nil apiName:contentApi type:GET_REQUEST loader:NO view:self];
 }
 
@@ -63,12 +65,12 @@
         NSDictionary *pageObj = [responseObject objectForKey:@"page"];
         NSString *content = [pageObj valueForKey:@"content"];
         NSString *htmlString = [NSString stringWithFormat:@"<font face='Roboto-Regular'>%@", content];
-        [_webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:BASE_URL]];
+        [_webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:strMainBaseUrl]];
     
         NSArray *banner_slides = [pageObj valueForKey:@"banner_slides"];
         NSDictionary *slideObj = [banner_slides objectAtIndex:0];
         NSString *banner_image = [slideObj valueForKey:@"image"];
-        [_bannerImgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@media/photos/banners/%@", BASE_URL, banner_image]]];
+        [_bannerImgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@media/photos/banners/%@", strMainBaseUrl, banner_image]]];
     }
     @catch (NSException *exception) {
     }

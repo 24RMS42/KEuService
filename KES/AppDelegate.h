@@ -10,6 +10,8 @@
 #import "ContactData.h"
 #import "UIColor+ColorWithHex.h"
 #import "macro.h"
+#import "LGSideMenuController/LGSideMenuController.h"
+#import "MainTabViewController.h"
 @import HockeySDK;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
@@ -29,12 +31,16 @@
 @property (strong, nonatomic) NSMutableArray *calendarEventArray;
 @property (strong, nonatomic) ContactData *contactData;
 @property (strong, nonatomic) NSMutableArray *userRoleArray;
+@property (strong, nonatomic) NSMutableArray *studentArray;
 
 @property (strong, nonatomic) NSMutableArray *UserArray;
 @property (strong, nonatomic) NSMutableArray *UserEmailArray;
 @property (nonatomic, strong) NSString *logAsUser;
 @property (nonatomic, strong) NSString *logOriginUser;
 @property (nonatomic, assign) BOOL isLogAs;
+
+@property (strong, nonatomic) LGSideMenuController *sideMenuController;
+@property (strong, nonatomic) MainTabViewController *mainTabView;
 
 @end
 

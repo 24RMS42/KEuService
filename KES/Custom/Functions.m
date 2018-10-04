@@ -8,7 +8,7 @@
 
 #import "Functions.h"
 //#import "UIAlertController+Window.h"
-
+NSString *strMainBaseUrl = @"";
 @implementation Functions
 
 + (Functions *)sharedInstance {
@@ -103,12 +103,12 @@
     textfield.clearButtonMode = UITextFieldViewModeWhileEditing;
 }
 
-+ (void)makeShadowLabel:(UILabel *)label
++ (void)makeShadowView:(UIView *)view
 {
-    label.layer.shadowOpacity = 1.0;
-    label.layer.shadowRadius = 0.0;
-    label.layer.shadowColor = [UIColor grayColor].CGColor;
-    label.layer.shadowOffset = CGSizeMake(1.0, 1.0);
+    view.layer.shadowOpacity = 0.7;
+    view.layer.shadowRadius = 2.0;
+    view.layer.shadowColor = [UIColor grayColor].CGColor;
+    view.layer.shadowOffset = CGSizeMake(1.0, 1.0);
 }
 
 + (void)makeRoundShadowView:(UIView *)view

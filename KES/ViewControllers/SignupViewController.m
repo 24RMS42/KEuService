@@ -24,27 +24,34 @@
     [Functions makeFloatingField:_ConfirmField placeholder:@"Confirm Password"];
     _PasswordField.clearButtonMode = UITextFieldViewModeNever;
     _ConfirmField.clearButtonMode = UITextFieldViewModeNever;
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     CGRect frame= _RoleSegment.frame;
     [_RoleSegment setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height + 0)];
-    if (appDelegate.userRoleArray.count != 0) {
-        [_RoleSegment setTitle:appDelegate.userRoleArray[0] forSegmentAtIndex:0];
-        [_RoleSegment setTitle:appDelegate.userRoleArray[1] forSegmentAtIndex:1];
-        [_RoleSegment setTitle:appDelegate.userRoleArray[2] forSegmentAtIndex:2];
+    for (int i = 0; i < appDelegate.userRoleArray.count; i++) {
+        if (i == 0 && appDelegate.userRoleArray.count == 1) {
+            [_RoleSegment removeSegmentAtIndex:1 animated:NO];
+        } else if (i == 2) {
+            [_RoleSegment insertSegmentWithTitle:appDelegate.userRoleArray[i] atIndex:i animated:NO];
+        }
+        [_RoleSegment setTitle:appDelegate.userRoleArray[i] forSegmentAtIndex:i];
     }
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     NSMutableAttributedString *hogan = [[NSMutableAttributedString alloc] initWithString:@"By signing up, you agree to Kilmartin' \nPrivacy Policy and Terms of use"];
     [hogan addAttribute:NSForegroundColorAttributeName
                   value:[UIColor colorWithHex:COLOR_PRIMARY]
                   range:NSMakeRange(40, 15)];
     [hogan addAttribute:NSLinkAttributeName
-                  value:[NSString stringWithFormat:@"%@%@", BASE_URL, PRIVACY_POLICY]
+                  value:[NSString stringWithFormat:@"%@%@", strMainBaseUrl, PRIVACY_POLICY]
                   range:NSMakeRange(40, 15)];
     [hogan addAttribute:NSForegroundColorAttributeName
                   value:[UIColor colorWithHex:COLOR_PRIMARY]
                   range:NSMakeRange(58, 13)];
     [hogan addAttribute:NSLinkAttributeName
-                  value:[NSString stringWithFormat:@"%@%@", BASE_URL, TERMS_SERVICE]
+                  value:[NSString stringWithFormat:@"%@%@", strMainBaseUrl, TERMS_SERVICE]
                   range:NSMakeRange(58, 13)];
     _TOSTextView.attributedText = hogan;
     [_TOSTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13]];
@@ -114,7 +121,10 @@
                                 @"mpassword":_PasswordField.text,
                                 @"role":[_RoleSegment titleForSegmentAtIndex:_RoleSegment.selectedSegmentIndex]
                                 };
-    signupApi = [NSString stringWithFormat:@"%@%@", BASE_URL, SIGNUP_API];
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
+    signupApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, SIGNUP_API];
     [_objWebServices callApiWithParameters:parameters apiName:signupApi type:POST_REQUEST loader:YES view:self];
 }
 
@@ -206,7 +216,10 @@
 }
 
 - (IBAction)OnContinueClicked:(id)sender {
-    [Functions openURl:BASE_URL];
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
+    [Functions openURl:strMainBaseUrl];
 }
 
 @end

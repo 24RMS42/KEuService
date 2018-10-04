@@ -16,7 +16,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     //Init
     appDelegate.topicArray = [[NSMutableArray alloc] init];
     appDelegate.locationArray = [[NSMutableArray alloc] init];
@@ -29,10 +31,10 @@
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
     
-    topicApi = [NSString stringWithFormat:@"%@%@", BASE_URL, COURSE_TOPICS];
-    locationApi = [NSString stringWithFormat:@"%@%@", BASE_URL, COURSE_LOCATIONS];
-    categoryApi = [NSString stringWithFormat:@"%@%@", BASE_URL, COURSE_CATEGORY];
-    subjectApi = [NSString stringWithFormat:@"%@%@", BASE_URL, COURSE_SUBJECTS];
+    topicApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, COURSE_TOPICS];
+    locationApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, COURSE_LOCATIONS];
+    categoryApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, COURSE_CATEGORY];
+    subjectApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, COURSE_SUBJECTS];
     [objWebServices callApiWithParameters:nil apiName:topicApi type:GET_REQUEST loader:NO view:self];
     [objWebServices callApiWithParameters:nil apiName:locationApi type:GET_REQUEST loader:NO view:self];
     [objWebServices callApiWithParameters:nil apiName:categoryApi type:GET_REQUEST loader:NO view:self];
@@ -91,6 +93,7 @@
         TopicModel *topicObj = [[TopicModel alloc] init];
         topicObj.name = [obj valueForKey:@"name"];
         topicObj.descript = [obj valueForKey:@"description"];
+        topicObj.topic_id = [obj valueForKey:@"id"];
         
         [appDelegate.topicArray addObject:topicObj];
     }

@@ -17,6 +17,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
+    
     [Functions makeFloatingField:_EmailField placeholder:@"Email"];
     
     if ([_info isEqualToString:@"SignUpSuccess"]) {
@@ -67,7 +71,8 @@
 - (void)actionSendEmail{
     
     NSDictionary * parameters=@{@"email":_EmailField.text};
-    forgotPwdApi = [NSString stringWithFormat:@"%@%@", BASE_URL, FORGOTPWD_API];
+    
+    forgotPwdApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, FORGOTPWD_API];
     [objWebServices callApiWithParameters:parameters apiName:forgotPwdApi type:POST_REQUEST loader:YES view:self];
 }
 

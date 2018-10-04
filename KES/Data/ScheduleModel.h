@@ -16,5 +16,6 @@
 @property (strong ,nonatomic) NSString *booking_type;
 @property (strong ,nonatomic) NSString *payment_type;
 @property (strong ,nonatomic) NSString *location_id;
+@property (strong ,nonatomic) NSMutableArray *topicArray;
 
 @end

@@ -23,6 +23,7 @@
     SignupViewController *signupController;
     WebServices *objWebServices;
     NSString *quoteApi, *settingsApi, *userRoleApi;
+    
 }
 
 @property (weak, nonatomic) IBOutlet UIView *TopView;
@@ -33,6 +34,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *julieImgView;
 @property (weak, nonatomic) IBOutlet UIImageView *citiationStartImg;
 @property (weak, nonatomic) IBOutlet UIImageView *citiationEndImg;
+@property (weak, nonatomic) IBOutlet UIImageView *imgLogoTop;
+
 
 @end
 

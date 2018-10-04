@@ -12,7 +12,8 @@
 
 @interface LoginViewController : UIViewController<WebServicesDelegate>
 {
-    NSString *loginApi, *getProfileApi;
+    NSString *loginApi, *getProfileApi, *userRoleApi;
+    
 }
 
 @property (nonatomic, assign) BOOL passwordShown;

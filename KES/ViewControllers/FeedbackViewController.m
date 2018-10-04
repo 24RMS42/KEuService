@@ -16,7 +16,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     userInfo = [NSUserDefaults standardUserDefaults];
     [self makeRoundBorderView:_messageField];
     msgPlaceHolder = @"Tell Julie...";
@@ -163,7 +165,7 @@
             [parameters setObject:_screenshot forKey:@"image"];
         }
         
-        sendFeedbackApi = [NSString stringWithFormat:@"%@%@", BASE_URL, SEND_FEEDBACK];
+        sendFeedbackApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, SEND_FEEDBACK];
         [objWebServices callApiWithParameters:parameters apiName:sendFeedbackApi type:POST_REQUEST loader:YES view:self];
     }
 }

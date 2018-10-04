@@ -8,7 +8,7 @@
 
 #import "SettingsViewController.h"
 
-#define APP_STORE_ID 912632260
+
 
 @interface SettingsViewController ()
 
@@ -18,7 +18,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     //Init
     appDelegate.countryArray = [[NSMutableArray alloc] init];
     appDelegate.countyArray = [[NSMutableArray alloc] init];
@@ -50,28 +52,28 @@
     NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     [_versionBtn setTitle:[NSString stringWithFormat:@"About My KES v%@", version] forState:UIControlStateNormal];
     
-    countryApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_COUNTRY];
+    countryApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_COUNTRY];
     [objWebServices callApiWithParameters:nil apiName:countryApi type:GET_REQUEST loader:NO view:self];
     
-    countyApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_COUNTY];
+    countyApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_COUNTY];
     [objWebServices callApiWithParameters:nil apiName:countyApi type:GET_REQUEST loader:NO view:self];
     
-    nationalityApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_NATIONAL];
+    nationalityApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_NATIONAL];
     [objWebServices callApiWithParameters:nil apiName:nationalityApi type:GET_REQUEST loader:NO view:self];
     
-    schoolApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_SCHOOK];
+    schoolApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_SCHOOK];
     [objWebServices callApiWithParameters:nil apiName:schoolApi type:GET_REQUEST loader:NO view:self];
     
-    yearApi = [NSString stringWithFormat:@"%@%@", BASE_URL, COURSE_YEAR];
+    yearApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, COURSE_YEAR];
     [objWebServices callApiWithParameters:nil apiName:yearApi type:GET_REQUEST loader:NO view:self];
     
-    academicYearApi = [NSString stringWithFormat:@"%@%@", BASE_URL, COURSE_ACADEMIC];
+    academicYearApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, COURSE_ACADEMIC];
     [objWebServices callApiWithParameters:nil apiName:academicYearApi type:GET_REQUEST loader:NO view:self];
     
-    preferenceApi = [NSString stringWithFormat:@"%@%@", BASE_URL, PREFERENCE_TYPE];
+    preferenceApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, PREFERENCE_TYPE];
     [objWebServices callApiWithParameters:nil apiName:preferenceApi type:GET_REQUEST loader:NO view:self];
     
-    calendarEventApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CALENDAR_EVENT];
+    calendarEventApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CALENDAR_EVENT];
     [objWebServices callApiWithParameters:nil apiName:calendarEventApi type:GET_REQUEST loader:NO view:self];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -108,17 +110,17 @@
 
 - (void)actionLoginAs:(NSString*)userId {
     NSDictionary *parameters=@{@"user_id":userId};
-    loginAsApi = [NSString stringWithFormat:@"%@%@", BASE_URL, USER_LOGINAS];
+    loginAsApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, USER_LOGINAS];
     [objWebServices callApiWithParameters:parameters apiName:loginAsApi type:POST_REQUEST loader:YES view:self];
 }
 
 - (void)actionLoginBack {
-    loginBackApi = [NSString stringWithFormat:@"%@%@", BASE_URL, USER_LOGINBACK];
+    loginBackApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, USER_LOGINBACK];
     [objWebServices callApiWithParameters:nil apiName:loginBackApi type:GET_REQUEST loader:YES view:self];
 }
 
 - (void)getUserList {
-    userListApi = [NSString stringWithFormat:@"%@%@", BASE_URL, USER_LIST];
+    userListApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, USER_LIST];
     [objWebServices callApiWithParameters:nil apiName:userListApi type:GET_REQUEST loader:YES view:self];
 }
 
@@ -458,45 +460,45 @@
 }
 
 - (IBAction)OnLogoutClicked:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_LOGOUT object:self];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_LOGOUT object:self];
 }
 
 - (IBAction)OnProfileClicked:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_PROFILE object:self];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_PROFILE object:self];
 }
 
 - (IBAction)OnNotificationClicked:(id)sender {
-     [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_PREFERENCES object:self];
+//     [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_PREFERENCES object:self];
 }
 
 - (IBAction)OnHelpClicked:(id)sender {
-    NSDictionary* info = @{@"info": @"Help"};
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_HELP object:self userInfo:info];
+//    NSDictionary* info = @{@"info": @"Help"};
+//    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_HELP object:self userInfo:info];
 }
 
 - (IBAction)OnAboutClicked:(id)sender {
-    NSDictionary* info = @{@"info": @"About"};
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_HELP object:self userInfo:info];
+//    NSDictionary* info = @{@"info": @"About"};
+//    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_HELP object:self userInfo:info];
 }
 
 - (IBAction)OnRateUsClicked:(id)sender {
-    [self rateUS];
+//    [self rateUS];
 }
 
 - (IBAction)OnShareClicked:(id)sender {
-    [self share];
+//    [self share];
 }
 
 - (IBAction)OnSubjectClicked:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_SUBJECTS object:self];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_SUBJECTS object:self];
 }
 
 - (IBAction)OnContactClicked:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_CONTACTUS object:self];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_CONTACTUS object:self];
 }
 
 - (IBAction)OnSendFeedbackClicked:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_FEEDBACK object:self];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_FEEDBACK object:self];
 }
 
 - (IBAction)OnShakeAppChanged:(id)sender {
@@ -505,6 +507,6 @@
 }
 
 - (IBAction)OnBetaTesterClicked:(id)sender {
-    [self openURl:KES_BOARD];
+//    [self openURl:KES_BOARD];
 }
 @end

@@ -21,7 +21,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     self.dateFormatter1 = [[NSDateFormatter alloc] init];
     self.dateFormatter1.dateFormat = @"dd/MM/yyyy";
     self.gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -51,7 +53,7 @@
 }
 
 - (void)retrieveTimeTable:(NSNotification*) notification {
-    bookApi = [NSString stringWithFormat:@"%@%@", BASE_URL, TIME_TABLE];
+    bookApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, TIME_TABLE];
     [objWebServices callApiWithParameters:nil apiName:bookApi type:GET_REQUEST loader:YES view:self];
 }
 
@@ -391,5 +393,9 @@
 
 - (IBAction)OnLogoClicked:(id)sender {
      [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_TAP_LOGO object:self];
+}
+
+- (IBAction)onBtnBack:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 @end

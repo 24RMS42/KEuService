@@ -12,15 +12,16 @@
 #define SCREEN_WIDTH    self.view.frame.size.width
 #define METERS_PER_MILE 1609.344
 #define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+#define USER_ROLE_VALUE  [[NSUserDefaults standardUserDefaults] valueForKey:@"user_role"]
+#define IS_STUDENT       [USER_ROLE_VALUE isEqualToString:@"Student"] || ([@"Parent/Guardian" rangeOfString:USER_ROLE_VALUE].location != NSNotFound)
 
 #define POST_REQUEST    @"POST"
 #define GET_REQUEST     @"GET"
 #define MAIN_DATE_FORMAT @"yyyy-MM-dd HH:mm:ss"
 #define MAXFIELDLENGTH 30
 
-#define BUILD_MODE      @"UAT"
-//#define BASE_URL        @"http://kilmartin.test.ibplatform.ie/"
-#define BASE_URL        @"http://kilmartin.uat.ibplatform.ie/"
+#define BASE_URL        @"http://kilmartin.test.ibplatform.ie/"
+#define BASE_URL1        @"http://kilmartin.uat.ibplatform.ie/"
 #define LOGIN_API       @"api/user/login"
 #define SIGNUP_API      @"api/user/register"
 #define FORGOTPWD_API   @"api/user/forgotpw"
@@ -52,9 +53,15 @@
 #define PAGE_CONTENT    @"api/pages/details"
 #define APP_SETTINGS    @"api/settings/variables"
 #define CALENDAR_EVENT  @"api/calendar/events"
-#define USER_ROLE       @"api/user/roles"
+#define USER_ROLES      @"api/user/roles"
+#define USER_ROLE       @"api/user/role"
+#define TRAINER_ANALYTICS @"api/contacts3/trainer_analytics"
+#define RC_TIMESLOTS      @"api/rollcall/timeslots"
+#define RC_STUDENTS       @"api/rollcall/students"
+#define RC_STUDENT_UPDATE @"api/rollcall/student_update"
+#define RC_DATES          @"api/rollcall/dates"
 
-#define CREATE_BOOK_URL @"http://kilmartin.uat.ibplatform.ie/available-results.html"
+#define CREATE_BOOK_URL @"available-results.html"
 #define HELP_URL        @"http://www.kes.ie/help.html"
 #define ABOUT_URL       @"http://www.kes.ie/history"
 #define KES_BOARD       @"https://kesboard.herokuapp.com/"
@@ -75,9 +82,11 @@
 #define KEY_PHONE       @"phone"
 #define KEY_ADDRESS     @"address"
 #define KEY_EIRCODE     @"eircode"
+#define KEY_AVATAR      @"avatar"
 #define KEY_SUPER_USER  @"super_user"
 #define KEY_REGISTERED  @"registered"
 #define KEY_SHAKE_APP   @"ShakeToSendAppFeedback"
+#define BUILD_MODE      @"build_mode"
 
 #define NOTIFICATION_LOGIN     @"LoginNotification"
 #define NOTIFICATION_SIGNUP    @"SignupNotification"
@@ -95,10 +104,12 @@
 #define NOTI_GO_BOOK           @"GoBookNotification"
 #define NOTI_RETRIEVE_FEED       @"RetrieveFeed"
 #define NOTI_RETRIEVE_TIMETABLE  @"RetrieveTimeTable"
+#define NOTI_GO_TIMETABLE        @"GoTimeTable"
 #define NOTI_RETRIEVE_ANALYTICS  @"RetrieveAnalytics"
 #define NOTI_SETTING_USERINFO    @"DisplaySettingUserInfo"
 #define NOTIFICATION_SEARCH_BOOK @"SearchBookNotification"
 #define NOTI_CLASS_DETAIL        @"ClassDetail"
+#define NOTI_BOOK_DETAIL         @"BookingDetail"
 #define NOTI_PROFILE             @"MyProfile"
 #define NOTI_NOTIFICATIONS       @"MyNotifications"
 #define NOTI_HELP                @"HelpPage"
@@ -106,6 +117,12 @@
 #define NOTI_PREFERENCES         @"PreferencePage"
 #define NOTI_CONTACTUS           @"ContactUspage"
 #define NOTI_SUBJECTS            @"MySubject"
+#define NOTI_BETATESTER          @"BetaTester"
+#define NOTI_SHAREWITHFRIENDS    @"ShareWithFriends"
+#define NOTI_RATEUS              @"RateUs"
+#define NOTI_SESSIONED_BOOK      @"SessionChangedBook"
+#define NOTI_SESSIONED_ATTENDANCE @"SessionChangedAttendance"
+#define APP_STORE_ID 912632260
 
 #define kJVFieldFontSize 16.0f
 #define kJVFieldFloatingLabelFontSize 11.0f

@@ -20,7 +20,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     [Functions makeFloatingField:_firstNameField placeholder:@"First Name"];
     [Functions makeFloatingField:_lastNameField placeholder:@"Last Name"];
     
@@ -195,7 +197,7 @@
     NSDictionary * parameters=@{@"email":email,
                                 @"password":_passwordNewField.text
                                 };
-    loginApi = [NSString stringWithFormat:@"%@%@", BASE_URL, LOGIN_API];
+    loginApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, LOGIN_API];
     [objWebServices callApiWithParameters:parameters apiName:loginApi type:POST_REQUEST loader:YES view:self];
 }
 
@@ -393,14 +395,14 @@
         if ([self validatePassword]) {
             NSDictionary * parameters = @{@"password":_passwordNewField.text,
                                           @"mpassword":_confirmPwdField.text};
-            updatePasswordApi = [NSString stringWithFormat:@"%@%@", BASE_URL, PROFILE_API];
+            updatePasswordApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, PROFILE_API];
             [objWebServices callApiWithParameters:parameters apiName:updatePasswordApi type:POST_REQUEST loader:YES view:self];
         }
         return;
     }
     
     NSMutableDictionary *parameters = [Functions getProfileParameter];
-    updateProfileApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_DETAIL];
+    updateProfileApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_DETAIL];
     [objWebServices callApiWithParameters:parameters apiName:updateProfileApi type:POST_REQUEST loader:YES view:self];
 }
 

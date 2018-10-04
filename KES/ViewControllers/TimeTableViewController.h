@@ -36,4 +36,6 @@
 - (IBAction)OnPrevClicked:(id)sender;
 - (IBAction)OnNextClicked:(id)sender;
 - (IBAction)OnLogoClicked:(id)sender;
+- (IBAction)onBtnBack:(id)sender;
+
 @end

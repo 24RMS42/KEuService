@@ -10,7 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "JVFloatLabeledTextField.h"
 #import "macro.h"
-#import <AFNetworking.h>
+#import "AFNetworking.h"
 #import <SVProgressHUD/SVProgressHUD.h>
 #import "UIColor+ColorWithHex.h"
 #import "TSMessage.h"
@@ -32,7 +32,10 @@
 #import "ContactNotification.h"
 #import "PreferenceType.h"
 #import "CalendarEvent.h"
+#import "StudentModel.h"
 #import "AppDelegate.h"
+
+extern NSString *strMainBaseUrl;
 
 @interface Functions : NSObject
 
@@ -44,7 +47,7 @@
 + (void)showAlert: (NSString*)title message:(NSString*)message vc:(UIViewController*)vc;
 + (void)showSuccessAlert: (NSString*)title message:(NSString*)message image:(NSString*)image;
 + (void)makeFloatingField: (JVFloatLabeledTextField*)textfield placeholder:(NSString*)placeholder;
-+ (void)makeShadowLabel: (UILabel*)label;
++ (void)makeShadowView: (UIView*)view;
 + (void)makeRoundShadowView: (UIView*)view;
 + (void)makeRoundImageView:(UIImageView*)imageView;
 + (void)makeBorderView:(UIView*)view;

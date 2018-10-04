@@ -162,7 +162,7 @@
 #pragma mark - IBAction
 - (IBAction)OnBackClicked:(id)sender {
     [self updateSubjectValue];
-    
+
     NSMutableDictionary *parameter = [Functions getProfileParameter];
     updateProfileApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_DETAIL];
     [objWebServices callApiWithParameters:parameter apiName:updateProfileApi type:POST_REQUEST loader:YES view:self];

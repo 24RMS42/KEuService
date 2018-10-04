@@ -36,6 +36,7 @@
     _calendarEventArray = [[NSMutableArray alloc]init];
     _contactData = [[ContactData alloc] init];
     _userRoleArray = [[NSMutableArray alloc]init];
+    _studentArray = [[NSMutableArray alloc] init];
     
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"ed1703e474d74b21ac6efab2de10e685"];
     [[BITHockeyManager sharedHockeyManager] startManager];

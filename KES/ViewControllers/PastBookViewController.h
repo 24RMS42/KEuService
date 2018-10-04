@@ -11,6 +11,7 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "AppDelegate.h"
 #import "NSDate+TimeAgo.h"
+#import "CircleProgressBar.h"
 
 @interface PastBookViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, WebServicesDelegate>
 {
@@ -18,7 +19,7 @@
     UIRefreshControl *refreshControl;
     int offset;
     WebServices *objWebServices;
-    NSString *bookApi, *bookFilterApi;
+    NSString *bookApi, *bookFilterApi, *bookSearchApiEnd;
 }
 @property (nonatomic, assign) bool whileSearch;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
