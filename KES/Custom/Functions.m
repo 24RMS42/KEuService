@@ -53,16 +53,31 @@ NSString *strMainBaseUrl = @"";
     return str;
 }
 
++ (void) setBoundsWithView:(UIView *) view
+{
+    view.layer.borderWidth = 1.0f;
+    view.layer.borderColor = [[UIColor colorWithRed:245.0f/255 green:246.0f/255 blue:248.0f/255 alpha:1.0f] CGColor];
+    view.layer.cornerRadius = 5.0f;
+    view.layer.masksToBounds = YES;
+}
+
++ (void) setBoundsWithGreyColor:(UIView *) view
+{
+    view.layer.borderWidth = 1.0f;
+    view.layer.borderColor = [[UIColor colorWithRed:214.0f/255 green:214.0f/255 blue:214.0f/255 alpha:1.0f] CGColor];
+}
+
 + (void)showAlert: (NSString*)title message:(NSString*)message
 {
     /*UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
     [alert show];*/
     [TSMessage showNotificationInViewController:[UIApplication sharedApplication].keyWindow.rootViewController
-                                          title:title
-                                       subtitle:message
-                                           type:TSMessageNotificationTypeError
-                                       duration:3.0];
+                                      title:title
+                                   subtitle:message
+                                       type:TSMessageNotificationTypeError
+                                   duration:3.0];
+    
 }
 
 + (void)showAlert: (NSString*)title message:(NSString*)message vc:(UIViewController*)vc
@@ -110,7 +125,31 @@ NSString *strMainBaseUrl = @"";
     view.layer.shadowColor = [UIColor grayColor].CGColor;
     view.layer.shadowOffset = CGSizeMake(1.0, 1.0);
 }
-
++ (void) showStatusBarBlackView
+{
+    if ([Functions isiPhoneX]) {
+        UIView *statusBar = [[[UIApplication sharedApplication] valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"];
+        UIView *blackView = [statusBar viewWithTag:1];
+        if (blackView) {
+            [UIView animateWithDuration:0.3f animations:^{
+                blackView.alpha = 0.7f;
+            }];
+        }
+        
+    }
+}
++ (void) hideStatusBarBlackView
+{
+    if ([Functions isiPhoneX]) {
+        UIView *statusBar = [[[UIApplication sharedApplication] valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"];
+        UIView *blackView = [statusBar viewWithTag:1];
+        if (blackView) {
+            [UIView animateWithDuration:0.3f animations:^{
+                blackView.alpha = 0.0f;
+            }];
+        }
+    }
+}
 + (void)makeRoundShadowView:(UIView *)view
 {
     view.layer.cornerRadius = 0.5f;
@@ -124,7 +163,10 @@ NSString *strMainBaseUrl = @"";
     view.layer.shadowColor = [UIColor grayColor].CGColor;
     view.layer.shadowOffset = CGSizeMake(1.0, 1.0);
 }
-
++ (UIColor *) blueColor
+{
+    return [UIColor colorWithRed:0.0f/255 green:198.0f/255 blue:238.0f/255 alpha:1.0f];
+}
 + (void)makeRoundImageView:(UIImageView *)imageView {
     imageView.layer.cornerRadius = imageView.frame.size.width/2;
     imageView.layer.masksToBounds = YES;
@@ -151,6 +193,7 @@ NSString *strMainBaseUrl = @"";
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+    formatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
     [formatter setDateFormat:format];
     NSDate *dateTime = [formatter dateFromString:strDate];
     return dateTime;
@@ -158,6 +201,7 @@ NSString *strMainBaseUrl = @"";
 
 + (NSString*)convertDateToString:(NSDate*)date format:(NSString*)format {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
     [formatter setDateFormat:format];
     NSString  *dateStr = [formatter stringFromDate:date];
     return dateStr;
@@ -257,11 +301,17 @@ NSString *strMainBaseUrl = @"";
         [parameters setValue:subjectModel.level_id forKey:[NSString stringWithFormat:@"subject_preferences[%d][level_id]", i]];
     }
     
+    int temp = 0;
     for (int i = 0; i < appDelegate.contactData.preferenceArray.count; i++) {
+        temp = i;
         PreferenceType *pType = [appDelegate.contactData.preferenceArray objectAtIndex:i];
         [parameters setValue:pType.preference_id forKey:[NSString stringWithFormat:@"preferences[%d][preference_id]", i]];
         [parameters setValue:@(1) forKey:[NSString stringWithFormat:@"preferences[%d][value]", i]];
         [parameters setValue:pType.notification_type forKey:[NSString stringWithFormat:@"preferences[%d][notification_type]", i]];
+    }
+    
+    if (appDelegate.contactData.medicalId.length > 0) {
+        [parameters setValue:appDelegate.contactData.medicalId forKey:[NSString stringWithFormat:@"preferences[%d]", (temp+1)]];
     }
     
     for (int i = 0; i < appDelegate.contactData.contactDetails.count; i++) {
@@ -276,15 +326,31 @@ NSString *strMainBaseUrl = @"";
 
 + (BOOL)isiPhoneX {
     BOOL iPhoneX = NO;
-    if (@available(iOS 11.0, *)) {
-        UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
-        if (mainWindow.safeAreaInsets.top > 0.0) {
+//    if (@available(iOS 11.0, *)) {
+//        UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
+//        if (mainWindow.safeAreaInsets.top > 0.0) {
+//            iPhoneX = YES;
+//        }
+//    }
+    if([[UIDevice currentDevice]userInterfaceIdiom]==UIUserInterfaceIdiomPhone)
+    {
+        if ([[UIScreen mainScreen] nativeBounds].size.height == 2436) {
             iPhoneX = YES;
         }
     }
     return iPhoneX;
 }
-
++ (BOOL) isiPhone5
+{
+    BOOL isiPhone5 = NO;
+    if([[UIDevice currentDevice]userInterfaceIdiom]==UIUserInterfaceIdiomPhone)
+    {
+        if ([[UIScreen mainScreen] nativeBounds].size.height == 1136) {
+            isiPhone5 = YES;
+        }
+    }
+    return isiPhone5;
+}
 + (BOOL)validateEmailField:(NSString*)targetStr {
     NSString *_regex = @"\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
     NSPredicate *_predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", _regex];

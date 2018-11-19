@@ -10,26 +10,31 @@
 #import "FSCalendar.h"
 #import "WebServices.h"
 #import "LSLDatePickerDialog.h"
+#import "NSDate+TimeAgo.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "SessionListViewController.h"
 
 @interface AttendanceMoreViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, WebServicesDelegate> {
-    
     NSMutableArray *totalTimeTableArray, *monthTTArray, *dayTTArray;
     NSMutableDictionary *groupTTDic;
     NSMutableArray *groupTitleArray;
+
     UITextField *planArrival, *planDeparture, *actualArrival, *actualLate, *expectDeparture, *expectReturn;
     LSLDatePickerDialog *dpDialog;
     UILabel *noPaymentLbl, *arrivedLateLbl, *leftEarlyLbl, *temporaryAbsenseLbl;
     UITextView *noPaymentText, *temporaryAbsenseText;
     WebServices *objWebServices;
     NSString *rcStudentApi, *rcStudentUpdateApi, *rcTimeSlotsApi, *rcDatesApi;
+    NSString *lastUsedTimeslotId;
+    NSString *shortBookDateLbl;
+    StudentModel *currentStudent;
 }
 @property (nonatomic, strong) NewsModel *objBook;
 @property (nonatomic, retain) StudentModel *objStudent;
 @property (nonatomic, retain) NSMutableArray *sessionList, *studentList;
 @property (nonatomic, retain) NSArray *dateList, *sessionTimeSlotList;
-@property (nonatomic, assign) int currentDateIndex, currentSessionIndex;
+@property (nonatomic, assign) NSInteger currentDateIndex, currentSessionIndex;
+
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLbl;
 @property (weak, nonatomic) IBOutlet UILabel *subTitleLbl;

@@ -29,6 +29,10 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *RoleSegment;
 @property (weak, nonatomic) IBOutlet UITextView *TOSTextView;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraint_tosTextView_height;
+
+
+
 - (IBAction)OnSignupClicked:(id)sender;
 - (IBAction)OnLoginClicked:(id)sender;
 - (IBAction)OnShowPwdClicked:(id)sender;

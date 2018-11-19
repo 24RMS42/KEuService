@@ -21,6 +21,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:BUILD_MODE]) {
+        
+        strMainBaseUrl = BASE_URL1;
+    }
+    else
+        strMainBaseUrl = BASE_URL;
+
     rootView = self.navigationController.view;
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
@@ -82,13 +91,13 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults objectForKey:BUILD_MODE]) {
         [defaults removeObjectForKey:BUILD_MODE];
-        strAlert = @"You changed from UAT mode to Test mode. You are in TEST mode now.";
+        strAlert = @"You changed from Test mode to UAT mode. You are in UAT mode now.";
         strMainBaseUrl = BASE_URL;
     }
     else
     {
         [defaults setObject:@"UAT MODE" forKey:BUILD_MODE];
-        strAlert = @"You changed from test mode to UAT mode. You are in UAT mode now.";
+        strAlert = @"You changed from UAT mode to Test mode. You are in Test mode now.";
         strMainBaseUrl = BASE_URL1;
     }
     [defaults synchronize];
@@ -237,7 +246,7 @@
     appDelegate.sideMenuController.leftViewWidth = self.view.frame.size.width - 100;
     appDelegate.sideMenuController.leftViewPresentationStyle = LGSideMenuPresentationStyleSlideBelow;
     appDelegate.sideMenuController.delegate = controller;
-    appDelegate.sideMenuController.leftViewStatusBarHidden = true;
+    appDelegate.sideMenuController.leftViewStatusBarHidden = false;
     
     appDelegate.mainTabView = controller;
     

@@ -34,8 +34,10 @@
     arrivedLateLbl = [self.view viewWithTag:31];
     leftEarlyLbl = [self.view viewWithTag:32];
     temporaryAbsenseLbl = [self.view viewWithTag:33];
+
     noPaymentText = [self.view viewWithTag:40];
     temporaryAbsenseText = [self.view viewWithTag:41];
+
     
     dpDialog = [[LSLDatePickerDialog alloc] init];
     planArrival = [self.view viewWithTag:20];
@@ -44,6 +46,7 @@
     actualLate = [self.view viewWithTag:23];//actualDeparture
     expectDeparture = [self.view viewWithTag:24];
     expectReturn = [self.view viewWithTag:25];
+
     planArrival.delegate = self;
     planDeparture.delegate = self;
     actualArrival.delegate = self;
@@ -71,8 +74,6 @@
     [self.view layoutIfNeeded];
     
     currentFeature = 0;
-    _currentDateIndex = 0;
-    _currentSessionIndex = 0;
     
     [_btnPerDay setImage:[UIImage imageNamed:@"white_unchecked.png"] forState:UIControlStateNormal];
     [_btnPerDay setImage:[UIImage imageNamed:@"white_checked.png"] forState:UIControlStateSelected];
@@ -88,6 +89,7 @@
     [Functions makeShadowView:_arrivedLateView];
     [Functions makeShadowView:_leftEarlyView];
     [Functions makeShadowView:_temporaryAbsenceView];
+
     [Functions makeRoundImageView:_studentAvatarView];
     
     _calendarTrailing.constant = 70;
@@ -97,7 +99,7 @@
     objWebServices.delegate = self;
     
     NSString *avatarUrl = [NSString stringWithFormat:@"%@media/photos/avatars/%@", strMainBaseUrl, _objStudent.avatar];
-    [_studentAvatarView sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:[UIImage imageNamed:@"teacher"]];
+    [_studentAvatarView sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:[UIImage imageNamed:@"temporary"]];
     _studentNameLbl.text = [NSString stringWithFormat:@"%@ %@", _objStudent.first_name, _objStudent.last_name];
     _titleLbl.text = _objBook.course;
     
@@ -111,6 +113,8 @@
     
     NSString *timeNowStr = [Functions convertDateToString:[NSDate new] format:@"h:mm a"];
     actualArrival.text = actualLate.text = expectDeparture.text = expectReturn.text = timeNowStr;
+    
+    lastUsedTimeslotId = _objBook.timeslot_id;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(sessionChanged:)
@@ -132,6 +136,7 @@
 - (void)updateDateLabel {
     NSDate *dat = [Functions convertStringToDate:_dateList[_currentDateIndex] format:@"yyyy-MM-dd"];
     _bookDateLbl.text = [Functions convertDateToString:dat format:@"E d LLL yyyy"];
+    shortBookDateLbl = [Functions convertDateToString:dat format:@"d LLL yyyy"];
 }
 
 - (void)getSessionList:(NSString *)date loader:(BOOL)loader {
@@ -140,6 +145,7 @@
 }
 
 - (void)getStudents:(NSString *)timeslotId loader:(BOOL)loader {
+    lastUsedTimeslotId = timeslotId;
     rcStudentApi = [NSString stringWithFormat:@"%@%@?timeslot_id=%@", strMainBaseUrl, RC_STUDENTS, timeslotId];
     [objWebServices callApiWithParameters:nil apiName:rcStudentApi type:GET_REQUEST loader:loader view:self];
 }
@@ -164,9 +170,17 @@
             studentModel.payment_type = [obj valueForKey:@"payment_type"];
             studentModel.fee_amount = [obj valueForKey:@"fee_amount"];
             studentModel.avatar = [Functions checkNullValue:[obj valueForKey:@"avatar"]];
+//            NSArray *taArray = [obj valueForKey:@"temporary_absences"];
+//            if (![taArray isKindOfClass:[NSNull class]] && taArray.count > 0) {
+//                studentModel.temporary_absences = [taArray[taArray.count - 1] valueForKey:@"left"];
+//            } else {
+//                studentModel.temporary_absences = @"2018-09-27 11:15:00";
+//            }
             
             if ([studentModel.timeslot_status isEqualToString:@""]) {
                 studentModel.timeslot_status = @"Pending";
+            } else {
+                studentModel.temporary_absences = [obj valueForKey:@"status_updated"];
             }
             
             [_studentList addObject:studentModel];
@@ -182,7 +196,8 @@
     _sessionList = [[NSMutableArray alloc] init];
     _sessionTimeSlotList = [NSArray new];
     _sessionTimeSlotList = [responseObject valueForKey:@"timeslots"];
-    for (NSDictionary *obj in _sessionTimeSlotList) {
+    for (int i = 0; i < _sessionTimeSlotList.count; i++) {
+        NSDictionary *obj = [_sessionTimeSlotList objectAtIndex:i];
         NSString *startDateStr = [obj valueForKey:@"datetime_start"];
         NSString *endDateStr = [obj valueForKey:@"datetime_end"];
         NSDate *startDate = [Functions convertStringToDate:startDateStr format:MAIN_DATE_FORMAT];
@@ -190,11 +205,16 @@
         NSString *startTime = [Functions convertDateToString:startDate format:@"HH:mm"];
         NSString *endTime = [Functions convertDateToString:endDate format:@"HH:mm"];
         [_sessionList addObject:[NSString stringWithFormat:@"%@ - %@", startTime, endTime]];
+        
+        NSString *slotId = [obj valueForKey:@"id"];
+        if ([_objBook.timeslot_id isEqualToString:slotId]) {
+            _currentSessionIndex = i;
+        }
     }
     
     if (_sessionList.count > 0) {
-        _currentSessionLabel.text = [NSString stringWithFormat:@"@%@", [_sessionList objectAtIndex:0]];
-        id timeSlotObj = _sessionTimeSlotList[0];
+        _currentSessionLabel.text = [NSString stringWithFormat:@"@%@", [_sessionList objectAtIndex:_currentSessionIndex]];
+        id timeSlotObj = _sessionTimeSlotList[_currentSessionIndex];
         [self getStudents:[timeSlotObj valueForKey:@"id"] loader:YES];
     }
 }
@@ -202,6 +222,7 @@
 - (void)clearFields {
     actualArrival.text = actualLate.text = expectDeparture.text = expectReturn.text = @"";
     noPaymentText.text = temporaryAbsenseText.text = @"";
+    [self.view endEditing:YES];
 }
 
 - (NSString *)getTimeValue:(NSString *)dateStr {
@@ -228,7 +249,7 @@
             note = noPaymentText.text;
             parameters = @{@"booking_id":_objStudent.booking_id,
                            @"booking_item_id":_objStudent.booking_item_id,
-                           @"status":@"",
+                           @"status":@"Present",
                            @"note":note
                            };
             break;
@@ -255,8 +276,8 @@
             parameters = @{@"booking_id":_objStudent.booking_id,
                            @"booking_item_id":_objStudent.booking_item_id,
                            @"status":@"Temporary Absence",
-                           @"absence_left":expectDepartureStr,
-                           @"absence_returned":expectReturnStr,
+                           @"temporary_absences[0][left]":expectDepartureStr,
+                           @"temporary_absences[0][returned]":expectReturnStr,
                            @"note":note
                            };
             break;
@@ -269,12 +290,23 @@
     }
     rcStudentUpdateApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, RC_STUDENT_UPDATE];
     [objWebServices callApiWithParameters:parameters apiName:rcStudentUpdateApi type:POST_REQUEST loader:YES view:self];
+
+}
+
+- (void)getCurrentStudent {
+    for (StudentModel *studentModel in _studentList) {
+        if ([studentModel.booking_id isEqualToString:_objStudent.booking_id]) {
+            currentStudent = [StudentModel new];
+            currentStudent = studentModel;
+        }
+    }
 }
 
 #pragma mark - UITextFieldDelegate
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
     [self openDatePicker:textField];
     return NO;
+
 }
 
 - (void)openDatePicker:(UITextField *)textField {
@@ -283,7 +315,9 @@
                    callback:^(NSDate * _Nullable date){
                        if(date)
                        {
-                           textField.text = [Functions convertDateToString:date format:@"h:m a"];
+                           NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                           [formatter setDateFormat:@"h:mm a"];
+                           textField.text = [formatter stringFromDate:date];
                            [textField resignFirstResponder];
                        }
                    }
@@ -296,6 +330,8 @@
         if(responseDict != nil) {
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
+                [self getStudents:lastUsedTimeslotId loader:YES];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_ATTENDANCE_UPDATE object:self];//Send notification, so student list will be updated on BookDetail screen
                 [TSMessage showNotificationInViewController:self
                                                       title:@""
                                                    subtitle:@"Successfully saved!"
@@ -321,6 +357,7 @@
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
                 [self parseAttendanceStudent:responseDict];
+                [self getCurrentStudent];
                 [self.tableView reloadData];
             } else {
                 [Functions checkError:responseDict];
@@ -333,10 +370,12 @@
 - (IBAction)sessionClicked:(id)sender {
     SessionListViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"sessionList"];
     controller.from = @"attendanceMore";
-    controller.sessionDate = _bookDateLbl.text;
+    controller.sessionDate = shortBookDateLbl;
     controller.sessionArray = _sessionList;
+    controller.sessionTimeSlotList = _sessionTimeSlotList;
     controller.sessionIndex = _currentSessionIndex;
     [self presentViewController:controller animated:YES completion:nil];
+
 }
 
 - (IBAction)actionSwitch:(UIButton*)sender {
@@ -346,6 +385,7 @@
             _btnPerSession.selected = false;
             _calendarTrailing.constant = 0;
             _bookDateLbl.textAlignment = NSTextAlignmentCenter;
+
             _sessionClickView.alpha = 0;
             break;
             
@@ -354,6 +394,7 @@
             _btnPerSession.selected = true;
             _calendarTrailing.constant = 70;
             _bookDateLbl.textAlignment = NSTextAlignmentLeft;
+
             _sessionClickView.alpha = 1;
             break;
             
@@ -450,12 +491,12 @@
         _oneFeatureTop.constant = 232;
         _threeDetailView.alpha = 1;
         _threeDetailTop.constant = -70;
-        _actualLabel.text = @"Actual departue";
+        _actualLabel.text = @"Actual departure";
     }
     if (currentFeature == 1 || currentFeature == 2) {
         _threeDetailTop.constant = -70;
         _oneFeatureTop.constant = 232;
-        _actualLabel.text = @"Actual departue";
+        _actualLabel.text = @"Actual departure";
     }
     if (currentFeature == 3) {
         _threeDetailTop.constant = -70;
@@ -543,6 +584,7 @@
 }
 
 - (IBAction)OnPrevClicked:(id)sender {
+
     if (_currentDateIndex > 0) {
         _currentDateIndex--;
         [self updateDateLabel];
@@ -556,6 +598,7 @@
         [self updateDateLabel];
         [self getSessionList:_dateList[_currentDateIndex] loader:YES];
     }
+
 }
 
 - (IBAction)cancelTapped:(id)sender {
@@ -571,11 +614,13 @@
     currentFeature = 0;
     [self setFeatureColors];
     [self clearFields];
+
     [self.view layoutIfNeeded];
 }
 
 - (IBAction)saveTapped:(id)sender {
     [self saveFeatures];
+
     _btnBack.hidden = false;
     _btnSave.hidden = true;
     _btnCancel.hidden = true;
@@ -588,6 +633,7 @@
     currentFeature = 0;
     [self setFeatureColors];
     [self clearFields];
+
     [self.view layoutIfNeeded];
 }
 
@@ -598,8 +644,9 @@
     if ([_studentList count] == 0) {
         return 0;
     } else {
-        return [_studentList count];
+        return 1;
     }
+
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -612,26 +659,21 @@
     UILabel *lblDetail = [cell viewWithTag:22];
     UILabel *lblTime = [cell viewWithTag:23];
     
+    [self getCurrentStudent];
     StudentModel *studentModel = [StudentModel new];
-    studentModel = [_studentList objectAtIndex:indexPath.row];
-    NSString *avatarUrl = [NSString stringWithFormat:@"%@media/photos/avatars/%@", strMainBaseUrl, studentModel.avatar];
-    [avatarView sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:[UIImage imageNamed:@"teacher"]];
-    lblName.text = [NSString stringWithFormat:@"%@ %@", studentModel.first_name, studentModel.last_name];
-    lblDetail.text = @"";
-    lblTime.text = [[NSString alloc]initWithFormat:@"%ld minutes ago", indexPath.row + 10 + indexPath.row];
+    studentModel = currentStudent;
+    //if ([studentModel.first_name isEqualToString:_objStudent.first_name] && [studentModel.last_name isEqualToString:_objStudent.last_name]) {
+        NSString *avatarUrl = [NSString stringWithFormat:@"%@media/photos/avatars/%@", strMainBaseUrl, studentModel.avatar];
+        [avatarView sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:[UIImage imageNamed:@"temporary"]];
+        lblName.text = [NSString stringWithFormat:@"%@ %@", studentModel.first_name, studentModel.last_name];
+        lblDetail.text = [NSString stringWithFormat:@"Checked in to %@", _objBook.course];
+        
+        NSDate *taDate = [Functions convertStringToDate:studentModel.temporary_absences format:MAIN_DATE_FORMAT];
+        lblTime.text = [taDate dateTimeAgo];
+    //}
     
     return cell;
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 - (IBAction)swipeDown:(id)sender {
     _switchHeight.constant = 50;

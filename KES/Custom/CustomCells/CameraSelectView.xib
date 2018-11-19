@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="CameraSelectView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view alpha="0.69999999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xpr-q4-El4">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yeo-zS-lma">
+                    <rect key="frame" x="10" y="285.5" width="355" height="116"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pjw-oB-fCX">
+                            <rect key="frame" x="0.0" y="58" width="355" height="1"/>
+                            <color key="backgroundColor" red="0.96078431372549022" green="0.96470588235294119" blue="0.97254901960784312" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="1" id="YSw-Xc-A39"/>
+                            </constraints>
+                        </view>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="InG-JD-pFI">
+                            <rect key="frame" x="8" y="8" width="339" height="42"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="42" id="PDh-6D-6Y1"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="20"/>
+                            <state key="normal" title="Take a photo">
+                                <color key="titleColor" red="0.19215686274509802" green="0.59607843137254901" blue="0.89803921568627454" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="onBtnTakePhoto:" destination="iN0-l3-epB" eventType="touchUpInside" id="llE-OF-wKl"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vvp-Lc-40U">
+                            <rect key="frame" x="8" y="66" width="339" height="42"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="42" id="9Um-y6-Pe8"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="20"/>
+                            <state key="normal" title="Open camera roll">
+                                <color key="titleColor" red="0.19215686274509802" green="0.59607843137254901" blue="0.89803921568627454" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="onBtnOpenCameraRoll:" destination="iN0-l3-epB" eventType="touchUpInside" id="nPN-Bj-2AV"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="vvp-Lc-40U" firstAttribute="leading" secondItem="Yeo-zS-lma" secondAttribute="leading" constant="8" id="0Cq-Dw-ucy"/>
+                        <constraint firstItem="InG-JD-pFI" firstAttribute="top" secondItem="Yeo-zS-lma" secondAttribute="top" constant="8" id="HCN-T4-BnS"/>
+                        <constraint firstItem="vvp-Lc-40U" firstAttribute="top" secondItem="Pjw-oB-fCX" secondAttribute="bottom" constant="7" id="PD3-dd-tkW"/>
+                        <constraint firstItem="InG-JD-pFI" firstAttribute="leading" secondItem="Yeo-zS-lma" secondAttribute="leading" constant="8" id="QEN-pl-j5Q"/>
+                        <constraint firstItem="Pjw-oB-fCX" firstAttribute="top" secondItem="InG-JD-pFI" secondAttribute="bottom" constant="8" id="Z0f-X6-FtU"/>
+                        <constraint firstAttribute="height" constant="116" id="cAo-zo-PM1"/>
+                        <constraint firstAttribute="trailing" secondItem="vvp-Lc-40U" secondAttribute="trailing" constant="8" id="cTF-8Q-tnJ"/>
+                        <constraint firstAttribute="trailing" secondItem="InG-JD-pFI" secondAttribute="trailing" constant="8" id="eAS-NN-zfT"/>
+                        <constraint firstItem="Pjw-oB-fCX" firstAttribute="leading" secondItem="Yeo-zS-lma" secondAttribute="leading" id="jjt-uQ-lio"/>
+                        <constraint firstAttribute="bottom" secondItem="vvp-Lc-40U" secondAttribute="bottom" constant="8" id="sSw-y7-5bq"/>
+                        <constraint firstAttribute="trailing" secondItem="Pjw-oB-fCX" secondAttribute="trailing" id="tG1-L6-Vkb"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Yeo-zS-lma" secondAttribute="trailing" constant="10" id="Qel-6Y-xRd"/>
+                <constraint firstItem="Xpr-q4-El4" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="XmO-8k-sKl"/>
+                <constraint firstItem="Yeo-zS-lma" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="aZf-0J-bXu"/>
+                <constraint firstItem="Xpr-q4-El4" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="dfT-oz-ttv"/>
+                <constraint firstItem="Yeo-zS-lma" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="10" id="fgh-72-q2x"/>
+                <constraint firstItem="Xpr-q4-El4" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="mD9-WJ-CP2"/>
+                <constraint firstItem="Xpr-q4-El4" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="qXz-qS-pXX"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="viewBlackBg" destination="Xpr-q4-El4" id="Krp-KA-ATs"/>
+                <outlet property="viewContain" destination="Yeo-zS-lma" id="ixG-h4-DXI"/>
+            </connections>
+            <point key="canvasLocation" x="62.5" y="59.5"/>
+        </view>
+    </objects>
+</document>

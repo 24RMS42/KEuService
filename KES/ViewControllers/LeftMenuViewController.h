@@ -15,7 +15,7 @@
 {
     NSUserDefaults *userInfo;
     WebServices *objWebServices;
-    NSString *countryApi, *nationalityApi, *schoolApi, *yearApi, *academicYearApi, *preferenceApi, *countyApi, *calendarEventApi;
+    NSString *countryApi, *nationalityApi, *schoolApi, *yearApi, *academicYearApi, *preferenceApi, *countyApi, *calendarEventApi, *familyMemberApi, *notificationTypeApi;
 }
 @property (strong, nonatomic) IBOutlet UIView *backView;
 @property (strong, nonatomic) IBOutlet UIView *profileView;

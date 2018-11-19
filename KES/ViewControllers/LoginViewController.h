@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *RememberSwitch;
 @property (weak, nonatomic) IBOutlet UIButton *PwdToggleButton;
 @property (weak, nonatomic) IBOutlet UITextView *TOSTextView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraint_tosTextView_height;
 
 - (IBAction)OnLoginClicked:(id)sender;
 - (IBAction)OnSignupClicked:(id)sender;

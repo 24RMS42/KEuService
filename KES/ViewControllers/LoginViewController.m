@@ -16,7 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    [self setHeightOfTosTextView];
     [Functions makeFloatingField:_EmailField placeholder:@"Your email"];
     [Functions makeFloatingField:_PasswordField placeholder:@"Password"];
     _PasswordField.clearButtonMode = UITextFieldViewModeNever;
@@ -48,6 +48,9 @@
     _TOSTextView.attributedText = hogan;
     [_TOSTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13]];
     
+    UILongPressGestureRecognizer *tap1 = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongTap1:)];
+    tap1.minimumPressDuration = 0;
+    [self.PwdToggleButton addGestureRecognizer:tap1];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -55,12 +58,26 @@
     _objWebServices.delegate = self;
 }
 
-
-
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+
+- (void) setHeightOfTosTextView
+{
+    CGFloat width = self.view.bounds.size.width - 125 - 2.0 * self.TOSTextView.textContainer.lineFragmentPadding;
+    CGRect boundingRect = [self.TOSTextView.text boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX)
+                                                              options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
+                                                           attributes:@{ NSFontAttributeName:self.TOSTextView.font}
+                                                              context:nil];
+    
+    CGFloat heightByBoundingRect = CGRectGetHeight(boundingRect);
+    if (heightByBoundingRect > self.constraint_tosTextView_height.constant) {
+        self.constraint_tosTextView_height.constant = heightByBoundingRect;
+        [self.view layoutIfNeeded];
+    }
+    
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
@@ -70,6 +87,19 @@
         [self.PasswordField becomeFirstResponder];
     }
     return YES;
+}
+
+- (void)handleLongTap1:(UIGestureRecognizer*)gesture {
+    if (gesture.state == UIPressPhaseChanged) {
+        _PasswordField.secureTextEntry = NO;
+    } else if (gesture.state == UIPressPhaseEnded) {
+        _PasswordField.secureTextEntry = YES;
+    }
+    
+    NSString *tmpString;
+    tmpString = _PasswordField.text;
+    _PasswordField.text = @" ";
+    _PasswordField.text = tmpString;
 }
 
 - (BOOL)isValid {
@@ -172,7 +202,12 @@
             int success = [[responseDict valueForKey:@"success"] intValue];
             if (success == 1) {
                 id roleObject = [responseDict valueForKey:@"role"];
+                id permissionsObject = [responseDict valueForKey:@"permissions"];
+                BOOL messaging = [[permissionsObject valueForKey:@"messaging"] boolValue];
+                BOOL todos = [[permissionsObject valueForKey:@"todos"] boolValue];
                 [userInfo setValue:[roleObject valueForKey:@"role"] forKey:@"user_role"];
+                [userInfo setValue:messaging == YES ? @"1" : @"0" forKey:@"messaging"];
+                [userInfo setValue:todos     == YES ? @"1" : @"0" forKey:@"todos"];
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GO_HOME object:self];
             } else {
                 [Functions showAlert:@"" message:[responseDict valueForKey:@"msg"]];

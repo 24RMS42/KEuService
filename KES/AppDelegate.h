@@ -28,10 +28,15 @@
 @property (strong, nonatomic) NSMutableArray *yearArray;
 @property (strong, nonatomic) NSMutableArray *academicYearArray;
 @property (strong, nonatomic) NSMutableArray *preferenceTypeArray;
+@property (strong, nonatomic) NSMutableArray *notificationTypeArray;
+@property (strong, nonatomic) NSMutableArray *familyMemberArray;
+@property (strong, nonatomic) NSMutableArray *preferenceMedicalTypeArray;
 @property (strong, nonatomic) NSMutableArray *calendarEventArray;
 @property (strong, nonatomic) ContactData *contactData;
 @property (strong, nonatomic) NSMutableArray *userRoleArray;
 @property (strong, nonatomic) NSMutableArray *studentArray;
+@property (strong, nonatomic) NSMutableArray *tempSessionList;
+@property (strong, nonatomic) NSArray *tempSessionTimeSlotList;
 
 @property (strong, nonatomic) NSMutableArray *UserArray;
 @property (strong, nonatomic) NSMutableArray *UserEmailArray;

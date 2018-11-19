@@ -172,6 +172,25 @@
 //    }
 }
 
+- (void)uploadImage:(NSData *)imageData apiName:(NSString *)apiName view:(UIViewController *)view {
+    [self showAnimatedView:view];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    [manager POST:apiName parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {//POST DATA USING MULTIPART CONTENT TYPE
+        [formData appendPartWithFileData:imageData
+                                    name:@"file"
+                                fileName:@"image.png" mimeType:@"image/png"];
+    } progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"Avatar Response: %@", responseObject);
+        [self hideAnimatedView];
+        [_delegate response:responseObject apiName:apiName ifAnyError:nil];
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSLog(@"Avatar Error: %@", error);
+        [self hideAnimatedView];
+        [Functions parseError:error];
+    }];
+}
+
 - (void)showAnimatedView:(UIViewController *)vc {
     UIWindow* mainWindow = [[UIApplication sharedApplication] keyWindow];
     

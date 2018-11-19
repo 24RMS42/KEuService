@@ -145,11 +145,26 @@
                                 forState:UIControlStateNormal];
     
     _titleLbl.text = _objBook.course;
+    lastUsedTimeslotId = _objBook.timeslot_id;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(sessionChanged:)
+                                             selector:@selector(notificationReceived:)
                                                  name:NOTI_SESSIONED_BOOK
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(notificationReceived:)
+                                                 name:NOTI_ATTENDANCE_UPDATE
+                                               object:nil];
+    
+    [Functions setBoundsWithGreyColor:self.tfRemaining];
+    [Functions setBoundsWithGreyColor:self.tfPaid];
+    self.tfPaid.delegate = self;
+    self.tfRemaining.delegate = self;
+}
+
+- (void) showPresentAndPaid
+{
+    self.viewPresentAndPaid.alpha = 1.0f;
 }
 
 - (void)makeAttributedStrings {
@@ -178,9 +193,12 @@
 
 - (IBAction)sessionClicked:(id)sender {
     SessionListViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"sessionList"];
+
     controller.from = @"bookDetail";
-    controller.sessionDate = _bookDateLbl.text;
+
+    controller.sessionDate = shortBookDateLbl;
     controller.sessionArray = sessionList;
+    controller.sessionTimeSlotList = sessionTimeSlotList;
     controller.sessionIndex = currentSessionIndex;
     [self presentViewController:controller animated:YES completion:nil];
 }
@@ -216,15 +234,23 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)sessionChanged:(NSNotification*)notification {
+- (void)notificationReceived:(NSNotification*)notification {
+
     if ([[notification name] isEqualToString:NOTI_SESSIONED_BOOK]) {
+        //NSLog(@"tempSessionList count %lu", (unsigned long)appDelegate.tempSessionList.count);
+        sessionList = [NSMutableArray arrayWithArray:appDelegate.tempSessionList];
+        sessionTimeSlotList = [appDelegate.tempSessionTimeSlotList copy];
+        //NSLog(@"sessionList count %lu", (unsigned long)sessionList.count);
         NSDictionary* info = notification.userInfo;
         currentSessionIndex = [[info valueForKey:@"sessionId"] intValue];
         _currentSessionLabel.text = [NSString stringWithFormat:@"@%@", [sessionList objectAtIndex:currentSessionIndex]];
         
         id timeSlotObj = sessionTimeSlotList[currentSessionIndex];
+        [self parseCurrentBook:timeSlotObj];
         [self getStudents:[timeSlotObj valueForKey:@"id"] loader:YES];
         [self getAnalyticsData:[timeSlotObj valueForKey:@"id"]];
+    } else if ([[notification name] isEqualToString:NOTI_ATTENDANCE_UPDATE]) {
+        [self getStudents:lastUsedTimeslotId loader:YES]; //Need to reload student list
     }
 }
 
@@ -248,11 +274,17 @@
     [objWebServices callApiWithParameters:nil apiName:analyticsApi type:GET_REQUEST loader:NO view:self];
 }
 
+/*
+ * Get session list as per date
+ */
 - (void)getSessionList:(NSString *)date loader:(BOOL)loader {
     rcTimeSlotsApi = [NSString stringWithFormat:@"%@%@?date=%@", strMainBaseUrl, RC_TIMESLOTS, date];
     [objWebServices callApiWithParameters:nil apiName:rcTimeSlotsApi type:GET_REQUEST loader:loader view:self];
 }
 
+/*
+ * Get available date list
+ */
 - (void)getDateList {
     NSString *currentDateStr = [Functions convertDateToString:[NSDate date] format:@"yyyy-MM-dd HH:mm:ss"];
     rcDatesApi = [NSString stringWithFormat:@"%@%@?%@=%@&schedule_id=%@&booked=1", strMainBaseUrl, RC_DATES, _from, currentDateStr, _objBook.schedule_id];
@@ -261,6 +293,7 @@
 }
 
 - (void)getStudents:(NSString *)timeslotId loader:(BOOL)loader {
+    lastUsedTimeslotId = timeslotId;
     rcStudentApi = [NSString stringWithFormat:@"%@%@?timeslot_id=%@", strMainBaseUrl, RC_STUDENTS, timeslotId];
     [objWebServices callApiWithParameters:nil apiName:rcStudentApi type:GET_REQUEST loader:loader view:self];
 }
@@ -285,9 +318,17 @@
             studentModel.payment_type = [obj valueForKey:@"payment_type"];
             studentModel.fee_amount = [obj valueForKey:@"fee_amount"];
             studentModel.avatar = [Functions checkNullValue:[obj valueForKey:@"avatar"]];
+//            NSArray *taArray = [obj valueForKey:@"temporary_absences"];
+//            if (![taArray isKindOfClass:[NSNull class]] && taArray.count > 0) {
+//                studentModel.temporary_absences = [taArray[taArray.count - 1] valueForKey:@"left"];
+//            } else {
+//                studentModel.temporary_absences = @"2018-09-27 11:15:00";
+//            }
             
             if ([studentModel.timeslot_status isEqualToString:@""]) {
                 studentModel.timeslot_status = @"Pending";
+            } else {
+                studentModel.temporary_absences = [obj valueForKey:@"status_updated"];
             }
             
             [studentArray addObject:studentModel];
@@ -301,9 +342,10 @@
 - (void)parseSessionList:(id)responseObject {
     currentSessionIndex = 0;
     sessionList = [[NSMutableArray alloc] init];
-    sessionTimeSlotList = [NSArray new];
+    sessionTimeSlotList = [NSArray array];
     sessionTimeSlotList = [responseObject valueForKey:@"timeslots"];
-    for (NSDictionary *obj in sessionTimeSlotList) {
+    for (int i = 0; i < sessionTimeSlotList.count; i++) {
+        NSDictionary *obj = [sessionTimeSlotList objectAtIndex:i];
         NSString *startDateStr = [obj valueForKey:@"datetime_start"];
         NSString *endDateStr = [obj valueForKey:@"datetime_end"];
         NSDate *startDate = [Functions convertStringToDate:startDateStr format:MAIN_DATE_FORMAT];
@@ -311,26 +353,73 @@
         NSString *startTime = [Functions convertDateToString:startDate format:@"HH:mm"];
         NSString *endTime = [Functions convertDateToString:endDate format:@"HH:mm"];
         [sessionList addObject:[NSString stringWithFormat:@"%@ - %@", startTime, endTime]];
+        
+        NSString *slotId = [obj valueForKey:@"id"];
+        if ([_objBook.timeslot_id isEqualToString:slotId]) {
+            currentSessionIndex = i; //Get index of current book in session list
+        }
     }
     
+    appDelegate.tempSessionList = [[NSMutableArray alloc] init];
+    appDelegate.tempSessionTimeSlotList = [NSArray array];
+    appDelegate.tempSessionList = [NSMutableArray arrayWithArray:sessionList];
+    appDelegate.tempSessionTimeSlotList = [sessionTimeSlotList copy];
+    
     if (sessionList.count > 0) {
-        _currentSessionLabel.text = [NSString stringWithFormat:@"@%@", [sessionList objectAtIndex:0]];
-        id timeSlotObj = sessionTimeSlotList[0];
+        _currentSessionLabel.text = [NSString stringWithFormat:@"@%@", [sessionList objectAtIndex:currentSessionIndex]];
+        id timeSlotObj = sessionTimeSlotList[currentSessionIndex];
+        [self parseCurrentBook:timeSlotObj];
         [self getStudents:[timeSlotObj valueForKey:@"id"] loader:YES];
         [self getAnalyticsData:[timeSlotObj valueForKey:@"id"]];
     }
 }
 
+/*
+ * Get current book detail whenever change session, and reload detail view
+ */
+- (void)parseCurrentBook:(NSDictionary *)obj {
+    NewsModel *bookModel = [[NewsModel alloc] init];
+    bookModel.timeslot_id = [Functions checkNullValue:[obj valueForKey:@"id"]];
+    bookModel.schedule_id = [Functions checkNullValue:[obj valueForKey:@"schedule_id"]];
+    bookModel.schedule = [Functions checkNullValue:[obj valueForKey:@"schedule"]];
+    bookModel.room = [Functions checkNullValue:[obj valueForKey:@"room"]];
+    bookModel.building = [Functions checkNullValue:[obj valueForKey:@"building"]];
+    bookModel.trainer = [Functions checkNullValue:[obj valueForKey:@"trainer"]];
+    bookModel.trainer_id = [Functions checkNullValue:[obj valueForKey:@"trainer_id"]];
+    bookModel.course = [Functions checkNullValue:[obj valueForKey:@"course"]];
+    bookModel.start_date = [Functions checkNullValue:[obj valueForKey:@"datetime_start"]];
+    bookModel.end_date = [Functions checkNullValue:[obj valueForKey:@"datetime_end"]];
+    bookModel.profile_img_url = [Functions checkNullValue:[obj valueForKey:@"profile_image_url"]];
+    bookModel.color = [Functions convertToHexColor:[Functions checkNullValue:[obj valueForKey:@"color"]]];
+    bookModel.max_capacity = [Functions checkNullValue:[obj valueForKey:@"max_capacity"]];
+    bookModel.booking_count = [Functions checkNullValue:[obj valueForKey:@"booking_count"]];
+    
+    if ([bookModel.max_capacity isEqualToString:@""]) {
+        bookModel.max_capacity = @"1";
+    }
+    
+    NSDate *startDateTime = [Functions convertStringToDate:bookModel.start_date format:MAIN_DATE_FORMAT];
+    NSString *startTimeStr = [Functions convertDateToString:startDateTime format:@"ccc d LLL yyyy @ h:mm a"];
+    bookModel.format_start_date = startTimeStr;
+    bookModel.time_prompt = [startDateTime timeAgo];
+    
+    _objBook = bookModel;
+    [self loadDetailView];
+}
+
 - (void)parseDateList:(id)responseObject {
     dateList = [NSArray new];
     dateList = [responseObject valueForKey:@"dates"];
-    [self getSessionList:dateList[0] loader:YES];
+    NSArray *ary = [_objBook.start_date componentsSeparatedByString:@" "];
+    currentDateIndex = [dateList indexOfObject:ary[0]];
+    [self getSessionList:dateList[currentDateIndex] loader:YES];
     [self updateDateLabel];
 }
 
 - (void)updateDateLabel {
     NSDate *dat = [Functions convertStringToDate:dateList[currentDateIndex] format:@"yyyy-MM-dd"];
     _bookDateLbl.text = [Functions convertDateToString:dat format:@"E d LLL yyyy"];
+    shortBookDateLbl = [Functions convertDateToString:dat format:@"d LLL yyyy"];
 }
 
 - (void)groupByStatus {
@@ -347,14 +436,42 @@
     NSLog(@"-=-=-=%@", groupTTDic);
 }
 
-- (void)updateStudent:(NSString *)status studentModel:(StudentModel *)studentObj {
+- (void)updateStudent:(NSString *)status studentModel:(StudentModel *)studentObj paid:(NSString *)paid{
     updatedStudentStatus = status;
     updatedStudentName = [NSString stringWithFormat:@"%@ %@", studentObj.first_name, studentObj.last_name];
     NSDictionary *parameters = @{@"booking_id":studentObj.booking_id,
                                  @"booking_item_id":studentObj.booking_item_id,
-                                 @"status":status};
+                                 @"status":status,
+                                 @"paid":paid
+                                 };
     rcStudentUpdateApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, RC_STUDENT_UPDATE];
     [objWebServices callApiWithParameters:parameters apiName:rcStudentUpdateApi type:POST_REQUEST loader:YES view:self];
+}
+
+- (void)showAlert:(NSString *)title message:(NSString *)message {
+    [TSMessage showNotificationInViewController:self
+                                          title:title
+                                       subtitle:message
+                                          image:[UIImage imageNamed:@""]
+                                           type:TSMessageNotificationTypeSuccess
+                                       duration:4.0
+                                       callback:nil
+                                    buttonTitle:nil
+                                 buttonCallback:nil
+                                     atPosition:TSMessageNotificationPositionTop
+                           canBeDismissedByUser:YES];
+}
+
+- (void)loadDetailView {
+    if (_typeSegment.selectedSegmentIndex == 2) {
+        _detailsBackView.hidden = false;
+        _DetailsView.hidden = false;
+        ClassDetailViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"class_detail"];
+        controller.objBook = _objBook;
+        controller.isContained = true;
+        [self displayContentController:controller];
+        [_DetailsView setContentOffset:CGPointMake(0, 64) animated:NO];
+    }
 }
 
 #pragma mark - webservice call delegate
@@ -390,6 +507,7 @@
                 [studentArray addObjectsFromArray:originArray];
                 [self groupByStatus];
                 [self.attendTableView reloadData];
+                _SearchField.placeholder = [NSString stringWithFormat:@"Search students (%lu)", (unsigned long)studentArray.count];
             } else {
                 [Functions checkError:responseDict];
             }
@@ -415,17 +533,8 @@
                 originArray = [[NSMutableArray alloc] init];
                 id timeSlotObj = sessionTimeSlotList[currentSessionIndex];
                 [self getStudents:[timeSlotObj valueForKey:@"id"] loader:YES];
-                [TSMessage showNotificationInViewController:self
-                                                      title:@"Success"
-                                                   subtitle:[NSString stringWithFormat:@"%@ marked as %@", updatedStudentName, updatedStudentStatus]
-                                                      image:[UIImage imageNamed:@""]
-                                                       type:TSMessageNotificationTypeSuccess
-                                                   duration:5.0
-                                                   callback:nil
-                                                buttonTitle:nil
-                                             buttonCallback:nil
-                                                 atPosition:TSMessageNotificationPositionTop
-                                       canBeDismissedByUser:YES];
+                [self showAlert:@"Success" message:[NSString stringWithFormat:@"%@ marked as %@", updatedStudentName, updatedStudentStatus]];
+                self.viewPresentAndPaid.alpha = 0.0;
             }
         }
     } else if ([apiName isEqualToString:rcTimeSlotsApi]) {
@@ -446,6 +555,11 @@
 }
 
 #pragma mark - IBAction
+- (IBAction)onBtnClosePresentAndPaid:(id)sender {
+    self.viewPresentAndPaid.alpha = 0.0;
+    [self.view endEditing:YES];
+}
+
 - (IBAction)OnTypeChanged:(id)sender {
     if (_typeSegment.selectedSegmentIndex == 0) {
         _AttendanceView.hidden = true;
@@ -456,13 +570,7 @@
         _detailsBackView.hidden = true;
         _DetailsView.hidden = true;
     } else {
-        _detailsBackView.hidden = false;
-        _DetailsView.hidden = false;
-        ClassDetailViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"class_detail"];
-        controller.objBook = _objBook;
-        controller.isContained = true;
-        [self displayContentController:controller];
-        [_DetailsView setContentOffset:CGPointMake(0, 64) animated:NO];
+        [self loadDetailView];
     }
 }
 
@@ -470,7 +578,7 @@
     if (currentDateIndex > 0) {
         currentDateIndex--;
         [self updateDateLabel];
-        [self getSessionList:dateList[currentDateIndex] loader:YES];
+        [self getSessionList:dateList[currentDateIndex] loader:YES]; //reload session list whenever change date
     }
 }
 
@@ -478,7 +586,7 @@
     if (currentDateIndex < (dateList.count - 1)) {
         currentDateIndex++;
         [self updateDateLabel];
-        [self getSessionList:dateList[currentDateIndex] loader:YES];
+        [self getSessionList:dateList[currentDateIndex] loader:YES]; //reload session list whenever change date
     }
 }
 
@@ -494,6 +602,8 @@
     [self textFieldDidChanged:_SearchField];
 }
 
+#pragma mark -
+#pragma mark UITextField delegates
 - (void)textFieldDidChanged: (UITextField*)textField
 {
     studentArray = [[NSMutableArray alloc]init];
@@ -516,6 +626,21 @@
     [self.attendTableView reloadData];
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.tfPaid) {
+        if ([_tfPaid.text isEqualToString:@""]) {
+            [self showAlert:@"" message:@"Please input paid amount"];
+        } else if (![Functions validateNumberField:_tfPaid.text]) {
+            [self showAlert:@"" message:@"Please input number amount"];
+        } else {
+            [self updateStudent:@"Present,Paid" studentModel:tempStudentModel paid:_tfPaid.text];
+        }
+        _tfPaid.text = @"";
+    }
+    [textField resignFirstResponder];
+    return NO;
+}
+
 #pragma mark -
 #pragma mark TableView delegates
 
@@ -534,8 +659,9 @@
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    StudentModel *obj = [[groupTTDic objectForKey:[groupTitleArray objectAtIndex:section]] objectAtIndex:0];
-    return obj.timeslot_status;
+    NSMutableArray *temp = [groupTTDic objectForKey:[groupTitleArray objectAtIndex:section]];
+    StudentModel *obj = [temp objectAtIndex:0];
+    return [NSString stringWithFormat:@"%@ (%lu)", obj.timeslot_status, (unsigned long)temp.count];
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section {
@@ -556,12 +682,13 @@
     UILabel *lblName = [cell viewWithTag:21];
     UILabel *lblDetail = [cell viewWithTag:22];
     UILabel *lblPrice = [cell viewWithTag:23];
-    
+    avatarView.contentMode = UIViewContentModeScaleAspectFill;
+    avatarView.clipsToBounds = YES;
     StudentModel *studentModel = [StudentModel new];
     if (studentArray.count > 0) {
         studentModel = [[groupTTDic objectForKey:[groupTitleArray objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
         NSString *avatarUrl = [NSString stringWithFormat:@"%@media/photos/avatars/%@", strMainBaseUrl, studentModel.avatar];
-        [avatarView sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:[UIImage imageNamed:@"teacher"]];
+        [avatarView sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:[UIImage imageNamed:@"temporary"]];
         lblName.text = [NSString stringWithFormat:@"%@ %@", studentModel.first_name, studentModel.last_name];
         lblDetail.text = [NSString stringWithFormat:@"%@ %@ / %@", studentModel.guardian_first_name, studentModel.guardian_last_name, studentModel.guardian_mobile];
         
@@ -577,7 +704,7 @@
     [Functions makeRoundImageView:avatarView];
     
     MGSwipeButton *absentBtn = [MGSwipeButton buttonWithTitle:@"Absent" backgroundColor:[UIColor colorWithHex:COLOR_PRIMARY] callback:^BOOL(MGSwipeTableCell * sender){
-        [self updateStudent:@"Absent" studentModel:studentModel];
+        [self updateStudent:@"Absent" studentModel:studentModel paid:@""];
         return YES;
     }];
     cell.leftButtons = @[absentBtn];
@@ -586,17 +713,24 @@
     
     MGSwipeButton *moreBtn = [MGSwipeButton buttonWithTitle:@"More..." backgroundColor:[UIColor colorWithHex:COLOR_SECONDARY] callback:^BOOL(MGSwipeTableCell * sender){
         AttendanceMoreViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"attend_more"];
+
         controller.objBook = _objBook;
         controller.objStudent = studentModel;
         controller.studentList = originArray;
         controller.sessionList = sessionList;
         controller.dateList = dateList;
         controller.sessionTimeSlotList = sessionTimeSlotList;
+        controller.currentDateIndex = currentDateIndex;
+        controller.currentSessionIndex = currentSessionIndex;
+
         [self presentViewController:controller animated:true completion:nil];
         return YES;
     }];
     MGSwipeButton *presentBtn = [MGSwipeButton buttonWithTitle:@"Present and paid" backgroundColor:[UIColor colorWithHex:COLOR_PRIMARY] callback:^BOOL(MGSwipeTableCell * sender){
-        [self updateStudent:@"Present,Paid" studentModel:studentModel];
+//        tempStudentModel = [StudentModel new];
+//        tempStudentModel = studentModel;
+//        [self showPresentAndPaid]; //TODO need new UI
+        [self updateStudent:@"Present,Paid" studentModel:studentModel paid:@""];
         return YES;
     }];
     cell.rightButtons = @[moreBtn, presentBtn];

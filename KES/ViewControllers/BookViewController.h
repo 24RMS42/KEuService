@@ -13,7 +13,7 @@
 #import "WebServices.h"
 #import "AppDelegate.h"
 
-@interface BookViewController : UIViewController<WebServicesDelegate>
+@interface BookViewController : UIViewController<WebServicesDelegate, CAPSPageMenuDelegate>
 {
     WebServices *objWebServices;
     NSString *topicApi, *locationApi, *categoryApi, *subjectApi;

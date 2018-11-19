@@ -11,7 +11,9 @@
 
 @interface SessionListViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
 
+
 @property (nonatomic, strong) NSString *from;
+@property (nonatomic, retain) NSArray *sessionTimeSlotList;
 @property (nonatomic, retain) NSArray *sessionArray;
 @property (nonatomic, retain) NSString *sessionDate;
 @property (nonatomic, assign) NSInteger sessionIndex;

@@ -24,4 +24,6 @@
 @property (strong ,nonatomic) NSString *guardian_last_name;
 @property (strong ,nonatomic) NSString *guardian_mobile;
 @property (strong ,nonatomic) NSString *avatar;
+@property (strong ,nonatomic) NSString *role;
+@property (strong ,nonatomic) NSString *temporary_absences;
 @end

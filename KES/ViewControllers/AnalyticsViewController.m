@@ -42,8 +42,10 @@
         categories = @[@"All bookings"];
     } else if ([userRole isEqualToString:@"Manager"]) {
         categories = @[@"All bookings", @"Total income"];
+
     } else {
         categories = @[@"All bookings"];
+
     }
     _titleTotalLbl.text = categories[0];
     [_dropDownMenu setDisclosureIndicatorImage:[UIImage imageNamed:@"white_down_arrow.png"]];
@@ -93,8 +95,8 @@
     _selectedTextColor = [UIColor colorWithHex:COLOR_FONT];
     _normalTextColor = [UIColor colorWithHex:0xa0a0a0];
     
-    NSDate *startDateOfLastMonth = [Functions startDateOfLastMonth];
-    _lastMonthName = [Functions convertDateToString:startDateOfLastMonth format:@"LLLL"];
+    NSDate *endDateOfLastMonth = [Functions endDateOfLastMonth];
+    _lastMonthName = [Functions convertDateToString:endDateOfLastMonth format:@"LLLL"];
     
     _width = (self.view.frame.size.width-6)/3;
     _height = self.carousel.frame.size.height;
@@ -152,7 +154,6 @@
 - (void)parseAnalyticsArray:(id)responseObject purpose:(NSString *)purpose
 {
     NSLog(@"analytics purpose: %@", purpose);
-    NSString *courseKey = @"course";
     id statsObject = [responseObject valueForKey:@"stats"];
     id categoryObj = [statsObject valueForKey:@"category"];
     id subjectObj = [statsObject valueForKey:@"subject"];
@@ -160,10 +161,8 @@
     if (!IS_STUDENT) {
         id booksObj = [statsObject valueForKey:@"bookings"];
         total_income = [[booksObj valueForKey:@"receipts"] intValue];
-    } else {
-        courseKey = @"trainer";
     }
-    id teacherObj = [statsObject valueForKey:courseKey];
+    id teacherObj = [statsObject valueForKey:@"course"];
     
     NSString *categoryTotal = [[categoryObj valueForKey:@"total_quantity"] stringValue];
     
@@ -197,7 +196,14 @@
         analyticsModel.timebar = purpose;
         
         float percent = analyticsModel.minute * 100 / (float)analyticsModel.total_minute;
-        analyticsModel.percent = [NSString stringWithFormat:@"%ld", lroundf(percent)];
+        if (analyticsModel.total_minute == 0) {
+            percent = 0;
+        }
+        if (lroundf(percent) == 0 && analyticsModel.minute > 0) {
+            analyticsModel.percent = @"1";
+        } else {
+            analyticsModel.percent = [NSString stringWithFormat:@"%ld", lroundf(percent)];
+        }
         
         [categoryArray addObject:analyticsModel];
     }
@@ -217,7 +223,14 @@
         analyticsModel.timebar = purpose;
         
         float percent = analyticsModel.minute * 100 / (float)analyticsModel.total_minute;
-        analyticsModel.percent = [NSString stringWithFormat:@"%ld", lroundf(percent)];
+        if (analyticsModel.total_minute == 0) {
+            percent = 0;
+        }
+        if (lroundf(percent) == 0 && analyticsModel.minute > 0) {
+            analyticsModel.percent = @"1";
+        } else {
+            analyticsModel.percent = [NSString stringWithFormat:@"%ld", lroundf(percent)];
+        }
         
         [subjectArray addObject:analyticsModel];
     }
@@ -237,7 +250,14 @@
         analyticsModel.timebar = purpose;
         
         float percent = analyticsModel.minute * 100 / (float)analyticsModel.total_minute;
-        analyticsModel.percent = [NSString stringWithFormat:@"%ld", lroundf(percent)];
+        if (analyticsModel.total_minute == 0) {
+            percent = 0;
+        }
+        if (lroundf(percent) == 0 && analyticsModel.minute > 0) {
+            analyticsModel.percent = @"1";
+        } else {
+            analyticsModel.percent = [NSString stringWithFormat:@"%ld", lroundf(percent)];
+        }
         
         [teacherArray addObject:analyticsModel];
     }
@@ -492,6 +512,12 @@
             return [filterTeacherArray count];
     }
     return 0;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return UITableViewAutomaticDimension;
+}
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 75;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

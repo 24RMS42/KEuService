@@ -86,7 +86,11 @@
     _buildingLbl.text = _objBook.building;
     _teacherLbl.text = _objBook.trainer;
     _costLbl.text = [NSString stringWithFormat:@"€%ld/slot", (long)scheduleObj.fee_amount];
-    _timePromptLbl.text = [NSString stringWithFormat:@"Starts in %@", _objBook.time_prompt];
+    if ([_objBook.time_prompt isEqualToString:@""]) {
+        _timePromptLbl.text = @"";
+    } else {
+        _timePromptLbl.text = [NSString stringWithFormat:@"Starts in %@", _objBook.time_prompt];
+    }
     
     //Call course_detail api
     courseApi = [NSString stringWithFormat:@"%@%@%@", strMainBaseUrl, COURSE_DETAIL, scheduleObj.course_id];
@@ -103,10 +107,16 @@
     courseObj.type_id = [courseObject valueForKey:@"type_id"];
     courseObj.summary = [Functions checkNullValue:[courseObject valueForKey:@"summary"]];
     courseObj.descript = [Functions checkNullValue:[courseObject valueForKey:@"description"]];
-    courseObj.banner = [NSString stringWithFormat:@"%@media/photos/courses/%@", strMainBaseUrl, [courseObject valueForKey:@"banner"]];
+    NSString *bannerUrl = [Functions checkNullValue:[courseObject valueForKey:@"banner"]];
+    courseObj.banner = [NSString stringWithFormat:@"%@media/photos/courses/%@", strMainBaseUrl, bannerUrl];
     
     //Fill data
     [_imageView sd_setImageWithURL:[NSURL URLWithString:courseObj.banner]];
+        if ([bannerUrl isEqualToString:@""]) {
+            CGRect frame = self.detailView.frame;
+            frame.origin.y = _titleView.frame.size.height;
+            self.detailView.frame = frame;
+        }
     NSAttributedString *summaryAttributedString = [[NSAttributedString alloc]
                                                    initWithData: [courseObj.summary dataUsingEncoding:NSUnicodeStringEncoding]
                                                    options: @{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType }

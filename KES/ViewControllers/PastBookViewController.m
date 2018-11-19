@@ -33,7 +33,7 @@
            forControlEvents:UIControlEventEditingChanged];
     
     bookSearchApiEnd = IS_STUDENT ? BOOK_SEARCH : RC_TIMESLOTS;
-    [self startSearch:nil];
+    //[self startSearch:nil]; //Searching will be triggered by below notification
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(startSearch:)
@@ -109,7 +109,7 @@
                 NSDate *startDateTime = [Functions convertStringToDate:bookModel.slot_start_date format:MAIN_DATE_FORMAT];
                 NSString *startTimeStr = [Functions convertDateToString:startDateTime format:@"ccc d LLL yyyy @ h:mm a"];
                 bookModel.format_start_date = startTimeStr;
-                bookModel.time_prompt = [startDateTime timeAgo];
+                bookModel.time_prompt = @"";
                 
                 [bookArray addObject:bookModel];
             }
@@ -144,7 +144,7 @@
                 NSDate *startDateTime = [Functions convertStringToDate:bookModel.start_date format:MAIN_DATE_FORMAT];
                 NSString *startTimeStr = [Functions convertDateToString:startDateTime format:@"ccc d LLL yyyy @ h:mm a"];
                 bookModel.format_start_date = startTimeStr;
-                bookModel.time_prompt = [startDateTime timeAgo];
+                bookModel.time_prompt = @"";
                 
                 [bookArray addObject:bookModel];
             }

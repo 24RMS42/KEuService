@@ -43,6 +43,7 @@
     }
     
     UILabel *titlelbl = (UILabel*)[cell viewWithTag:39];
+    UILabel *countlbl = (UILabel*)[cell viewWithTag:40];
     if ([_sessionArray count] > 0) {
         if (indexPath.row == _sessionIndex) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -50,6 +51,10 @@
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
         titlelbl.text = _sessionArray[indexPath.row];
+    }
+    
+    if ([_sessionTimeSlotList count] > 0) {
+        countlbl.text = [[_sessionTimeSlotList objectAtIndex:indexPath.row] valueForKey:@"booking_count"];
     }
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -62,6 +67,7 @@
     _sessionIndex = indexPath.row;
     [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
     [self.sessionTableView reloadData];
+    [self OnBackClicked:nil];
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -69,6 +75,7 @@
 }
 
 - (IBAction)OnBackClicked:(id)sender {
+
     NSString *notificationName = [self.from isEqualToString:@"bookDetail"] ? NOTI_SESSIONED_BOOK : NOTI_SESSIONED_ATTENDANCE;
     NSDictionary* info = @{@"sessionId":@(_sessionIndex)};
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:info];

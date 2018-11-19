@@ -14,6 +14,7 @@
 #import "NewsModel.h"
 #import "LGSideMenuController.h"
 
+
 @interface MainTabViewController : UIViewController<BATabBarControllerDelegate, LGSideMenuDelegate>
 
 @property (nonatomic, strong) BATabBarController* vc;

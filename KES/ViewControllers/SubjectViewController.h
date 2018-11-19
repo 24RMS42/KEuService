@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UIView *subView;
 @property (weak, nonatomic) IBOutlet UISwitch *accountingSwitch;
 @property (weak, nonatomic) IBOutlet UITextView *explainTxt;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *constraint_scContainer_height;
 
 - (IBAction)OnBackClicked:(id)sender;
 - (IBAction)switchChanged:(id)sender;

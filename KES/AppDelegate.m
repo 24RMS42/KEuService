@@ -20,6 +20,8 @@
     // Override point for customization after application launch.
     
     [[UISegmentedControl appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor colorWithHex:COLOR_GRAY]} forState:UIControlStateNormal];
+    [[UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[[UISearchBar class]]] setTintColor:[UIColor whiteColor]];
+
     _topicArray = [[NSMutableArray alloc] init];
     _locationArray = [[NSMutableArray alloc] init];
     _categoryArray = [[NSMutableArray alloc] init];
@@ -33,6 +35,9 @@
     _yearArray = [[NSMutableArray alloc]init];
     _academicYearArray = [[NSMutableArray alloc]init];
     _preferenceTypeArray = [[NSMutableArray alloc]init];
+    _notificationTypeArray = [[NSMutableArray alloc]init];
+    _preferenceMedicalTypeArray = [[NSMutableArray alloc]init];
+    _familyMemberArray = [[NSMutableArray alloc]init];
     _calendarEventArray = [[NSMutableArray alloc]init];
     _contactData = [[ContactData alloc] init];
     _userRoleArray = [[NSMutableArray alloc]init];
@@ -46,14 +51,7 @@
     //[[UIApplication sharedApplication] setStatusBarHidden:NO];
     //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
-    if ([Functions isiPhoneX]) {
-        UIView *statusBar = [[[UIApplication sharedApplication] valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"];
-        if ([statusBar respondsToSelector:@selector(setBackgroundColor:)]) {
-            statusBar.backgroundColor = [UIColor colorWithHex:COLOR_PRIMARY];
-        }
-    }
     
-    application.applicationSupportsShakeToEdit = YES;
     return YES;
 }
 
@@ -77,6 +75,19 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    if ([Functions isiPhoneX]) {
+        UIView *statusBar = [[[UIApplication sharedApplication] valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"];
+        UIView *blackView = [[UIView alloc] initWithFrame:statusBar.frame];
+        blackView.tag = 1;
+        [blackView setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1]];
+        blackView.alpha = 0.0f;
+        [statusBar addSubview:blackView];
+        if ([statusBar respondsToSelector:@selector(setBackgroundColor:)]) {
+            statusBar.backgroundColor = [UIColor colorWithHex:COLOR_PRIMARY];
+        }
+    }
+    
+    application.applicationSupportsShakeToEdit = YES;
 }
 
 

@@ -33,7 +33,7 @@
         strMainBaseUrl = BASE_URL;
     }
     NSString *avatarUrl = [NSString stringWithFormat:@"%@media/photos/avatars/%@", strMainBaseUrl, [userInfo valueForKey:KEY_AVATAR]];
-    [avatarImgView sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:[UIImage imageNamed:@"teacher"]];
+    [avatarImgView sd_setImageWithURL:[NSURL URLWithString:avatarUrl] placeholderImage:[UIImage imageNamed:@"defaultAvatar"]];
 
     appDelegate.countryArray = [[NSMutableArray alloc] init];
     appDelegate.countyArray = [[NSMutableArray alloc] init];
@@ -42,9 +42,13 @@
     appDelegate.yearArray = [[NSMutableArray alloc] init];
     appDelegate.academicYearArray = [[NSMutableArray alloc] init];
     appDelegate.preferenceTypeArray = [[NSMutableArray alloc] init];
+    appDelegate.notificationTypeArray = [[NSMutableArray alloc] init];
+    appDelegate.preferenceMedicalTypeArray = [[NSMutableArray alloc] init];
+    appDelegate.familyMemberArray = [[NSMutableArray alloc] init];
     appDelegate.calendarEventArray = [[NSMutableArray alloc] init];
     appDelegate.UserArray = [[NSMutableArray alloc] init];
     appDelegate.UserEmailArray = [[NSMutableArray alloc] init];
+    appDelegate.isLogAs = NO;
     
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
@@ -73,10 +77,17 @@
     calendarEventApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CALENDAR_EVENT];
     [objWebServices callApiWithParameters:nil apiName:calendarEventApi type:GET_REQUEST loader:NO view:self];
     
+    familyMemberApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_FAMILIY_MEMBERS];
+    [objWebServices callApiWithParameters:nil apiName:familyMemberApi type:GET_REQUEST loader:NO view:self];
+    
+    notificationTypeApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, NOTIFICATION_TYPE];
+    [objWebServices callApiWithParameters:nil apiName:notificationTypeApi type:GET_REQUEST loader:NO view:self];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(displayUserInfo:)
                                                  name:NOTI_SETTING_USERINFO
                                                object:nil];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -171,9 +182,17 @@
             model.required = [obj valueForKey:@"required"];
             model.summary = [Functions checkNullValue:[obj valueForKey:@"summary"]];
             [appDelegate.preferenceTypeArray addObject:model];
+        } else if ([[obj valueForKey:@"group"] isEqualToString:@"special"]) {
+            PreferenceType *model = [[PreferenceType alloc] init];
+            model.preference_id = [obj valueForKey:@"id"];
+            model.label = [obj valueForKey:@"label"];
+            model.required = [obj valueForKey:@"required"];
+            model.summary = [Functions checkNullValue:[obj valueForKey:@"summary"]];
+            [appDelegate.preferenceMedicalTypeArray addObject:model];
         }
     }
     NSLog(@"preferences type count:%lu", (unsigned long)appDelegate.preferenceTypeArray.count);
+    NSLog(@"preferences medical type count:%lu", (unsigned long)appDelegate.preferenceMedicalTypeArray.count);
 }
 
 - (void)parseCountyArray:(id)responseObject {
@@ -200,6 +219,32 @@
         [appDelegate.calendarEventArray addObject:model];
     }
     NSLog(@"calendarEventArray count:%lu", (unsigned long)appDelegate.calendarEventArray.count);
+}
+
+- (void)parseFamilyMembers:(id)responseObject {
+    NSDictionary *ids = [responseObject valueForKey:@"ids"];
+    for (NSDictionary *obj in ids) {
+        StudentModel *model = [[StudentModel alloc] init];
+        model.first_name = [obj valueForKey:@"first_name"];
+        model.last_name = [obj valueForKey:@"last_name"];
+        NSArray *roles = [obj valueForKey:@"has_roles"];
+        model.role = roles[0];
+        
+        [appDelegate.familyMemberArray addObject:model];
+    }
+    NSLog(@"familymembers array count:%lu", (unsigned long)appDelegate.familyMemberArray.count);
+}
+
+- (void)parseNotificationTypes:(id)responseObject {
+    NSDictionary *ids = [responseObject valueForKey:@"notification_types"];
+    for (NSDictionary *obj in ids) {
+        ContactNotification *model = [[ContactNotification alloc] init];
+        model.type_id = [obj valueForKey:@"id"];
+        model.value = [obj valueForKey:@"name"];
+        
+        [appDelegate.notificationTypeArray addObject:model];
+    }
+    NSLog(@"notificationTypeArray count:%lu", (unsigned long)appDelegate.notificationTypeArray.count);
 }
 
 #pragma mark - webservice call delegate
@@ -297,6 +342,24 @@
                 [Functions checkError:responseDict];
             }
         }
+    } else if ([apiName isEqualToString:familyMemberApi]) {
+        if(responseDict != nil) {
+            int success = [[responseDict valueForKey:@"success"] intValue];
+            if (success == 1) {
+                [self parseFamilyMembers:responseDict];
+            } else {
+                [Functions checkError:responseDict];
+            }
+        }
+    } else if ([apiName isEqualToString:notificationTypeApi]) {
+        if(responseDict != nil) {
+            int success = [[responseDict valueForKey:@"success"] intValue];
+            if (success == 1) {
+                [self parseNotificationTypes:responseDict];
+            } else {
+                [Functions checkError:responseDict];
+            }
+        }
     }
 }
 
@@ -309,6 +372,32 @@
         [self.view layoutIfNeeded];
     }];
     [_scrollView scrollRectToVisible:CGRectMake(0, 0, 10, 10) animated:false];
+}
+- (IBAction)onBtnProfile:(id)sender {
+    NSDictionary* info = @{NOTI_SELECT_INDEX: @"0"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_GO_PROFILE object:self userInfo:info];
+}
+
+
+
+- (IBAction)onBtnAddress:(id)sender {
+    NSDictionary* info = @{NOTI_SELECT_INDEX: @"1"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_GO_PROFILE object:self userInfo:info];
+}
+
+- (IBAction)onBtnFamily:(id)sender {
+    NSDictionary* info = @{NOTI_SELECT_INDEX: @"2"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_GO_PROFILE object:self userInfo:info];
+
+}
+- (IBAction)onBtnNotificationForProfile:(id)sender {
+    NSDictionary* info = @{NOTI_SELECT_INDEX: @"3"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_GO_PROFILE object:self userInfo:info];
+}
+
+- (IBAction)onBtnPassword:(id)sender {
+    NSDictionary* info = @{NOTI_SELECT_INDEX: @"4"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_GO_PROFILE object:self userInfo:info];
 }
 
 - (IBAction)goBacktoProfile:(id)sender {
@@ -334,6 +423,7 @@
 }
 
 - (IBAction)onBtnMessaging:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_MESSAGES object:self];
 }
 
 - (IBAction)onBtnNotification:(id)sender {
@@ -362,7 +452,8 @@
 }
 
 - (IBAction)onBtnContactUs:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_CONTACTUS object:self];
+    //[[NSNotificationCenter defaultCenter] postNotificationName:NOTI_CONTACTUS object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_USER_MANAMGE object:self];
 }
 
 - (IBAction)onBtnShareAppWithFriends:(id)sender {

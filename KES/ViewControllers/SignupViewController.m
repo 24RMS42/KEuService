@@ -17,6 +17,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self setHeightOfTosTextView];
+    
     [Functions makeFloatingField:_EmailField placeholder:@"Your email"];
     [Functions makeFloatingField:_PasswordField placeholder:@"Password"];
     [Functions makeFloatingField:_FirstNameField placeholder:@"First name"];
@@ -55,6 +57,10 @@
                   range:NSMakeRange(58, 13)];
     _TOSTextView.attributedText = hogan;
     [_TOSTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13]];
+    
+    UILongPressGestureRecognizer *tap1 = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongTap1:)];
+    tap1.minimumPressDuration = 0;
+    [self.PwdToggleButton addGestureRecognizer:tap1];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -78,6 +84,19 @@
         [theTextField resignFirstResponder];
     }
     return YES;
+}
+
+- (void)handleLongTap1:(UIGestureRecognizer*)gesture {
+    if (gesture.state == UIPressPhaseChanged) {
+        _PasswordField.secureTextEntry = NO;
+    } else if (gesture.state == UIPressPhaseEnded) {
+        _PasswordField.secureTextEntry = YES;
+    }
+    
+    NSString *tmpString;
+    tmpString = _PasswordField.text;
+    _PasswordField.text = @" ";
+    _PasswordField.text = tmpString;
 }
 
 - (BOOL)isValid {
@@ -126,6 +145,22 @@
     }
     signupApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, SIGNUP_API];
     [_objWebServices callApiWithParameters:parameters apiName:signupApi type:POST_REQUEST loader:YES view:self];
+}
+
+- (void) setHeightOfTosTextView
+{
+    CGFloat width = self.view.bounds.size.width - 125 - 2.0 * self.TOSTextView.textContainer.lineFragmentPadding;
+    CGRect boundingRect = [self.TOSTextView.text boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX)
+                                                            options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
+                                                         attributes:@{ NSFontAttributeName:self.TOSTextView.font}
+                                                            context:nil];
+    
+    CGFloat heightByBoundingRect = CGRectGetHeight(boundingRect);
+    if (heightByBoundingRect > self.constraint_tosTextView_height.constant) {
+        self.constraint_tosTextView_height.constant = heightByBoundingRect;
+        [self.view layoutIfNeeded];
+    }
+    
 }
 
 #pragma mark - UITextField delegate

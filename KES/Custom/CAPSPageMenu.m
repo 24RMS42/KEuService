@@ -258,7 +258,7 @@ NSString * const CAPSPageMenuOptionHideTopMenuBar                       = @"hide
     if (_addBottomMenuHairline) {
         UIView *menuBottomHairline = [UIView new];
         
-        menuBottomHairline.translatesAutoresizingMaskIntoConstraints = NO;
+        menuBottomHairline.translatesAutoresizingMaskIntoConstraints = YES;
         
         [self.view addSubview:menuBottomHairline];
         

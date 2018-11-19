@@ -32,6 +32,7 @@
 @property (strong ,nonatomic) NSString *cycle;
 @property (strong ,nonatomic) NSString *courses_i_would_like;
 @property (strong ,nonatomic) NSString *points;
+@property (strong ,nonatomic) NSString *medicalId;
 @property (strong ,nonatomic) NSMutableArray *contactDetails;
 @property (strong ,nonatomic) NSMutableArray *preferenceArray;
 @property (strong ,nonatomic) NSMutableArray *subjectArray;

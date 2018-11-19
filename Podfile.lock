@@ -1,18 +1,18 @@
 PODS:
-  - AFNetworking (3.2.0):
-    - AFNetworking/NSURLSession (= 3.2.0)
-    - AFNetworking/Reachability (= 3.2.0)
-    - AFNetworking/Security (= 3.2.0)
-    - AFNetworking/Serialization (= 3.2.0)
-    - AFNetworking/UIKit (= 3.2.0)
-  - AFNetworking/NSURLSession (3.2.0):
+  - AFNetworking (3.2.1):
+    - AFNetworking/NSURLSession (= 3.2.1)
+    - AFNetworking/Reachability (= 3.2.1)
+    - AFNetworking/Security (= 3.2.1)
+    - AFNetworking/Serialization (= 3.2.1)
+    - AFNetworking/UIKit (= 3.2.1)
+  - AFNetworking/NSURLSession (3.2.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (3.2.0)
-  - AFNetworking/Security (3.2.0)
-  - AFNetworking/Serialization (3.2.0)
-  - AFNetworking/UIKit (3.2.0):
+  - AFNetworking/Reachability (3.2.1)
+  - AFNetworking/Security (3.2.1)
+  - AFNetworking/Serialization (3.2.1)
+  - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
   - BRYSerialAnimationQueue (1.0.0)
   - CircleProgressBar (0.32)
@@ -32,9 +32,9 @@ PODS:
   - MGSwipeTableCell (1.6.7)
   - MKDropdownMenu (1.4)
   - RadioButton (1.0)
-  - SDWebImage (4.3.3):
-    - SDWebImage/Core (= 4.3.3)
-  - SDWebImage/Core (4.3.3)
+  - SDWebImage (4.4.2):
+    - SDWebImage/Core (= 4.4.2)
+  - SDWebImage/Core (4.4.2)
   - SSBouncyButton (1.0.7):
     - BRYSerialAnimationQueue (~> 1.0)
     - UIColor-Hex (~> 0.1)
@@ -98,7 +98,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/KrauseFx/TSMessages.git
 
 SPEC CHECKSUMS:
-  AFNetworking: 8ac6017b94ea105479f7776e5288e48ae9c59bb4
+  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
   BRYSerialAnimationQueue: 75feef56345338619a6c2111f2a81de28a59c368
   CircleProgressBar: 3920079be5224b62b3d9ed6eeb23ac01c835b681
   DatePickerDialog-ObjC: 63266ee38d3d7b8b7a3e03f7512693b940baaddd
@@ -114,7 +114,7 @@ SPEC CHECKSUMS:
   MGSwipeTableCell: fb20e983988bde2b8d0df29c2d9e1d8ffd10b74a
   MKDropdownMenu: 269df4a41d21a1db684ce8bc709befe419fc5bae
   RadioButton: 7ef053baf6ff0e7f9e777016c28e9ba4e330edba
-  SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
+  SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   SSBouncyButton: 90f6da63da6c6d32f9dab4928b80632b427d871a
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   TSMessages: eb3cf27b6900684a21bad4fe9ea426e287b8c839

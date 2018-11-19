@@ -12,7 +12,8 @@
 #import "ClassDetailViewController.h"
 #import "HelpViewController.h"
 #import "FeedbackViewController.h"
-
+#import "TodosMoreViewController.h"
+#import "TodoCreateViewController.h"
 @interface MainTabViewController ()
 
 @property (nonatomic, assign) bool firstTime;
@@ -98,6 +99,32 @@
                                              selector:@selector(goTimeTableViewController:)
                                                  name:NOTI_GO_TIMETABLE
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(goProfileEditViewController:)
+                                                 name:NOTI_GO_PROFILE
+                                               object:nil];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(goMessagesVC:)
+                                                 name:NOTI_MESSAGES
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(viewClassTodoMore:)
+                                                 name:TODO_LIST_MORE
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(viewClassCreateTodo:)
+                                                 name:TODO_CREATE
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(goUserManagePage:)
+                                                 name:NOTI_USER_MANAMGE
+                                               object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -108,12 +135,14 @@
 - (void)viewDidLayoutSubviews {
     if(self.firstTime){
         
-        BATabBarItem *tabBarItem, *tabBarItem2, *tabBarItem3, *tabBarItem5;
+        BATabBarItem *tabBarItem, *tabBarItem2, *tabBarItem3, *tabBarItem4;
         UIViewController *homeController = [self.storyboard instantiateViewControllerWithIdentifier:@"home"];
         UIViewController *analyticsController = [self.storyboard instantiateViewControllerWithIdentifier:@"analytics"];
         UIViewController *bookController = [self.storyboard instantiateViewControllerWithIdentifier:@"book"];
-//        UIViewController *timeTableController = [self.storyboard instantiateViewControllerWithIdentifier:@"time_table"];
-        UIViewController *settingsController = [self.storyboard instantiateViewControllerWithIdentifier:@"settings"];
+        
+//        UIViewController *todosListVC = [[UIStoryboard storyboardWithName:@"Todos" bundle:nil] instantiateViewControllerWithIdentifier:@"TodosListViewController"];
+        
+        UINavigationController *todoNavigationController = [[UIStoryboard storyboardWithName:@"Todos" bundle:nil] instantiateViewControllerWithIdentifier:@"TodoNavigationController"];
         
         NSMutableAttributedString *option1 = [[NSMutableAttributedString alloc] initWithString:@"Home"];
         [option1 addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHex:COLOR_GRAY] range:NSMakeRange(0,option1.length)];
@@ -127,13 +156,13 @@
         [option3 addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHex:COLOR_GRAY] range:NSMakeRange(0,option3.length)];
         tabBarItem3 = [[BATabBarItem alloc] initWithImage:[UIImage imageNamed:@"book"] selectedImage:[UIImage imageNamed:@"book_select"] title:option3];
         
-//        NSMutableAttributedString * option4 = [[NSMutableAttributedString alloc] initWithString:@"Timetable"];
-//        [option4 addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHex:COLOR_GRAY] range:NSMakeRange(0,option4.length)];
-//        tabBarItem4 = [[BATabBarItem alloc] initWithImage:[UIImage imageNamed:@"timetable"] selectedImage:[UIImage imageNamed:@"timetable_select"] title:option4];
+        NSMutableAttributedString * option4 = [[NSMutableAttributedString alloc] initWithString:@"Todos"];
+        [option4 addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHex:COLOR_GRAY] range:NSMakeRange(0,option4.length)];
+        tabBarItem4 = [[BATabBarItem alloc] initWithImage:[UIImage imageNamed:@"todos"] selectedImage:[UIImage imageNamed:@"todos_selected"] title:option4];
         
-        NSMutableAttributedString * option5 = [[NSMutableAttributedString alloc] initWithString:@"Settings"];
-        [option5 addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHex:COLOR_GRAY] range:NSMakeRange(0,option5.length)];
-        tabBarItem5 = [[BATabBarItem alloc] initWithImage:[UIImage imageNamed:@"settings"] selectedImage:[UIImage imageNamed:@"settings_select"] title:option5];
+//        NSMutableAttributedString * option5 = [[NSMutableAttributedString alloc] initWithString:@"Settings"];
+//        [option5 addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHex:COLOR_GRAY] range:NSMakeRange(0,option5.length)];
+//        tabBarItem5 = [[BATabBarItem alloc] initWithImage:[UIImage imageNamed:@"settings"] selectedImage:[UIImage imageNamed:@"settings_select"] title:option5];
         
         self.vc = [[BATabBarController alloc] init];
         self.vc.tabBarBackgroundColor = [UIColor colorWithHex:0xebebeb];
@@ -144,8 +173,16 @@
 //        self.vc.hidesBottomBarWhenPushed = NO;
 //        self.vc.tabBar.hidden = NO;
         
-        self.vc.viewControllers = @[homeController,analyticsController,bookController];
-        self.vc.tabBarItems = @[tabBarItem,tabBarItem2,tabBarItem3];
+        NSMutableArray *viewControllers = [[NSMutableArray alloc] initWithObjects:homeController, analyticsController, bookController, nil];
+        NSMutableArray *tabBarItems = [[NSMutableArray alloc] initWithObjects:tabBarItem, tabBarItem2, tabBarItem3, nil];
+        NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
+        if ([[userInfo valueForKey:@"todos"] isEqualToString:@"1"]) {
+            [viewControllers addObject:todoNavigationController];
+            [tabBarItems addObject:tabBarItem4];
+        }
+        
+        self.vc.viewControllers = viewControllers;
+        self.vc.tabBarItems = tabBarItems;
         [self.vc setSelectedViewController:homeController animated:NO];
         
         self.vc.delegate = self;
@@ -208,6 +245,23 @@
     }
 }
 
+- (void) viewClassTodoMore:(NSNotification *) notification
+{
+    if ([[notification name] isEqualToString:TODO_LIST_MORE]) {
+        TodosMoreViewController *vc = [[UIStoryboard storyboardWithName:@"Todos" bundle:nil] instantiateViewControllerWithIdentifier:@"TodosMoreViewController"];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+}
+
+- (void) viewClassCreateTodo:(NSNotification *) notification
+{
+//    TodoCreateViewController
+    if ([[notification name] isEqualToString:TODO_CREATE]) {
+        TodoCreateViewController *vc = [[UIStoryboard storyboardWithName:@"Todos" bundle:nil] instantiateViewControllerWithIdentifier:@"TodoCreateViewController"];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+}
+
 - (void)viewBookDetail:(NSNotification*)notification {
     if ([[notification name] isEqualToString:NOTI_BOOK_DETAIL])
     {
@@ -236,6 +290,13 @@
     [self.navigationController pushViewController:controller animated:YES];
 }
 
+- (void) goMessagesVC:(NSNotification *) notification
+{
+    [self hideLeftView];
+    UIViewController *controller = [[UIStoryboard storyboardWithName:@"Messages" bundle:nil] instantiateViewControllerWithIdentifier:@"MessagesViewController"];
+    [self.navigationController pushViewController:controller animated:YES];
+}
+
 - (void)goHomeTab:(NSNotification *) notification{
     [self.vc.tabBar selectedTabItem:0 animated:YES];
     [[self.vc.tabBarItems objectAtIndex:3] hideOutline];
@@ -252,6 +313,13 @@
     [self.navigationController pushViewController:controller animated:YES];
 }
 
+- (void)goUserManagePage:(NSNotification *) notification {
+    [self performSelector:@selector(hideLeftView) withObject:nil afterDelay:0.5];
+    HelpViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"UserMngView"];
+    [self.navigationController pushViewController:controller animated:YES];
+}
+
+//ProfileParentViewController
 - (void)goHelpPage:(NSNotification *) notification {
     [self performSelector:@selector(hideLeftView) withObject:nil afterDelay:0.5];
     NSDictionary* info = notification.userInfo;
@@ -271,7 +339,7 @@
 
 - (void)goPreferencePage:(NSNotification *) notification {
     [self performSelector:@selector(hideLeftView) withObject:nil afterDelay:0.5];
-    UIViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"notification"];
+    UIViewController *controller = [[UIStoryboard storyboardWithName:@"Profile" bundle:nil] instantiateViewControllerWithIdentifier:@"MyNotificationViewController"];
     [self.navigationController pushViewController:controller animated:YES];
 }
 
@@ -296,6 +364,22 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_RETRIEVE_TIMETABLE object:self];
     });
     
+}
+
+- (void) goProfileEditViewController:(NSNotification *) notification
+{
+    [self performSelector:@selector(hideLeftView) withObject:nil afterDelay:0.5];
+    NSDictionary* info = notification.userInfo;
+    UIViewController *controller = [[UIStoryboard storyboardWithName:@"Profile" bundle:nil] instantiateViewControllerWithIdentifier:@"ProfileParentViewController"];
+    [self.navigationController pushViewController:controller animated:YES];
+    [self performSelector:@selector(sendNotificationForProfile:) withObject:info afterDelay:0.3];
+    
+}
+
+- (void) sendNotificationForProfile:(NSDictionary *) dic
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_SELECT_INDEX object:self userInfo:dic];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_SELECT_INDEX1 object:self userInfo:dic];
 }
 
 - (void) clickShareWithFriends:(NSNotification *) notification

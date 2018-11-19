@@ -19,6 +19,12 @@
 
     _titleLbl.text = _newsObj.title;
     [_imageView sd_setImageWithURL:[NSURL URLWithString:_newsObj.image] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+    if (_newsObj.image.length < 56) { //if no image
+        self.imageViewHeightConstraint.constant = 0;
+        CGRect frame = self.detailView.frame;
+        frame.origin.y = 0;
+        self.detailView.frame = frame;
+    }
     
     NSAttributedString *summaryAttributedString = [[NSAttributedString alloc]
                                                    initWithData: [_newsObj.summary dataUsingEncoding:NSUnicodeStringEncoding]
@@ -34,6 +40,9 @@
                                                   ];
     
     _summaryTxt.attributedText = summaryAttributedString;
+    if (summaryAttributedString.length == 0) {
+        _summaryLbl.text = @"";
+    }
     _detailTxt.attributedText = detailAttributedString;
     [_summaryTxt setFont:[UIFont fontWithName:@"Roboto-Light" size:16]];
     [_detailTxt setFont:[UIFont fontWithName:@"Roboto-Light" size:16]];
@@ -50,7 +59,7 @@
     detailTxtFrame.origin.y = _detailLbl.frame.origin.y + _detailLbl.frame.size.height + 1;
     _detailTxt.frame = detailTxtFrame;
     
-    _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, _detailTxt.frame.origin.y + _detailTxt.frame.size.height + 64);
+    _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, _detailTxt.frame.origin.y + self.detailView.frame.origin.y + _detailTxt.frame.size.height + 10);
 }
 
 - (void)didReceiveMemoryWarning {

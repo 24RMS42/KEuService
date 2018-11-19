@@ -43,7 +43,7 @@ extern NSString *strMainBaseUrl;
 + (id)checkNullValueWithZero:(id)value;
 + (id)checkNullValueWithDate:(id)value;
 + (id)checkNullValue:(id)value;
-+ (void)showAlert: (NSString*)title message:(NSString*)message;
++ (void)showAlert: (NSString*)title message:(NSString*)message; //Show error alert
 + (void)showAlert: (NSString*)title message:(NSString*)message vc:(UIViewController*)vc;
 + (void)showSuccessAlert: (NSString*)title message:(NSString*)message image:(NSString*)image;
 + (void)makeFloatingField: (JVFloatLabeledTextField*)textfield placeholder:(NSString*)placeholder;
@@ -59,8 +59,10 @@ extern NSString *strMainBaseUrl;
 + (NSDate *)startDateOfLastMonth;
 + (NSDate *)endDateOfLastMonth;
 + (UIColor*)convertToHexColor:(NSString*)colorValue;
++ (UIColor *) blueColor;
 + (NSMutableDictionary*)getProfileParameter;
 + (BOOL)isiPhoneX;
++ (BOOL) isiPhone5;
 + (BOOL)validateEmailField:(NSString*)targetStr;
 + (BOOL)validateNumberField:(NSString*)targetStr;
 + (BOOL)validateNormalField:(NSString*)targetStr;
@@ -68,5 +70,10 @@ extern NSString *strMainBaseUrl;
 
 + (void)parseError: (NSError*)error;
 + (void)checkError: (id)responseObject;
+
++ (void) setBoundsWithView:(UIView *) view;
++ (void) setBoundsWithGreyColor:(UIView *) view;
++ (void) showStatusBarBlackView;
++ (void) hideStatusBarBlackView;
 
 @end

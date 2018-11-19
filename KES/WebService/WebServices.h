@@ -31,6 +31,7 @@
 
 //Api Call
 -(void)callApiWithParameters:(NSDictionary *)parameters apiName:(NSString *)apiName type:(NSString*)type loader:(BOOL)isLoaderNeed view:(UIViewController *)view;
+- (void)uploadImage:(NSData *)imageData apiName:(NSString *)apiName view:(UIViewController *)view;
 
 
 @end

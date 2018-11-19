@@ -11,6 +11,7 @@
         "contentFontSize": 12,
         "contentTextColor": "#B73556",
         "imageName": "error_dismiss.png",
+        "shadowColor": "#67B759",
         "shadowOffsetX": 0,
         "shadowOffsetY": 0,
         "textColor": "#B73556",

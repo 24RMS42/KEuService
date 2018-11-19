@@ -17,6 +17,7 @@
 {
     NSMutableArray *feedArray, *newsArray, *offersArray, *bookArray;
     NSMutableArray *filterFeedArray, *filterNewsArray, *filterOffersArray, *filterBookArray;
+    NSMutableArray *searchFeedArray, *searchNewsArray, *searchOffersArray, *searchBookArray;
     UIRefreshControl *refreshControl;
     NSString *category;
     WebServices *objWebServices;
@@ -26,6 +27,7 @@
     NSUserDefaults *userInfo;
     NSMutableArray *aryPrice;
     NSDate *startOfMonth, *endOfMonth, *startOfLastMonth, *endOfLastMonth;
+    BOOL isSearching;
 }
 
 @property (nonatomic) BOOL isLoadTimePrompt;
@@ -35,6 +37,7 @@
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet UIButton *searchBtn;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *searchBarHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *closeBtnHeight;
 
 @property (weak, nonatomic) IBOutlet iCarousel *carousel;
 @property (nonatomic, strong) UIColor *selectItemColor, *normalItemColor, *selectedTextColor, *normalTextColor;

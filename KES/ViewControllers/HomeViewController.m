@@ -25,9 +25,13 @@
     }
     category = @"All";
     userInfo = [NSUserDefaults standardUserDefaults];
-    refreshControl = [[UIRefreshControl alloc]init];
+    //refreshControl = [[UIRefreshControl alloc]init];
     //[self.tableView addSubview:refreshControl];
     [refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+    searchFeedArray = [[NSMutableArray alloc] init];
+    searchBookArray = [[NSMutableArray alloc] init];
+    searchNewsArray = [[NSMutableArray alloc] init];
+    searchOffersArray = [[NSMutableArray alloc] init];
     
     [self setupCarousel:[[NSMutableArray alloc] initWithObjects:
                          @"My feed",
@@ -49,6 +53,7 @@
                                                object:nil];
     
     [_searchBtn setImage:[UIImage imageNamed:@"ic_search.png"] forState:UIControlStateNormal];
+    [self.searchBar setReturnKeyType:UIReturnKeyDone];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -63,8 +68,8 @@
     _selectedTextColor = [UIColor colorWithHex:COLOR_FONT];
     _normalTextColor = [UIColor colorWithHex:0xa0a0a0];
     
-    NSDate *startDateOfLastMonth = [Functions startDateOfLastMonth];
-    _lastMonthName = [Functions convertDateToString:startDateOfLastMonth format:@"LLLL"];
+    NSDate *endDateOfLastMonth = [Functions endDateOfLastMonth];
+    _lastMonthName = [Functions convertDateToString:endDateOfLastMonth format:@"LLLL"];
     
     _width = (self.view.frame.size.width-6)/3;
     _height = self.carousel.frame.size.height;
@@ -98,6 +103,11 @@
     [self retrieveNews:_selectedIndex];
     [self retrieveOffers:_selectedIndex];
     [self retrieveBook:_selectedIndex];
+    
+    //Init search bar
+    isSearching = NO;
+    self.searchBar.text = @"";
+    [self.searchBar resignFirstResponder];
 }
 
 - (void)retrieveNews:(NSInteger)selectedIndex {
@@ -404,7 +414,10 @@
                 for (NSDictionary *obj in subjectArray) {
                     SubjectModel *subjectModel = [[SubjectModel alloc] init];
                     subjectModel.subject_id = [obj valueForKey:@"subject_id"];
-                    subjectModel.level_id = [obj valueForKey:@"level_id"];
+                    subjectModel.level_id = [Functions checkNullValue:[obj valueForKey:@"level_id"]];
+                    if ([subjectModel.level_id isEqualToString:@""]) {
+                        subjectModel.level_id = @"9"; //default value 9
+                    }
                     [contactData.subjectArray addObject:subjectModel];
                 }
                 
@@ -564,9 +577,19 @@
     }
 }
 
-- (NSArray*)filterWithSearch:(NSMutableArray*) array {
+- (void)filterWithSearch {
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    if ([category isEqualToString:@"News"]) {
+        array = [NSMutableArray arrayWithArray:filterNewsArray];
+    } else if ([category isEqualToString:@"Offers"]) {
+        array = [NSMutableArray arrayWithArray:filterOffersArray];
+    } else if ([category isEqualToString:@"Bookings"]) {
+        array = [NSMutableArray arrayWithArray:filterBookArray];
+    } else if ([category isEqualToString:@"All"]) {
+        array = [NSMutableArray arrayWithArray:filterFeedArray];
+    }
+    
     NSString* search = [_searchBar.text stringByTrimmingCharactersInSet: NSCharacterSet.whitespaceCharacterSet];
-    if ([search isEqualToString:@""]) return array;
     NSMutableArray *resultArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < array.count; i ++) {
         NewsModel *model = [[NewsModel alloc] init];
@@ -575,11 +598,23 @@
             || [model.summary containsString:search] || [model.trainer containsString:search] || [model.course containsString:search])
             [resultArray addObject:model];
     }
-    return resultArray;
+    
+    if ([category isEqualToString:@"News"]) {
+        searchNewsArray = [NSMutableArray arrayWithArray:resultArray];
+    } else if ([category isEqualToString:@"Offers"]) {
+        searchOffersArray = [NSMutableArray arrayWithArray:resultArray];
+    } else if ([category isEqualToString:@"Bookings"]) {
+        searchBookArray = [NSMutableArray arrayWithArray:resultArray];
+    } else if ([category isEqualToString:@"All"]) {
+        searchFeedArray = [NSMutableArray arrayWithArray:resultArray];
+    }
 }
 
 - (IBAction)toggleSearch:(id)sender {
     _searchBtn.hidden = !_searchBtn.hidden;
+    if (_searchBtn.hidden) {
+        [_searchBar becomeFirstResponder];
+    }
     _searchBarHeight.constant = 60 - _searchBarHeight.constant;
     [UIView animateWithDuration:0.5 animations:^{
         [self.view layoutIfNeeded];
@@ -587,6 +622,7 @@
 }
 
 - (IBAction)closeSearch:(id)sender {
+    [self.view endEditing:YES];
     _searchBtn.hidden = !_searchBtn.hidden;
     _searchBarHeight.constant = 60 - _searchBarHeight.constant;
     [UIView animateWithDuration:0.5 animations:^{
@@ -654,7 +690,10 @@
 {
     UILabel *label = nil;
     UILabel *catLabel = nil;
-    
+    int sizeWheniPhone = 0;
+    if ([Functions isiPhone5]) {
+        sizeWheniPhone = 2;
+    }
     if (view == nil)
     {
         view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, _width, _height)];
@@ -662,12 +701,12 @@
         //CGRect rectLabel = view.bounds;
         label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, _width, _height*0.7)];
         label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont fontWithName:@"Roboto-Medium" size:30];
+        label.font = [UIFont fontWithName:@"Roboto-Medium" size:30-sizeWheniPhone];
         label.tag = 1;
         
         catLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, _height*0.5, _width, _height*0.4)];
         catLabel.textAlignment = NSTextAlignmentCenter;
-        catLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15];
+        catLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15-sizeWheniPhone];
         catLabel.tag = 2;
         
         [view addSubview:label];
@@ -689,7 +728,7 @@
     {
         view.backgroundColor = _normalItemColor;
         label.textColor = _normalTextColor;
-        label.font = [UIFont fontWithName:@"Roboto-Medium" size:18];
+        label.font = [UIFont fontWithName:@"Roboto-Medium" size:18-sizeWheniPhone];
         catLabel.textColor = _normalTextColor;
     }
     
@@ -762,26 +801,42 @@
         if ([filterNewsArray count] == 0) {
             [self showNoPromptMessage:@"There are no news articles for this time range"];
             return 0;
-        } else
-            return [filterNewsArray count];
+        } else {
+            if (isSearching) {
+                return [searchNewsArray count];
+            } else
+                return [filterNewsArray count];
+        }
     } else if ([category isEqualToString:@"Offers"]) {
         if ([filterOffersArray count] == 0) {
             [self showNoPromptMessage:@"There are no offers for this time range"];
             return 0;
-        } else
-            return [filterOffersArray count];
+        } else {
+            if (isSearching) {
+                return [searchOffersArray count];
+            } else
+                return [filterOffersArray count];
+        }
     } else if ([category isEqualToString:@"Bookings"]) {
         if ([filterBookArray count] == 0) {
             [self showNoPromptMessage:@"There are no bookings for this time range"];
             return 0;
-        } else
-            return [filterBookArray count];
+        } else {
+            if (isSearching) {
+                return [searchBookArray count];
+            } else
+                return [filterBookArray count];
+        }
     } else if ([category isEqualToString:@"All"]) {
         if ([filterFeedArray count] == 0) {
             [self showNoPromptMessage:@"There are no items for this time range"];
             return 0;
-        } else
-            return [filterFeedArray count];
+        } else {
+            if (isSearching) {
+                return [searchFeedArray count];
+            } else
+                return [filterFeedArray count];
+        }
     }
     return 0;
 }
@@ -821,6 +876,9 @@
             
             if ([filterNewsArray count] > 0) {
                 NewsModel *item = [filterNewsArray objectAtIndex:indexPath.row];
+                if (isSearching) {
+                    item = [searchNewsArray objectAtIndex:indexPath.row];
+                }
                 dayOfWeeklbl.text = item.dayOfWeek;
                 daylbl.text = item.day;
                 monthlbl.text = item.month;
@@ -840,6 +898,9 @@
             
             if ([filterOffersArray count] > 0) {
                 NewsModel *item = [filterOffersArray objectAtIndex:indexPath.row];
+                if (isSearching) {
+                    item = [searchOffersArray objectAtIndex:indexPath.row];
+                }
                 dayOfWeeklbl.text = item.dayOfWeek;
                 daylbl.text = item.day;
                 monthlbl.text = item.month;
@@ -859,6 +920,9 @@
             
             if ([filterBookArray count] > 0) {
                 NewsModel *item = [filterBookArray objectAtIndex:indexPath.row];
+                if (isSearching) {
+                    item = [searchBookArray objectAtIndex:indexPath.row];
+                }
                 dayOfWeeklbl.text = item.dayOfWeek;
                 daylbl.text = item.day;
                 monthlbl.text = item.month;
@@ -869,6 +933,9 @@
             }
         } else if ([category isEqualToString:@"All"]) {
             NewsModel *item = [filterFeedArray objectAtIndex:indexPath.row];
+            if (isSearching) {
+                item = [searchFeedArray objectAtIndex:indexPath.row];
+            }
             if ([item.category isEqualToString:@"News"] || [item.category isEqualToString:@"Offers"]) {
                 if ([item.category isEqualToString:@"News"]) {
                     [headerImg setImage:[UIImage imageNamed:@"news.png"]];
@@ -954,6 +1021,31 @@
     [self presentViewController:controller animated:YES completion:nil];
 }
 
+#pragma mark - SearchBar Implementation
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    NSLog(@"Text change %@ - %lu", searchText, (unsigned long)searchText.length);
+    if ([searchText length] != 0) {
+        isSearching = YES;
+        [self filterWithSearch];
+    } else {
+        isSearching = NO;
+    }
+    [self.tableView reloadData];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    NSLog(@"Cancel clicked");
+    [self closeSearch:nil];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    NSLog(@"Search Clicked");
+    [searchBar resignFirstResponder];
+}
+
 #pragma mark - IBAction
 - (IBAction)OnCategoryChanged:(id)sender {
     _noPromptLbl.hidden = YES;
@@ -988,10 +1080,6 @@
             [self showNoPromptMessage:@"There are no offers for this time range"];
         }
     }
-}
-
-- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    
 }
 
 @end

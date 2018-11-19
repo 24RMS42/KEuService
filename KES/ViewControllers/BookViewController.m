@@ -76,6 +76,7 @@
     
     CGFloat offset = [Functions isiPhoneX] ? 20 : 0;
     _pagemenu = [[CAPSPageMenu alloc] initWithViewControllers:controllerArray frame:CGRectMake(0.0, _TopView.frame.origin.y + _TopView.frame.size.height + offset, self.view.frame.size.width, self.view.frame.size.height) options:parameters];//Add 20 for timing issue
+    _pagemenu.delegate = self;
     
     [self.view addSubview:_pagemenu.view];
 }
@@ -191,6 +192,13 @@
                 [Functions checkError:responseDict];
             }
         }
+    }
+}
+
+#pragma mark - CAPageMenu delegate
+- (void)didMoveToPage:(UIViewController *)controller index:(NSInteger)index {
+    if (index == 1) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_SEARCH_PAST_EVENT object:self];
     }
 }
 

@@ -16,11 +16,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if (strMainBaseUrl.length == 0) {
+        strMainBaseUrl = BASE_URL;
+    }
     
     objWebServices = [WebServices sharedInstance];
     objWebServices.delegate = self;
     
-    [self retriveSubjects:appDelegate.contactData.cycle];
+    @try {
+        [self retriveSubjects:appDelegate.contactData.cycle];
+    } @catch (NSException *exception) {
+        [Functions showAlert:@"" message:@"Some data is not correct. Please try again later"];
+    }
     
     _levelSegment.selectedSegmentIndex = [appDelegate.contactData.cycle isEqualToString:@"Senior"] ? 1 : 0;
 }
@@ -79,7 +86,8 @@
     self.explainTxt.frame = frame;
     
     _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width, _explainTxt.frame.origin.y + _explainTxt.frame.size.height);
-    
+    self.constraint_scContainer_height.constant = _explainTxt.frame.origin.y + _explainTxt.frame.size.height;
+    [self.view layoutIfNeeded];
     for (SubjectModel *subjectObj in appDelegate.contactData.subjectArray) {
         NSInteger tag = [subjectObj.subject_id integerValue];
         UISwitch *enabledSwitch = (UISwitch*)[self.sInnerView viewWithTag:tag];
@@ -164,7 +172,7 @@
     [self updateSubjectValue];
 
     NSMutableDictionary *parameter = [Functions getProfileParameter];
-    updateProfileApi = [NSString stringWithFormat:@"%@%@", BASE_URL, CONTACT_DETAIL];
+    updateProfileApi = [NSString stringWithFormat:@"%@%@", strMainBaseUrl, CONTACT_DETAIL];
     [objWebServices callApiWithParameters:parameter apiName:updateProfileApi type:POST_REQUEST loader:YES view:self];
 }
 

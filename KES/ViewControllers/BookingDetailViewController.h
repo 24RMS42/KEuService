@@ -15,8 +15,9 @@
 #import "ClassDetailViewController.h"
 #import "SessionListViewController.h"
 #import "UIButton+Extensions.h"
+#import "NSDate+TimeAgo.h"
 
-@interface BookingDetailViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, WebServicesDelegate, MGSwipeTableCellDelegate>
+@interface BookingDetailViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, WebServicesDelegate, MGSwipeTableCellDelegate, UITextFieldDelegate>
 {
     NSMutableArray *studentArray, *originArray;
     NSMutableArray *sessionList;
@@ -27,8 +28,11 @@
     WebServices *objWebServices;
     NSString *rcStudentApi, *rcStudentFilterApi, *analyticsApi, *rcStudentUpdateApi, *rcTimeSlotsApi, *rcDatesApi;
     NSMutableArray *aryPrice;
-    int currentDateIndex, currentSessionIndex;
+    NSInteger currentDateIndex, currentSessionIndex;
     NSString *updatedStudentStatus, *updatedStudentName;
+    StudentModel *tempStudentModel;
+    NSString *shortBookDateLbl;
+    NSString *lastUsedTimeslotId;
 }
 @property (nonatomic, retain) NewsModel *objBook;
 @property (nonatomic, strong) NSString *from;
@@ -54,6 +58,14 @@
 @property (strong, nonatomic) IBOutlet UIView *switchView;
 @property (strong, nonatomic) IBOutlet UIButton *btnPerDay;
 @property (strong, nonatomic) IBOutlet UIButton *btnPerSession;
+
+@property (weak, nonatomic) IBOutlet UIView *viewPresentAndPaid;
+@property (weak, nonatomic) IBOutlet UITextField *tfRemaining;
+@property (weak, nonatomic) IBOutlet UITextField *tfPaid;
+- (IBAction)onBtnClosePresentAndPaid:(id)sender;
+
+
+
 
 - (IBAction)OnTypeChanged:(id)sender;
 - (IBAction)OnPrevClicked:(id)sender;
